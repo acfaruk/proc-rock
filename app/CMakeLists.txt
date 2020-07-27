@@ -22,3 +22,6 @@ target_link_libraries(proc-rock PRIVATE imgui::imgui)
 
 find_package(tinyfiledialogs CONFIG REQUIRED)
 target_link_libraries(proc-rock PRIVATE tinyfiledialogs::tinyfiledialogs)
+
+find_package(glm CONFIG REQUIRED)
+target_link_libraries(proc-rock PRIVATE glm)
