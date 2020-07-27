@@ -1,0 +1,90 @@
+name: build
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build-ubuntu:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    - name: apt install
+      run: sudo apt install libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev libgl-dev mesa-common-dev
+      
+    - name: cache setup
+      id: cache-setup
+      uses: actions/cache@v2
+      with:
+        path: vcpkg
+        key: ${{ runner.os }}-vcpkg-${{ hashFiles('setup.sh') }}
+
+    - name: setup
+      if: steps.cache-setup.outputs.cache-hit != 'true'
+      run: ./setup.sh
+
+    - name: mkdir
+      run: mkdir build
+
+    - name: cmake build
+      run: cmake -Bbuild
+
+    - name: cmake make
+      run: cmake --build build/ --target proc-rock
+  
+  build-macos:
+    runs-on: macos-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: cache setup
+      id: cache-setup
+      uses: actions/cache@v2
+      with:
+        path: vcpkg
+        key: ${{ runner.os }}-vcpkg-${{ hashFiles('setup.sh') }}
+
+    - name: setup
+      if: steps.cache-setup.outputs.cache-hit != 'true'
+      run: ./setup.sh
+
+    - name: mkdir
+      run: mkdir build
+
+    - name: cmake build
+      run: cmake -Bbuild
+
+    - name: cmake make
+      run: cmake --build build/ --target proc-rock
+  
+  build-windows:
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: cache setup
+      id: cache-setup
+      uses: actions/cache@v2
+      with:
+        path: vcpkg
+        key: ${{ runner.os }}-vcpkg-${{ hashFiles('setup.bat') }}
+
+    - name: setup
+      if: steps.cache-setup.outputs.cache-hit != 'true'
+      run: ./setup.bat
+
+    - name: mkdir
+      run: mkdir build
+
+    - name: cmake build
+      run: cmake -Bbuild
+
+    - name: cmake make
+      run: cmake --build build/ --target proc-rock
