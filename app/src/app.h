@@ -1,9 +1,12 @@
 #pragma once
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-
 #include <glm/glm.hpp>
+#include <memory>
 #include <string>
+
+#include "render/camera.h"
+#include "render/drawables/cube.h"
+#include "render/gl_includes.h"
+#include "render/shader.h"
 
 namespace procRock {
 
@@ -29,17 +32,10 @@ class App {
   const std::string title;
   const std::string resourcesPath;
 
-  struct MouseState {
-    bool leftPressed = false;
-    glm::dvec2 pos = glm::dvec2(0, 0);
-    glm::dvec2 lastPos = glm::dvec2(0, 0);
-    glm::dvec2 scrollOffset = glm::dvec2(0, 0);
-
-  } mouseState;
+  std::unique_ptr<Camera> mainCam;
+  std::unique_ptr<Shader> mainShader;
+  std::unique_ptr<Cube> testCube;
 
   static void onCurrentWindowResize(GLFWwindow* window, int width, int height);
-  static void onCurrentWindowCursorChange(GLFWwindow* window, double x, double y);
-  static void onCurrentWindowMouseButton(GLFWwindow* window, int button, int action, int mods);
-  static void onCurrentWindowMouseScroll(GLFWwindow* window, double x_offset, double y_offset);
 };
 }  // namespace procRock

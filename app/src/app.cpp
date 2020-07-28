@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "gui/gui.h"
+#include "io/input_manager.h"
 
 namespace procRock {
 App* App::current = nullptr;
@@ -19,9 +20,9 @@ App::App(glm::uvec2 windowSize, std::string title, std::string resPath, bool res
   window = glfwCreateWindow((int)windowSize.x, (int)windowSize.y, title.c_str(), NULL, NULL);
 
   glfwSetWindowSizeCallback(window, onCurrentWindowResize);
-  glfwSetMouseButtonCallback(window, onCurrentWindowMouseButton);
-  glfwSetCursorPosCallback(window, onCurrentWindowCursorChange);
-  glfwSetScrollCallback(window, onCurrentWindowMouseScroll);
+  glfwSetMouseButtonCallback(window, InputManager::onMouseButton);
+  glfwSetCursorPosCallback(window, InputManager::onMousePos);
+  glfwSetScrollCallback(window, InputManager::onMouseScroll);
 
   glfwMakeContextCurrent(window);
 
@@ -68,21 +69,33 @@ void App::run() {
 
 bool App::init() {
   gui::init(window);
+
+  mainCam = std::make_unique<Camera>(getFrameBufferSize(), getWindowSize());
+  mainCam->lookAt(glm::vec3(2, 5, 2), glm::vec3(0), glm::vec3(1, 0, 0));
+
+  testCube = std::make_unique<Cube>();
+  testCube->createBuffers();
+
+  mainShader = std::make_unique<Shader>(resourcesPath + "/shaders/main.vert",
+                                        resourcesPath + "/shaders/main.frag");
+
+  glEnable(GL_CULL_FACE);
+  glCullFace(GL_BACK);
+
   return true;
 }
 
 bool App::update() {
   gui::update(this->getFrameBufferSize());
 
-  mouseState.lastPos = mouseState.pos;
-  mouseState.scrollOffset = glm::dvec2(0, 0);
+  mainShader->setFVec3("camPos", mainCam->getPosition());
   return true;
 }
 
 bool App::render() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  // glDrawArrays(GL_TRIANGLES, 0, 3);
 
+  testCube->draw(*mainCam.get(), *mainShader.get());
   gui::render();
   return true;
 }
@@ -106,23 +119,5 @@ void App::onCurrentWindowResize(GLFWwindow* window, int width, int height) {
   current->update();
   current->render();
   glfwSwapBuffers(window);
-}
-
-void App::onCurrentWindowCursorChange(GLFWwindow* window, double x, double y) {
-  if (!gui::isCapturingMouse()) {
-    current->mouseState.pos = glm::dvec2(x, y);
-  }
-}
-
-void App::onCurrentWindowMouseButton(GLFWwindow* window, int button, int action, int mods) {
-  if (!gui::isCapturingMouse()) {
-    current->mouseState.leftPressed = button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS;
-  }
-}
-
-void App::onCurrentWindowMouseScroll(GLFWwindow* window, double x_offset, double y_offset) {
-  if (!gui::isCapturingMouse()) {
-    current->mouseState.scrollOffset = glm::dvec2(x_offset, y_offset);
-  }
 }
 }  // namespace procRock

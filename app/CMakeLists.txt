@@ -8,8 +8,12 @@ file(GLOB_RECURSE PROC_ROCK_APP_SOURCES
     src/*.h
     src/*.cpp)
 
-add_executable(proc-rock ${PROC_ROCK_APP_SOURCES})
-source_group(TREE ${PROJECT_SOURCE_DIR} FILES ${PROC_ROCK_APP_SOURCES})
+file(GLOB_RECURSE PROC_ROCK_APP_SHADERS
+    res/shaders/*.vert
+    res/shaders/*.frag)
+
+add_executable(proc-rock ${PROC_ROCK_APP_SOURCES} ${PROC_ROCK_APP_SHADERS})
+source_group(TREE ${PROJECT_SOURCE_DIR} FILES ${PROC_ROCK_APP_SOURCES} ${PROC_ROCK_APP_SHADERS})
 
 find_package(GLEW REQUIRED)
 target_link_libraries(proc-rock PRIVATE GLEW::GLEW)
