@@ -1,14 +1,10 @@
 #include "gui.h"
 
-#include <imgui.h>
-
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
-
 namespace procRock {
 namespace gui {
 
 Settings settings;
+Viewer viewer;
 
 static void HelpMarker(const char* desc) {
   ImGui::TextDisabled("(?)");
@@ -31,7 +27,7 @@ void init(GLFWwindow* window) {
   ImGui_ImplOpenGL3_Init();
 }
 
-void update(glm::vec2 frameBufferSize) {
+void update(glm::vec2 frameBufferSize, Framebuffer& viewerFrame) {
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
@@ -49,6 +45,15 @@ void update(glm::vec2 frameBufferSize) {
     ImGui::Checkbox("Test Bool", &settings.main.test2);
     ImGui::SameLine();
   }
+  ImGui::End();
+
+  ImGui::Begin("Viewer");
+
+  viewer.size = glm::uvec2(glm::uvec2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight()));
+  viewerFrame.resize(viewer.size);
+
+  ImGui::Image((ImTextureID)viewerFrame.getRenderedTextures()[0],
+               ImVec2(viewer.size.x, viewer.size.y - 35), ImVec2(0, 1), ImVec2(1, 0));
   ImGui::End();
 
   ImGui::EndFrame();

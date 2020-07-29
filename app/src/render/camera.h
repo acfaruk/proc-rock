@@ -5,14 +5,12 @@
 namespace procRock {
 class Camera : public InputReceiver {
  public:
-  Camera(glm::uvec2 viewportSize, glm::uvec2 windowSize);
-  Camera(glm::uvec2 viewportSize, glm::uvec2 windowSize, float fov);
+  Camera(glm::uvec2 viewportSize);
+  Camera(glm::uvec2 viewportSize, float fov);
 
   void setViewport(glm::uvec2 extent);
   void lookAt(glm::vec3 pos, glm::vec3 target, glm::vec3 up);
   void setPosition(glm::vec3 pos);
-
-  float getFieldOfView() const;
 
   glm::vec3 getPosition() const;
   glm::vec3 getUpVector() const;
@@ -37,7 +35,6 @@ class Camera : public InputReceiver {
   glm::vec3 up = glm::vec3(0);
 
   glm::uvec2 viewportSize;
-  glm::uvec2 windowSize;
 
   glm::mat4 viewMatrix = glm::mat4(1);
   glm::mat4 projectionMatrix = glm::mat4(1);

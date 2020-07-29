@@ -5,6 +5,7 @@
 
 #include "render/camera.h"
 #include "render/drawables/cube.h"
+#include "render/framebuffer.h"
 #include "render/gl_includes.h"
 #include "render/shader.h"
 
@@ -35,6 +36,7 @@ class App {
   std::unique_ptr<Camera> mainCam;
   std::unique_ptr<Shader> mainShader;
   std::unique_ptr<Cube> testCube;
+  std::unique_ptr<Framebuffer> viewerFramebuffer;
 
   static void onCurrentWindowResize(GLFWwindow* window, int width, int height);
 };

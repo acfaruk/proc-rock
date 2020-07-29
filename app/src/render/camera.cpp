@@ -4,13 +4,15 @@
 #include <iostream>
 
 namespace procRock {
-Camera::Camera(glm::uvec2 viewportSize, glm::uvec2 windowSize)
-    : Camera(viewportSize, windowSize, glm::pi<float>() / 4.0) {}
+Camera::Camera(glm::uvec2 viewportSize) : Camera(viewportSize, glm::pi<float>() / 4.0) {}
 
-Camera::Camera(glm::uvec2 viewportSize, glm::uvec2 windowSize, float fov)
-    : viewportSize(viewportSize), windowSize(windowSize), fieldOfView(fov) {}
+Camera::Camera(glm::uvec2 viewportSize, float fov) : viewportSize(viewportSize), fieldOfView(fov) {}
 
-void Camera::setViewport(glm::uvec2 extent) { this->viewportSize = extent; }
+void Camera::setViewport(glm::uvec2 extent) {
+  this->viewportSize = extent;
+  computeProjectionMatrix();
+  computeViewProjectionMatrix();
+}
 void Camera::lookAt(glm::vec3 pos, glm::vec3 target, glm::vec3 up) {
   this->position = pos;
   this->target = target;

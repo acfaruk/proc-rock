@@ -70,14 +70,15 @@ void App::run() {
 bool App::init() {
   gui::init(window);
 
-  mainCam = std::make_unique<Camera>(getFrameBufferSize(), getWindowSize());
+  mainCam = std::make_unique<Camera>(getFrameBufferSize());
   mainCam->lookAt(glm::vec3(2, 5, 2), glm::vec3(0), glm::vec3(1, 0, 0));
 
   testCube = std::make_unique<Cube>();
-  testCube->createBuffers();
 
   mainShader = std::make_unique<Shader>(resourcesPath + "/shaders/main.vert",
                                         resourcesPath + "/shaders/main.frag");
+
+  viewerFramebuffer = std::make_unique<Framebuffer>(glm::uvec2(200, 200));
 
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
@@ -86,7 +87,8 @@ bool App::init() {
 }
 
 bool App::update() {
-  gui::update(this->getFrameBufferSize());
+  gui::update(this->getFrameBufferSize(), *viewerFramebuffer.get());
+  mainCam->setViewport(gui::viewer.size);
 
   mainShader->setFVec3("camPos", mainCam->getPosition());
   return true;
@@ -95,7 +97,10 @@ bool App::update() {
 bool App::render() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+  viewerFramebuffer->bind();
   testCube->draw(*mainCam.get(), *mainShader.get());
+
+  bindDefaultFrameBuffer(getFrameBufferSize());
   gui::render();
   return true;
 }
