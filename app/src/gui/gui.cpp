@@ -24,7 +24,7 @@ void init(GLFWwindow* window) {
 
   // Setup Platform/Renderer bindings
   ImGui_ImplGlfw_InitForOpenGL(window, true);
-  ImGui_ImplOpenGL3_Init();
+  ImGui_ImplOpenGL3_Init("#version 150");
 }
 
 void update(glm::vec2 frameBufferSize, Framebuffer& viewerFrame) {
