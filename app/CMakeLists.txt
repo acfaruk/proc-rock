@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 project(proc-rock-app)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 file(GLOB_RECURSE PROC_ROCK_APP_SOURCES
@@ -29,3 +29,5 @@ target_link_libraries(proc-rock PRIVATE tinyfiledialogs::tinyfiledialogs)
 
 find_package(glm CONFIG REQUIRED)
 target_link_libraries(proc-rock PRIVATE glm)
+
+target_compile_options(proc-rock PUBLIC "$<$<BOOL:${MSVC}>:/permissive->")
