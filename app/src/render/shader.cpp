@@ -82,60 +82,45 @@ Shader::Shader(const std::string vertexPath, const std::string fragmentPath) {
   glDeleteShader(fragment);
 }
 
-void Shader::bind() const { glUseProgram(ID); }
+void Shader::bind() const {
+  glUseProgram(ID);
+  for (auto& u : uniformsi) {
+    glUniform1i(glGetUniformLocation(ID, u.first.c_str()), u.second);
+  }
+
+  for (auto& u : uniformsf) {
+    glUniform1f(glGetUniformLocation(ID, u.first.c_str()), u.second);
+  }
+
+  for (auto& u : uniforms2ui) {
+    glUniform2uiv(glGetUniformLocation(ID, u.first.c_str()), 1, &u.second[0]);
+  }
+
+  for (auto& u : uniforms3ui) {
+    glUniform3uiv(glGetUniformLocation(ID, u.first.c_str()), 1, &u.second[0]);
+  }
+
+  for (auto& u : uniforms4ui) {
+    glUniform4uiv(glGetUniformLocation(ID, u.first.c_str()), 1, &u.second[0]);
+  }
+
+  for (auto& u : uniforms2f) {
+    glUniform2fv(glGetUniformLocation(ID, u.first.c_str()), 1, &u.second[0]);
+  }
+
+  for (auto& u : uniforms3f) {
+    glUniform3fv(glGetUniformLocation(ID, u.first.c_str()), 1, &u.second[0]);
+  }
+
+  for (auto& u : uniforms4f) {
+    glUniform4fv(glGetUniformLocation(ID, u.first.c_str()), 1, &u.second[0]);
+  }
+
+  for (auto& u : uniformsMatrix4f) {
+    glUniformMatrix4fv(glGetUniformLocation(ID, u.first.c_str()), 1, GL_FALSE, &u.second[0][0]);
+  }
+}
 
 void Shader::unbind() const { glUseProgram(0); }
-
-void Shader::setUVec2(const std::string& name, glm::uvec2 value) const {
-  glUniform2ui(glGetUniformLocation(ID, name.c_str()), value.x, value.y);
-}
-
-void Shader::setUVec3(const std::string& name, glm::uvec3 value) const {
-  glUniform3ui(glGetUniformLocation(ID, name.c_str()), value.x, value.y, value.z);
-}
-
-void Shader::setUVec4(const std::string& name, glm::uvec4 value) const {
-  glUniform4ui(glGetUniformLocation(ID, name.c_str()), value.x, value.y, value.z, value.w);
-}
-
-void Shader::setDVec2(const std::string& name, glm::dvec2 value) const {
-  glUniform2d(glGetUniformLocation(ID, name.c_str()), value.x, value.y);
-}
-
-void Shader::setDVec3(const std::string& name, glm::dvec3 value) const {
-  glUniform3d(glGetUniformLocation(ID, name.c_str()), value.x, value.y, value.z);
-}
-
-void Shader::setDVec4(const std::string& name, glm::dvec4 value) const {
-  glUniform4d(glGetUniformLocation(ID, name.c_str()), value.x, value.y, value.z, value.w);
-}
-
-void Shader::setFVec2(const std::string& name, glm::vec2 value) const {
-  glUniform2f(glGetUniformLocation(ID, name.c_str()), value.x, value.y);
-}
-
-void Shader::setFVec3(const std::string& name, glm::vec3 value) const {
-  glUniform3f(glGetUniformLocation(ID, name.c_str()), value.x, value.y, value.z);
-}
-
-void Shader::setFVec4(const std::string& name, glm::vec4 value) const {
-  glUniform4f(glGetUniformLocation(ID, name.c_str()), value.x, value.y, value.z, value.w);
-}
-
-void Shader::setFMat4(const std::string& name, glm::mat4 value) const {
-  glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, (float*)&value);
-}
-
-void Shader::setFloat(const std::string& name, float value) const {
-  glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
-}
-
-void Shader::setDouble(const std::string& name, double value) const {
-  glUniform1d(glGetUniformLocation(ID, name.c_str()), value);
-}
-
-void Shader::setInt(const std::string& name, int value) const {
-  glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
-}
 
 }  // namespace procRock

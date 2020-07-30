@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <map>
 #include <string>
 
 namespace procRock {
@@ -12,24 +13,20 @@ class Shader {
   void bind() const;
   void unbind() const;
 
-  void setUVec2(const std::string& name, glm::uvec2 value) const;
-  void setUVec3(const std::string& name, glm::uvec3 value) const;
-  void setUVec4(const std::string& name, glm::uvec4 value) const;
+  std::map<std::string, glm::uvec2> uniforms2ui;
+  std::map<std::string, glm::uvec3> uniforms3ui;
+  std::map<std::string, glm::uvec4> uniforms4ui;
 
-  void setDVec2(const std::string& name, glm::dvec2 value) const;
-  void setDVec3(const std::string& name, glm::dvec3 value) const;
-  void setDVec4(const std::string& name, glm::dvec4 value) const;
+  std::map<std::string, glm::vec2> uniforms2f;
+  std::map<std::string, glm::vec3> uniforms3f;
+  std::map<std::string, glm::vec4> uniforms4f;
 
-  void setFVec2(const std::string& name, glm::vec2 value) const;
-  void setFVec3(const std::string& name, glm::vec3 value) const;
-  void setFVec4(const std::string& name, glm::vec4 value) const;
+  std::map<std::string, glm::mat4> uniformsMatrix4f;
 
-  void setFMat4(const std::string& name, glm::mat4 value) const;
+  std::map<std::string, float> uniformsf;
+  std::map<std::string, int> uniformsi;
 
-  void setFloat(const std::string& name, float value) const;
-  void setDouble(const std::string& name, double value) const;
-  void setInt(const std::string& name, int value) const;
-
+ private:
   unsigned int ID;
 };
 }  // namespace procRock

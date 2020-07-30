@@ -26,18 +26,17 @@ Drawable::~Drawable() {
     glDeleteVertexArrays(1, &this->vaoID);
   }
 }
-void Drawable::draw(const Camera& cam, const Shader& shader, bool updateMVP) const {
+void Drawable::draw(const Camera& cam, Shader& shader, bool updateMVP) const {
   const std::vector<glm::vec3>& colors = getColors();
 
-  shader.bind();
   if (updateMVP) {
     glm::mat4 mvpMatrix = cam.getViewProjectionMatrix() * this->getModelMatrix();
-    shader.setFMat4("modelMatrix", this->getModelMatrix());
-    shader.setFMat4("viewMatrix", cam.getViewMatrix());
-    shader.setFMat4("mvpMatrix", mvpMatrix);
+    shader.uniformsMatrix4f["modelMatrix"] = this->getModelMatrix();
+    shader.uniformsMatrix4f["mvpMatrix"] = mvpMatrix;
   }
-  shader.setInt("vertexColored", colors.size() > 0);
+  shader.uniformsi["vertexColored"] = colors.size() > 0;
 
+  shader.bind();
   glBindVertexArray(getVertexArrayId());
   glDrawElements(primitiveType, this->getDrawElementsCount(), GL_UNSIGNED_INT, 0);
   glBindVertexArray(0);

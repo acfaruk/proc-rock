@@ -15,7 +15,7 @@ class Drawable {
   Drawable();
   ~Drawable();
 
-  virtual void draw(const Camera& cam, const Shader& shader, bool updateMVP = true) const;
+  virtual void draw(const Camera& cam, Shader& shader, bool updateMVP = true) const;
 
   void createBuffers(unsigned int posAttribLoc = 0, unsigned int colAttribLoc = 1,
                      unsigned int normAttribLoc = 2, unsigned int texCoordsAttribLoc = 3);

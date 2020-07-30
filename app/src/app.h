@@ -33,11 +33,15 @@ class App {
   const std::string title;
   const std::string resourcesPath;
 
+  bool debug = false;  // debug mode
+
   std::unique_ptr<Camera> mainCam;
   std::unique_ptr<Shader> mainShader;
   std::unique_ptr<Cube> testCube;
   std::unique_ptr<Framebuffer> viewerFramebuffer;
 
   static void onCurrentWindowResize(GLFWwindow* window, int width, int height);
+  static void onOpenGLDebugMessage(GLenum source, GLenum type, GLuint id, GLenum severity,
+                                   GLsizei length, const GLchar* message, const void* userParam);
 };
 }  // namespace procRock
