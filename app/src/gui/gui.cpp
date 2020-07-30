@@ -1,5 +1,7 @@
 #include "gui.h"
 
+#include <iostream>
+
 namespace procRock {
 namespace gui {
 
@@ -32,12 +34,23 @@ void update(glm::vec2 frameBufferSize, Framebuffer& viewerFrame) {
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
 
-  // ImGui::ShowDemoWindow();
+  // Menu Bar
+  if (ImGui::BeginMainMenuBar()) {
+    if (ImGui::BeginMenu("File")) {
+      if (ImGui::MenuItem("Test")) {
+        std::cout << "test" << std::endl;
+      }
+      ImGui::EndMenu();
+    }
+    ImGui::EndMainMenuBar();
+  }
 
-  ImGui::SetNextWindowPos(ImVec2(0, 0));
-  ImGui::SetNextWindowSize(ImVec2(320, frameBufferSize.y));
+  ImGui::SetNextWindowPos(ImVec2(0, 20));
+  ImGui::SetNextWindowSize(ImVec2(350, frameBufferSize.y - 30 - 20));
 
-  ImGui::Begin("Settings", 0, ImGuiWindowFlags_NoResize);
+  ImGui::Begin("Settings", 0,
+               ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
+                   ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
   if (ImGui::CollapsingHeader("Main", ImGuiTreeNodeFlags_DefaultOpen)) {
     ImGui::SliderInt("Test Value.", &settings.main.test, 1, 3000);
     ImGui::SameLine();
@@ -47,13 +60,32 @@ void update(glm::vec2 frameBufferSize, Framebuffer& viewerFrame) {
   }
   ImGui::End();
 
-  ImGui::Begin("Viewer");
+  ImGui::SetNextWindowBgAlpha(0);
+  ImGui::SetNextWindowPos(ImVec2(350, 20));
+  ImGui::SetNextWindowSize(ImVec2(frameBufferSize.x - 350, frameBufferSize.y - 30 - 20));
 
+  ImGui::Begin("Viewer", 0,
+               ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
+                   ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
   viewer.size = glm::uvec2(glm::uvec2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight()));
   viewerFrame.resize(viewer.size);
 
   ImGui::Image((ImTextureID)viewerFrame.getRenderedTextures()[0],
                ImVec2(viewer.size.x, viewer.size.y - 35), ImVec2(0, 1), ImVec2(1, 0));
+  ImGui::End();
+
+  ImGui::SetNextWindowPos(ImVec2(0, frameBufferSize.y - 30));
+  ImGui::SetNextWindowSize(ImVec2(frameBufferSize.x, 30));
+
+  ImGui::Begin("Status Bar", 0,
+               ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
+                   ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
+
+  ImGui::Text("Ready");
+  ImGui::SameLine(frameBufferSize.x - 330);
+  ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate,
+              ImGui::GetIO().Framerate);
+
   ImGui::End();
 
   ImGui::EndFrame();

@@ -34,6 +34,7 @@ App::App(glm::uvec2 windowSize, std::string title, std::string resPath, bool res
   glfwSetMouseButtonCallback(window, InputManager::onMouseButton);
   glfwSetCursorPosCallback(window, InputManager::onMousePos);
   glfwSetScrollCallback(window, InputManager::onMouseScroll);
+  glfwSetWindowSizeLimits(window, 1280, 720, GLFW_DONT_CARE, GLFW_DONT_CARE);
 
   glfwMakeContextCurrent(window);
 
