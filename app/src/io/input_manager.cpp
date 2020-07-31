@@ -1,11 +1,13 @@
 #include "input_manager.h"
 
+#include <iostream>
+
 #include "../gui/gui.h"
 
 namespace procRock {
-glm::dvec2 InputManager::currentMousePosition;
-glm::dvec2 InputManager::lastMousePosition;
-glm::dvec2 InputManager::clickMousePosition;
+glm::ivec2 InputManager::currentMousePosition;
+glm::ivec2 InputManager::lastMousePosition;
+glm::ivec2 InputManager::clickMousePosition;
 
 int InputManager::currentMouseAction = 0;
 int InputManager::currentMouseButton = 0;
@@ -29,10 +31,15 @@ void InputManager::onMousePos(GLFWwindow* window, double xpos, double ypos) {
   lastMousePosition = currentMousePosition;
   currentMousePosition = glm::dvec2(xpos, ypos);
 
-  if (!gui::isCapturingMouse()) {
-    // Left Click Drag
-    if (currentMouseAction == GLFW_PRESS && currentMouseButton == GLFW_MOUSE_BUTTON_LEFT) {
-      for (auto receiver : inputReceivers) {
+  // Left Click Drag
+  if (currentMouseAction == GLFW_PRESS && currentMouseButton == GLFW_MOUSE_BUTTON_LEFT) {
+    for (auto receiver : inputReceivers) {
+      if (receiver->isViewerOnly()) {
+        if (gui::viewer.focused) {
+          receiver->mouseLeftDrag(lastMousePosition - glm::ivec2(gui::viewer.position),
+                                  currentMousePosition - glm::ivec2(gui::viewer.position));
+        }
+      } else {
         receiver->mouseLeftDrag(lastMousePosition, currentMousePosition);
       }
     }
@@ -40,10 +47,8 @@ void InputManager::onMousePos(GLFWwindow* window, double xpos, double ypos) {
 }
 
 void InputManager::onMouseScroll(GLFWwindow* window, double xoffset, double yoffset) {
-  if (!gui::isCapturingMouse()) {
-    for (auto receiver : inputReceivers) {
-      receiver->mouseScroll(glm::dvec2(xoffset, yoffset));
-    }
+  for (auto receiver : inputReceivers) {
+    receiver->mouseScroll(glm::dvec2(xoffset, yoffset));
   }
 }
 

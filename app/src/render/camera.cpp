@@ -6,7 +6,8 @@
 namespace procRock {
 Camera::Camera(glm::uvec2 viewportSize) : Camera(viewportSize, glm::pi<float>() / 4.0) {}
 
-Camera::Camera(glm::uvec2 viewportSize, float fov) : viewportSize(viewportSize), fieldOfView(fov) {}
+Camera::Camera(glm::uvec2 viewportSize, float fov)
+    : InputReceiver(true), viewportSize(viewportSize), fieldOfView(fov) {}
 
 void Camera::setViewport(glm::uvec2 extent) {
   this->viewportSize = extent;

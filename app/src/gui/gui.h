@@ -12,26 +12,42 @@ namespace procRock {
 namespace gui {
 
 void init(GLFWwindow* window);
-void update(glm::vec2 frameBufferSize, Framebuffer& viewerFrame);
-void render();
+void update(glm::uvec2 framebufferSize, Framebuffer& viewerFrame);
+
+void updateMainMenu();
+void updateSideBar(glm::uvec2 framebufferSize);
+void updateViewer(glm::uvec2 framebufferSize, Framebuffer& viewerFrame);
+void updateStatusBar(glm::uvec2 framebufferSize);
 
 bool isCapturingMouse();
 
-struct Main {
-  int test = 400;
-  bool test2 = true;
+void render();
+
+struct MainMenu {
+  const int height = 20;
 };
 
-struct Settings {
-  Main main;
+struct SideBar {
+  int width = 350;
 };
 
 struct Viewer {
   glm::uvec2 size;
+  glm::uvec2 position;
+  bool focused;
 };
 
-extern Settings settings;
+struct StatusBar {
+  const int height = 30;
+};
+
+extern MainMenu mainMenu;
+extern SideBar sideBar;
 extern Viewer viewer;
+extern StatusBar statusBar;
+
+extern const int MAIN_MENU_HEIGHT;
+
 }  // namespace gui
 
 }  // namespace procRock

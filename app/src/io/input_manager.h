@@ -9,8 +9,14 @@ namespace procRock {
 
 class InputReceiver {
  public:
+  InputReceiver(bool viewerOnly) : viewerOnly(viewerOnly) {}
   virtual void mouseLeftDrag(glm::dvec2 pos1, glm::dvec2 pos2) = 0;
   virtual void mouseScroll(glm::dvec2 offset) = 0;
+
+  bool isViewerOnly() { return viewerOnly; }
+
+ protected:
+  bool viewerOnly;  // Only interested in events that happen in the viewer specifically
 };
 
 class InputManager {
@@ -21,10 +27,10 @@ class InputManager {
   static void onMouseScroll(GLFWwindow* window, double xoffset, double yoffset);
   static void registerInputReceiver(InputReceiver* inputReceiver);
 
-  static glm::dvec2 lastMousePosition;
-  static glm::dvec2 clickMousePosition;
+  static glm::ivec2 lastMousePosition;
+  static glm::ivec2 clickMousePosition;
 
-  static glm::dvec2 currentMousePosition;
+  static glm::ivec2 currentMousePosition;
   static int currentMouseAction;
   static int currentMouseButton;
 
