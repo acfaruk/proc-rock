@@ -71,6 +71,19 @@ void updateSideBar(glm::uvec2 framebufferSize) {
                ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
                    ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
   sideBar.width = ImGui::GetWindowWidth();
+  ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
+
+  if (ImGui::BeginTabBar("Tab Bar", tabBarFlags)) {
+    if (ImGui::BeginTabItem("Pipeline")) {
+      ImGui::EndTabItem();
+    }
+
+    if (ImGui::BeginTabItem("View")) {
+      updateViewSettings();
+      ImGui::EndTabItem();
+    }
+    ImGui::EndTabBar();
+  }
   ImGui::End();
 }
 
@@ -108,6 +121,14 @@ void updateStatusBar(glm::uvec2 framebufferSize) {
               ImGui::GetIO().Framerate);
 
   ImGui::End();
+}
+
+void updateViewSettings() {
+  if (ImGui::CollapsingHeader("Light", ImGuiTreeNodeFlags_DefaultOpen)) {
+    ImGui::SliderAngle("Yaw", &sideBar.viewSettings.light.yaw, 0.0f, 360.0f);
+    ImGui::SliderAngle("Pitch", &sideBar.viewSettings.light.pitch, 0.0f, 360.0f);
+    ImGui::ColorEdit3("Ambient", &sideBar.viewSettings.light.ambientColor[0]);
+  }
 }
 
 bool isCapturingMouse() { return ImGui::GetIO().WantCaptureMouse; }

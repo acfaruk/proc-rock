@@ -93,9 +93,11 @@ bool App::init() {
   gui::init(window);
 
   mainCam = std::make_unique<Camera>(getFrameBufferSize());
-  mainCam->lookAt(glm::vec3(2, 5, 2), glm::vec3(0), glm::vec3(1, 0, 0));
+  mainCam->lookAt(glm::vec3(3, 3, 3), glm::vec3(0), glm::vec3(0, 1, 0));
 
   testCube = std::make_unique<Cube>();
+
+  pointLight = std::make_unique<PointLight>(glm::vec3(7, 0, 0));
 
   mainShader = std::make_unique<Shader>(resourcesPath + "/shaders/main.vert",
                                         resourcesPath + "/shaders/main.frag");
@@ -114,6 +116,13 @@ bool App::update() {
   gui::update(this->getFrameBufferSize(), *viewerFramebuffer.get());
   mainCam->setViewport(gui::viewer.size);
   mainShader->uniforms3f["camPos"] = mainCam->getPosition();
+
+  pointLight->setEulerAngles(gui::sideBar.viewSettings.light.yaw,
+                             gui::sideBar.viewSettings.light.pitch);
+  mainShader->uniforms3f["lightPos"] = pointLight->getPosition();
+  mainShader->uniforms3f["lightColor"] = pointLight->getColor();
+  mainShader->uniforms3f["ambientColor"] = gui::sideBar.viewSettings.light.ambientColor;
+
   return true;
 }
 
@@ -122,7 +131,6 @@ bool App::render() {
 
   viewerFramebuffer->bind();
   testCube->draw(*mainCam.get(), *mainShader.get());
-
   bindDefaultFrameBuffer(getFrameBufferSize());
   gui::render();
   return true;

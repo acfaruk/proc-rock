@@ -7,6 +7,7 @@
 #include "render/drawables/cube.h"
 #include "render/framebuffer.h"
 #include "render/gl_includes.h"
+#include "render/point_light.h"
 #include "render/shader.h"
 
 namespace procRock {
@@ -39,6 +40,7 @@ class App {
   std::unique_ptr<Shader> mainShader;
   std::unique_ptr<Cube> testCube;
   std::unique_ptr<Framebuffer> viewerFramebuffer;
+  std::unique_ptr<PointLight> pointLight;
 
   static void onCurrentWindowResize(GLFWwindow* window, int width, int height);
   static void onOpenGLDebugMessage(GLenum source, GLenum type, GLuint id, GLenum severity,

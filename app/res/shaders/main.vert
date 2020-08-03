@@ -7,6 +7,7 @@ layout(location = 3) in vec2 vTexCoords;
 
 out vec3 vertexColor;
 out vec3 vertexNormal;
+out vec3 fragPos;
 out vec3 worldPos;
 out vec2 texCoord;
 
@@ -23,5 +24,8 @@ void main(){
 		vertexColor = vec3(1, 1, 1);
 	}
 	vertexColor = vColor;
+	vertexNormal = vNormal;
+	texCoord = vTexCoords;
+	fragPos = vPosition;
 	gl_Position = mvpMatrix * vec4(vPosition, 1);
 }

@@ -19,9 +19,19 @@ void updateSideBar(glm::uvec2 framebufferSize);
 void updateViewer(glm::uvec2 framebufferSize, Framebuffer& viewerFrame);
 void updateStatusBar(glm::uvec2 framebufferSize);
 
+void updateViewSettings();
+
 bool isCapturingMouse();
 
 void render();
+
+struct ViewSettings {
+  struct Light {
+    float yaw = 3.67;
+    float pitch = 4.01;
+    glm::vec3 ambientColor = glm::vec3(0.5);
+  } light;
+};
 
 struct MainMenu {
   const int height = 20;
@@ -29,6 +39,7 @@ struct MainMenu {
 
 struct SideBar {
   int width = 350;
+  ViewSettings viewSettings;
 };
 
 struct Viewer {
