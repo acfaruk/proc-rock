@@ -48,7 +48,13 @@ void InputManager::onMousePos(GLFWwindow* window, double xpos, double ypos) {
 
 void InputManager::onMouseScroll(GLFWwindow* window, double xoffset, double yoffset) {
   for (auto receiver : inputReceivers) {
-    receiver->mouseScroll(glm::dvec2(xoffset, yoffset));
+    if (receiver->isViewerOnly()) {
+      if (gui::viewer.howered) {
+        receiver->mouseScroll(glm::dvec2(xoffset, yoffset));
+      }
+    } else {
+      receiver->mouseScroll(glm::dvec2(xoffset, yoffset));
+    }
   }
 }
 

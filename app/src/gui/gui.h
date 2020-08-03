@@ -35,6 +35,7 @@ struct Viewer {
   glm::uvec2 size;
   glm::uvec2 position;
   bool focused;
+  bool howered;
 };
 
 struct StatusBar {

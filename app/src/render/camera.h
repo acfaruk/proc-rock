@@ -30,6 +30,8 @@ class Camera : public InputReceiver {
   void computeProjectionMatrix();
   void computeViewMatrix();
 
+  glm::dvec3 screenToSphere(glm::dvec2 screenPos);
+
   glm::vec3 position = glm::vec3(0);
   glm::vec3 target = glm::vec3(0);
   glm::vec3 up = glm::vec3(0);
@@ -43,5 +45,8 @@ class Camera : public InputReceiver {
   float fieldOfView = 1;
   float nearPlane = 0.01;
   float farPlane = 100.0;
+
+  float minDistance = 1.0;
+  float maxDistance = 50.0;
 };
 }  // namespace procRock

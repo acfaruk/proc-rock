@@ -85,7 +85,8 @@ void updateViewer(glm::uvec2 framebufferSize, Framebuffer& viewerFrame) {
                    ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
   viewer.position = glm::uvec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
   viewer.size = glm::uvec2(glm::uvec2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight()));
-  viewer.focused = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootWindow);
+  viewer.focused = ImGui::IsWindowFocused();
+  viewer.howered = ImGui::IsWindowHovered();
   viewerFrame.resize(viewer.size);
 
   ImGui::Image((ImTextureID)viewerFrame.getRenderedTextures()[0],
