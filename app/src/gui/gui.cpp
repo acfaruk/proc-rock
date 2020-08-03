@@ -13,17 +13,6 @@ Viewer viewer;
 StatusBar statusBar;
 const int MAIN_MENU_HEIGHT = 20;
 
-static void HelpMarker(const char* desc) {
-  ImGui::TextDisabled("(?)");
-  if (ImGui::IsItemHovered()) {
-    ImGui::BeginTooltip();
-    ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-    ImGui::TextUnformatted(desc);
-    ImGui::PopTextWrapPos();
-    ImGui::EndTooltip();
-  }
-}
-
 void init(GLFWwindow* window) {
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
@@ -34,15 +23,15 @@ void init(GLFWwindow* window) {
   ImGui_ImplOpenGL3_Init("#version 150");
 }
 
-void update(glm::uvec2 framebufferSize, Framebuffer& viewerFrame) {
+void update(glm::uvec2 windowSize, Framebuffer& viewerFrame) {
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
 
   updateMainMenu();
-  updateSideBar(framebufferSize);
-  updateViewer(framebufferSize, viewerFrame);
-  updateStatusBar(framebufferSize);
+  updateSideBar(windowSize);
+  updateViewer(windowSize, viewerFrame);
+  updateStatusBar(windowSize);
 
   ImGui::EndFrame();
   ImGui::Render();
@@ -63,10 +52,10 @@ void updateMainMenu() {
   }
 }
 
-void updateSideBar(glm::uvec2 framebufferSize) {
+void updateSideBar(glm::uvec2 windowSize) {
   ImGui::SetNextWindowPos(ImVec2(0, MAIN_MENU_HEIGHT));
   ImGui::SetNextWindowSize(
-      ImVec2(sideBar.width, framebufferSize.y - mainMenu.height - statusBar.height));
+      ImVec2(sideBar.width, windowSize.y - mainMenu.height - statusBar.height));
   ImGui::Begin("Settings", 0,
                ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
                    ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
@@ -87,11 +76,11 @@ void updateSideBar(glm::uvec2 framebufferSize) {
   ImGui::End();
 }
 
-void updateViewer(glm::uvec2 framebufferSize, Framebuffer& viewerFrame) {
+void updateViewer(glm::uvec2 windowSize, Framebuffer& viewerFrame) {
   ImGui::SetNextWindowBgAlpha(0);
   ImGui::SetNextWindowPos(ImVec2(sideBar.width, MAIN_MENU_HEIGHT));
-  ImGui::SetNextWindowSize(ImVec2(framebufferSize.x - sideBar.width,
-                                  framebufferSize.y - MAIN_MENU_HEIGHT - statusBar.height));
+  ImGui::SetNextWindowSize(
+      ImVec2(windowSize.x - sideBar.width, windowSize.y - MAIN_MENU_HEIGHT - statusBar.height));
 
   ImGui::Begin("Viewer", 0,
                ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
@@ -107,16 +96,16 @@ void updateViewer(glm::uvec2 framebufferSize, Framebuffer& viewerFrame) {
   ImGui::End();
 }
 
-void updateStatusBar(glm::uvec2 framebufferSize) {
-  ImGui::SetNextWindowPos(ImVec2(0, framebufferSize.y - statusBar.height));
-  ImGui::SetNextWindowSize(ImVec2(framebufferSize.x, statusBar.height));
+void updateStatusBar(glm::uvec2 windowSize) {
+  ImGui::SetNextWindowPos(ImVec2(0, windowSize.y - statusBar.height));
+  ImGui::SetNextWindowSize(ImVec2(windowSize.x, statusBar.height));
 
   ImGui::Begin("Status Bar", 0,
                ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
                    ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
 
   ImGui::Text("Ready");
-  ImGui::SameLine(framebufferSize.x - 330);
+  ImGui::SameLine(windowSize.x - 330);
   ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate,
               ImGui::GetIO().Framerate);
 

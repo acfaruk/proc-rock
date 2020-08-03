@@ -12,12 +12,12 @@ namespace procRock {
 namespace gui {
 
 void init(GLFWwindow* window);
-void update(glm::uvec2 framebufferSize, Framebuffer& viewerFrame);
+void update(glm::uvec2 windowSize, Framebuffer& viewerFrame);
 
 void updateMainMenu();
-void updateSideBar(glm::uvec2 framebufferSize);
-void updateViewer(glm::uvec2 framebufferSize, Framebuffer& viewerFrame);
-void updateStatusBar(glm::uvec2 framebufferSize);
+void updateSideBar(glm::uvec2 windowSize);
+void updateViewer(glm::uvec2 windowSize, Framebuffer& viewerFrame);
+void updateStatusBar(glm::uvec2 windowSize);
 
 void updateViewSettings();
 

@@ -48,6 +48,7 @@ glm::mat4 Camera::getProjectionMatrix() const { return this->projectionMatrix; }
 glm::mat4 Camera::getViewProjectionMatrix() const { return this->viewProjectionMatrix; }
 
 void Camera::mouseLeftDrag(glm::dvec2 pos1, glm::dvec2 pos2) {
+  if (glm::distance2(pos1, pos2) <= 0.01) return;
   glm::dvec2 delta = pos2 - pos1;
   glm::dvec3 spherePos1 = screenToSphere(pos1);
   glm::dvec3 spherePos2 = screenToSphere(glm::vec2(pos2.x - 2 * (delta.x), pos2.y));

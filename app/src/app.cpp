@@ -113,7 +113,7 @@ bool App::init() {
 }
 
 bool App::update() {
-  gui::update(this->getFrameBufferSize(), *viewerFramebuffer.get());
+  gui::update(this->getWindowSize(), *viewerFramebuffer.get());
   mainCam->setViewport(gui::viewer.size);
   mainShader->uniforms3f["camPos"] = mainCam->getPosition();
 
