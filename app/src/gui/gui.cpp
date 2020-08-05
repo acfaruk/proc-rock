@@ -55,11 +55,11 @@ void updateMainMenu() {
 void updateSideBar(glm::uvec2 windowSize) {
   ImGui::SetNextWindowPos(ImVec2(0, MAIN_MENU_HEIGHT));
   ImGui::SetNextWindowSize(
-      ImVec2(sideBar.width, windowSize.y - mainMenu.height - statusBar.height));
+      ImVec2((float)sideBar.width, (float)windowSize.y - mainMenu.height - statusBar.height));
   ImGui::Begin("Settings", 0,
                ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
                    ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
-  sideBar.width = ImGui::GetWindowWidth();
+  sideBar.width = (int)ImGui::GetWindowWidth();
   ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
 
   if (ImGui::BeginTabBar("Tab Bar", tabBarFlags)) {
@@ -78,9 +78,9 @@ void updateSideBar(glm::uvec2 windowSize) {
 
 void updateViewer(glm::uvec2 windowSize, Framebuffer& viewerFrame) {
   ImGui::SetNextWindowBgAlpha(0);
-  ImGui::SetNextWindowPos(ImVec2(sideBar.width, MAIN_MENU_HEIGHT));
-  ImGui::SetNextWindowSize(
-      ImVec2(windowSize.x - sideBar.width, windowSize.y - MAIN_MENU_HEIGHT - statusBar.height));
+  ImGui::SetNextWindowPos(ImVec2((float)sideBar.width, (float)MAIN_MENU_HEIGHT));
+  ImGui::SetNextWindowSize(ImVec2((float)windowSize.x - sideBar.width,
+                                  (float)windowSize.y - MAIN_MENU_HEIGHT - statusBar.height));
 
   ImGui::Begin("Viewer", 0,
                ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
@@ -91,21 +91,22 @@ void updateViewer(glm::uvec2 windowSize, Framebuffer& viewerFrame) {
   viewer.howered = ImGui::IsWindowHovered();
   viewerFrame.resize(viewer.size);
 
-  ImGui::Image((ImTextureID)viewerFrame.getRenderedTextures()[0],
-               ImVec2(viewer.size.x, viewer.size.y - statusBar.height), ImVec2(0, 1), ImVec2(1, 0));
+  ImGui::Image((ImTextureID)(uint64_t)viewerFrame.getRenderedTextures()[0],
+               ImVec2((float)viewer.size.x, (float)viewer.size.y - statusBar.height), ImVec2(0, 1),
+               ImVec2(1, 0));
   ImGui::End();
 }
 
 void updateStatusBar(glm::uvec2 windowSize) {
-  ImGui::SetNextWindowPos(ImVec2(0, windowSize.y - statusBar.height));
-  ImGui::SetNextWindowSize(ImVec2(windowSize.x, statusBar.height));
+  ImGui::SetNextWindowPos(ImVec2(0.0f, (float)windowSize.y - statusBar.height));
+  ImGui::SetNextWindowSize(ImVec2((float)windowSize.x, (float)statusBar.height));
 
   ImGui::Begin("Status Bar", 0,
                ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
                    ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
 
   ImGui::Text("Ready");
-  ImGui::SameLine(windowSize.x - 330);
+  ImGui::SameLine((float)windowSize.x - 330);
   ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate,
               ImGui::GetIO().Framerate);
 

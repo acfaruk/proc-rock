@@ -38,7 +38,7 @@ void Drawable::draw(const Camera& cam, Shader& shader, bool updateMVP) const {
 
   shader.bind();
   glBindVertexArray(getVertexArrayId());
-  glDrawElements(primitiveType, this->getDrawElementsCount(), GL_UNSIGNED_INT, 0);
+  glDrawElements((int)primitiveType, this->getDrawElementsCount(), GL_UNSIGNED_INT, 0);
   glBindVertexArray(0);
   shader.unbind();
 }
@@ -107,14 +107,17 @@ unsigned int Drawable::getIndexBufferId() const { return indexBufferID; }
 unsigned int Drawable::getVertexArrayId() const { return vaoID; }
 int Drawable::getDrawElementsCount() const {
   switch (primitiveType) {
-    case POINT:
-      return getPositions().size();
+    case Primitive::POINT:
+      return (int)getPositions().size();
       break;
-    case LINE:
-      return getLineIndices().size() * 2;
+    case Primitive::LINE:
+      return (int)getLineIndices().size() * 2;
       break;
-    case TRIANGLE:
-      return 3 * getFaces().size();
+    case Primitive::TRIANGLE:
+      return 3 * (int)getFaces().size();
+      break;
+    default:
+      return 0;
       break;
   }
 }
@@ -122,7 +125,7 @@ int Drawable::getDrawElementsCount() const {
 void Drawable::initIndexBuffer() {
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, getIndexBufferId());
   switch (primitiveType) {
-    case POINT: {
+    case Primitive::POINT: {
       size_t size = getPositions().size();
       std::vector<unsigned int> indices;
       indices.reserve(size);
@@ -131,13 +134,13 @@ void Drawable::initIndexBuffer() {
                    GL_STATIC_DRAW);
       break;
     }
-    case LINE: {
+    case Primitive::LINE: {
       const std::vector<glm::uvec2>& lineIndices = getLineIndices();
       glBufferData(GL_ELEMENT_ARRAY_BUFFER, lineIndices.size() * sizeof(glm::uvec2),
                    lineIndices.data(), GL_STATIC_DRAW);
       break;
     }
-    case TRIANGLE: {
+    case Primitive::TRIANGLE: {
       const std::vector<glm::uvec3>& faces = getFaces();
       glBufferData(GL_ELEMENT_ARRAY_BUFFER, faces.size() * sizeof(glm::uvec3), faces.data(),
                    GL_STATIC_DRAW);

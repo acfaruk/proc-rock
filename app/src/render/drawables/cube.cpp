@@ -62,7 +62,7 @@ Cube::Cube() : DrawableShape() {
                        {0.0f, 1.0f, 0.0f},  {0.0f, 1.0f, 0.0f},  {0.0f, 0.0f, -1.0f},
                        {0.0f, 0.0f, -1.0f}, {0.0f, 0.0f, 1.0f},  {0.0f, 0.0f, 1.0f}};
 
-  this->primitiveType = TRIANGLE;
+  this->primitiveType = Primitive::TRIANGLE;
   this->createBuffers();
 }
 }  // namespace procRock

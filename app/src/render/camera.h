@@ -42,11 +42,11 @@ class Camera : public InputReceiver {
   glm::mat4 projectionMatrix = glm::mat4(1);
   glm::mat4 viewProjectionMatrix = glm::mat4(1);
 
-  float fieldOfView = 1;
-  float nearPlane = 0.01;
-  float farPlane = 100.0;
+  float fieldOfView = 1.0f;
+  float nearPlane = 0.01f;
+  float farPlane = 100.0f;
 
-  float minDistance = 1.0;
-  float maxDistance = 50.0;
+  float minDistance = 1.0f;
+  float maxDistance = 50.0f;
 };
 }  // namespace procRock

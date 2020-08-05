@@ -18,7 +18,7 @@ Framebuffer::Framebuffer(const glm::uvec2& size, unsigned int textureCount) {
   glBindFramebuffer(GL_FRAMEBUFFER, ID);
 
   // Create textures
-  for (int i = 0; i < textureCount; i++) {
+  for (unsigned int i = 0; i < textureCount; i++) {
     unsigned int renderedTexture;
     glGenTextures(1, &renderedTexture);
 
@@ -32,7 +32,7 @@ Framebuffer::Framebuffer(const glm::uvec2& size, unsigned int textureCount) {
 
   // Assign textures to framebuffer
   std::vector<unsigned int> drawBuffers;
-  for (int i = 0; i < textureCount; i++) {
+  for (unsigned int i = 0; i < textureCount; i++) {
     glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, renderedTextures[i], 0);
     drawBuffers.push_back(GL_COLOR_ATTACHMENT0 + i);
   }
@@ -41,7 +41,7 @@ Framebuffer::Framebuffer(const glm::uvec2& size, unsigned int textureCount) {
 }
 
 Framebuffer::~Framebuffer() {
-  glDeleteTextures(renderedTextures.size(), renderedTextures.data());
+  glDeleteTextures((GLsizei)renderedTextures.size(), renderedTextures.data());
   glDeleteFramebuffers(1, &ID);
 }
 

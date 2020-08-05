@@ -10,7 +10,11 @@
 namespace procRock {
 class Drawable {
  public:
-  enum Primitive { POINT = 0x0000, LINE = 0x0001, TRIANGLE = 0x0004 } primitiveType = TRIANGLE;
+  enum class Primitive {
+    POINT = 0x0000,
+    LINE = 0x0001,
+    TRIANGLE = 0x0004
+  } primitiveType = Primitive::TRIANGLE;
 
   Drawable();
   ~Drawable();

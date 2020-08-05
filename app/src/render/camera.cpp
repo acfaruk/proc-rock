@@ -5,7 +5,7 @@
 #include <iostream>
 
 namespace procRock {
-Camera::Camera(glm::uvec2 viewportSize) : Camera(viewportSize, glm::pi<float>() / 4.0) {}
+Camera::Camera(glm::uvec2 viewportSize) : Camera(viewportSize, glm::pi<float>() / 4.0f) {}
 
 Camera::Camera(glm::uvec2 viewportSize, float fov)
     : InputReceiver(true), viewportSize(viewportSize), fieldOfView(fov) {}
@@ -54,7 +54,7 @@ void Camera::mouseLeftDrag(glm::dvec2 pos1, glm::dvec2 pos2) {
   glm::dvec3 spherePos2 = screenToSphere(glm::vec2(pos2.x - 2 * (delta.x), pos2.y));
 
   glm::vec3 rotAxis = glm::cross(spherePos1, spherePos2);
-  float angle = glm::acos(glm::min(1.0, glm::dot(spherePos1, spherePos2)));
+  float angle = (float)glm::acos(glm::min(1.0, glm::dot(spherePos1, spherePos2)));
 
   glm::mat4 rotMatrix = glm::rotate(glm::mat4(1), angle, rotAxis);
 
