@@ -3,7 +3,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace procRock {
-Shape::Shape() { this->modelMatrix = glm::mat4(1); }
 
 const std::vector<glm::vec3> &Shape::getPositions() const { return this->positions; }
 const std::vector<glm::vec3> &Shape::getNormals() const { return this->normals; }

@@ -5,7 +5,6 @@
 #include "gl_includes.h"
 
 namespace procRock {
-Drawable::Drawable() {}
 Drawable::~Drawable() {
   if (this->posBufferID != 0) {
     glDeleteBuffers(1, &this->posBufferID);

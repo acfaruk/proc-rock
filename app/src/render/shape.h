@@ -6,8 +6,6 @@
 namespace procRock {
 class Shape {
  public:
-  Shape();
-
   const std::vector<glm::vec3>& getPositions() const;
   const std::vector<glm::vec3>& getNormals() const;
   const std::vector<glm::uvec3>& getFaces() const;

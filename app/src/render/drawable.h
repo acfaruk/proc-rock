@@ -16,8 +16,12 @@ class Drawable {
     TRIANGLE = 0x0004
   } primitiveType = Primitive::TRIANGLE;
 
-  Drawable();
-  ~Drawable();
+  Drawable() = default;
+  Drawable(const Drawable&) = delete;
+  Drawable(Drawable&&) = delete;
+  Drawable& operator=(const Drawable&) = delete;
+  Drawable& operator=(Drawable&&) = delete;
+  virtual ~Drawable();
 
   virtual void draw(const Camera& cam, Shader& shader, bool updateMVP = true) const;
 

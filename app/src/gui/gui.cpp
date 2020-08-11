@@ -11,7 +11,6 @@ MainMenu mainMenu;
 SideBar sideBar;
 Viewer viewer;
 StatusBar statusBar;
-const int MAIN_MENU_HEIGHT = 20;
 
 void init(GLFWwindow* window) {
   IMGUI_CHECKVERSION();
@@ -53,7 +52,7 @@ void updateMainMenu() {
 }
 
 void updateSideBar(glm::uvec2 windowSize) {
-  ImGui::SetNextWindowPos(ImVec2(0, MAIN_MENU_HEIGHT));
+  ImGui::SetNextWindowPos(ImVec2(0, mainMenu.height));
   ImGui::SetNextWindowSize(
       ImVec2((float)sideBar.width, (float)windowSize.y - mainMenu.height - statusBar.height));
   ImGui::Begin("Settings", 0,
@@ -78,9 +77,9 @@ void updateSideBar(glm::uvec2 windowSize) {
 
 void updateViewer(glm::uvec2 windowSize, Framebuffer& viewerFrame) {
   ImGui::SetNextWindowBgAlpha(0);
-  ImGui::SetNextWindowPos(ImVec2((float)sideBar.width, (float)MAIN_MENU_HEIGHT));
+  ImGui::SetNextWindowPos(ImVec2((float)sideBar.width, (float)mainMenu.height));
   ImGui::SetNextWindowSize(ImVec2((float)windowSize.x - sideBar.width,
-                                  (float)windowSize.y - MAIN_MENU_HEIGHT - statusBar.height));
+                                  (float)windowSize.y - mainMenu.height - statusBar.height));
 
   ImGui::Begin("Viewer", 0,
                ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |

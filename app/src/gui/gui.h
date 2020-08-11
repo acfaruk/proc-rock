@@ -58,8 +58,6 @@ extern SideBar sideBar;
 extern Viewer viewer;
 extern StatusBar statusBar;
 
-extern const int MAIN_MENU_HEIGHT;
-
 }  // namespace gui
 
 }  // namespace procRock
