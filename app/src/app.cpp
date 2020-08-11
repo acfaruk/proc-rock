@@ -1,5 +1,7 @@
 #include "app.h"
 
+#include <procrocklib/mesh.h>
+
 #include <iostream>
 
 #include "gui/gui.h"
@@ -58,6 +60,10 @@ App::App(glm::uvec2 windowSize, std::string title, std::string resPath, bool res
       glDebugMessageCallbackARB(onOpenGLDebugMessage, this);
     }
   }
+
+  using namespace procrocklib;
+  std::string teststr = "hello world from library part";
+  test(teststr);
 }
 
 App::~App() {
