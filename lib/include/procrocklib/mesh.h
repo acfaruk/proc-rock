@@ -1,15 +1,16 @@
 #pragma once
-#define _USE_MATH_DEFINES
-#include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
 #include <glm/glm.hpp>
+#include <vector>
 
 namespace procrock {
 
-class Mesh {
- public:
-  void BuildAndOutputPyramid();
+struct Mesh {
+  std::vector<glm::vec3> positions;
+  std::vector<glm::vec3> normals;
+  std::vector<glm::vec3> colors;
+  std::vector<glm::uvec3> faces;
+  std::vector<glm::vec2> texCoords;
 
- private:
-  typedef OpenMesh::TriMesh_ArrayKernelT<> InternalMesh;
+  void Test();
 };
 }  // namespace procrock

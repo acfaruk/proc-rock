@@ -62,7 +62,7 @@ App::App(glm::uvec2 windowSize, std::string title, std::string resPath, bool res
   }
 
   Mesh mesh;
-  mesh.BuildAndOutputPyramid();
+  mesh.Test();
 }
 
 App::~App() {

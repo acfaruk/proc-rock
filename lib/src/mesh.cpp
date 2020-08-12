@@ -1,9 +1,8 @@
 #include "mesh.h"
 
-#include <OpenMesh/Core/IO/MeshIO.hh>
-#include <vector>
+#include "internal_mesh.h"
 namespace procrock {
-void Mesh::BuildAndOutputPyramid() {
+void Mesh::Test() {
   InternalMesh mesh;
   InternalMesh::VertexHandle vertices[4];
   vertices[0] = mesh.add_vertex(OpenMesh::Vec3f(0, -1, -1));
@@ -35,6 +34,6 @@ void Mesh::BuildAndOutputPyramid() {
   face_handles.push_back(vertices[3]);
   mesh.add_face(face_handles);
 
-  OpenMesh::IO::write_mesh(mesh, "test.obj");
+  auto test = internalmesh::convert(mesh);
 }
 }  // namespace procrock
