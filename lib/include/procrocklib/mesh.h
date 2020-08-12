@@ -1,5 +1,15 @@
 #pragma once
-#include <string>
+#define _USE_MATH_DEFINES
+#include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
+#include <glm/glm.hpp>
+
 namespace procrock {
-void test(std::string& test);
+
+class Mesh {
+ public:
+  void BuildAndOutputPyramid();
+
+ private:
+  typedef OpenMesh::TriMesh_ArrayKernelT<> InternalMesh;
+};
 }  // namespace procrock

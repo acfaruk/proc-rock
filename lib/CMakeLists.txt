@@ -18,6 +18,15 @@ target_include_directories(proc-rock-lib PRIVATE src)
 
 
 find_package(glm CONFIG REQUIRED)
-target_link_libraries(proc-rock-lib PRIVATE glm)
+target_link_libraries(proc-rock-lib PUBLIC glm)
+
+# OPENMESH
+find_library(OPENMESH_CORE_LIB_R OpenMeshCore)
+find_library(OPENMESH_TOOLS_LIB_R OpenMeshTools)
+
+find_library(OPENMESH_CORE_LIB_D OpenMeshCored)
+find_library(OPENMESH_TOOLS_LIB_D OpenMeshToolsd)
+target_link_libraries(proc-rock-lib PUBLIC optimized ${OPENMESH_CORE_LIB_R} ${OPENMESH_TOOLS_LIB_R})
+target_link_libraries(proc-rock-lib PUBLIC debug ${OPENMESH_CORE_LIB_D} ${OPENMESH_TOOLS_LIB_D})
 
 target_compile_options(proc-rock-lib PUBLIC "$<$<BOOL:${MSVC}>:/permissive->")

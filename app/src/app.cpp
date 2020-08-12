@@ -61,8 +61,8 @@ App::App(glm::uvec2 windowSize, std::string title, std::string resPath, bool res
     }
   }
 
-  std::string teststr = "hello world from library part";
-  test(teststr);
+  Mesh mesh;
+  mesh.BuildAndOutputPyramid();
 }
 
 App::~App() {
