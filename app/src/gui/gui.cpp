@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-namespace procRock {
+namespace procrock {
 namespace gui {
 
 MainMenu mainMenu;
@@ -125,4 +125,4 @@ bool isCapturingMouse() { return ImGui::GetIO().WantCaptureMouse; }
 void render() { ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData()); }
 }  // namespace gui
 
-}  // namespace procRock
+}  // namespace procrock

@@ -4,7 +4,7 @@
 
 #include "../gui/gui.h"
 
-namespace procRock {
+namespace procrock {
 glm::ivec2 InputManager::currentMousePosition;
 glm::ivec2 InputManager::lastMousePosition;
 glm::ivec2 InputManager::clickMousePosition;
@@ -62,4 +62,4 @@ void InputManager::registerInputReceiver(InputReceiver* inputReceiver) {
   inputReceivers.push_back(inputReceiver);
 }
 
-}  // namespace procRock
+}  // namespace procrock

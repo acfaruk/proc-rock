@@ -1,6 +1,6 @@
 #include "cube.h"
 
-namespace procRock {
+namespace procrock {
 Cube::Cube() : DrawableShape() {
   // set geometry with respect to local origin
   this->positions = {
@@ -65,4 +65,4 @@ Cube::Cube() : DrawableShape() {
   this->primitiveType = Primitive::TRIANGLE;
   this->createBuffers();
 }
-}  // namespace procRock
+}  // namespace procrock

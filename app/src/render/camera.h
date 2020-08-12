@@ -2,7 +2,7 @@
 
 #include "../io/input_manager.h"
 
-namespace procRock {
+namespace procrock {
 class Camera : public InputReceiver {
  public:
   Camera(glm::uvec2 viewportSize);
@@ -49,4 +49,4 @@ class Camera : public InputReceiver {
   float minDistance = 1.0f;
   float maxDistance = 50.0f;
 };
-}  // namespace procRock
+}  // namespace procrock

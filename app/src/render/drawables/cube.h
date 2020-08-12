@@ -2,9 +2,9 @@
 
 #include "../drawable_shape.h"
 
-namespace procRock {
+namespace procrock {
 class Cube : public DrawableShape {
  public:
   Cube();
 };
-}  // namespace procRock
+}  // namespace procrock

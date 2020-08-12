@@ -2,6 +2,6 @@
 
 #include <iostream>
 
-namespace procrocklib {
+namespace procrock {
 void test(std::string& test) { std::cout << test << std::endl; }
-}  // namespace procrocklib
+}  // namespace procrock

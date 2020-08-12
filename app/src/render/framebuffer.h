@@ -5,7 +5,7 @@
 
 #include "gl_includes.h"
 
-namespace procRock {
+namespace procrock {
 
 void bindDefaultFrameBuffer(glm::uvec2 size);
 
@@ -22,4 +22,4 @@ class Framebuffer {
   std::vector<unsigned int> renderedTextures;
   glm::uvec2 size;
 };
-}  // namespace procRock
+}  // namespace procrock

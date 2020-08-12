@@ -4,7 +4,7 @@
 #include <map>
 #include <string>
 
-namespace procRock {
+namespace procrock {
 
 class Shader {
  public:
@@ -29,4 +29,4 @@ class Shader {
  private:
   unsigned int ID;
 };
-}  // namespace procRock
+}  // namespace procrock

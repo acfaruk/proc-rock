@@ -4,7 +4,7 @@
 
 #include "gl_includes.h"
 
-namespace procRock {
+namespace procrock {
 Drawable::~Drawable() {
   if (this->posBufferID != 0) {
     glDeleteBuffers(1, &this->posBufferID);
@@ -147,4 +147,4 @@ void Drawable::initIndexBuffer() {
     }
   }
 }
-}  // namespace procRock
+}  // namespace procrock

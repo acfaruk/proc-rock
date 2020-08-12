@@ -4,7 +4,7 @@
 #include <glm/gtx/norm.hpp>
 #include <iostream>
 
-namespace procRock {
+namespace procrock {
 Camera::Camera(glm::uvec2 viewportSize) : Camera(viewportSize, glm::pi<float>() / 4.0f) {}
 
 Camera::Camera(glm::uvec2 viewportSize, float fov)
@@ -130,4 +130,4 @@ glm::dvec3 Camera::screenToSphere(glm::dvec2 screenPos) {
   return result;
 }
 
-}  // namespace procRock
+}  // namespace procrock

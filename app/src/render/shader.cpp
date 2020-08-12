@@ -6,7 +6,7 @@
 #include <iostream>
 #include <sstream>
 
-namespace procRock {
+namespace procrock {
 Shader::Shader(const std::string vertexPath, const std::string fragmentPath) {
   std::ifstream vShaderFile;
   std::ifstream fShaderFile;
@@ -123,4 +123,4 @@ void Shader::bind() const {
 
 void Shader::unbind() const { glUseProgram(0); }
 
-}  // namespace procRock
+}  // namespace procrock

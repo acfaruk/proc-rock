@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 
-namespace procRock {
+namespace procrock {
 
 class PointLight {
  public:
@@ -19,4 +19,4 @@ class PointLight {
   glm::vec3 position;
   glm::vec3 color;
 };
-}  // namespace procRock
+}  // namespace procrock

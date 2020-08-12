@@ -1,5 +1,5 @@
 #pragma once
 #include <string>
-namespace procrocklib {
+namespace procrock {
 void test(std::string& test);
-}  // namespace procrocklib
+}  // namespace procrock

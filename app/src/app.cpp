@@ -7,7 +7,7 @@
 #include "gui/gui.h"
 #include "io/input_manager.h"
 
-namespace procRock {
+namespace procrock {
 App* App::current = nullptr;
 App::App(glm::uvec2 windowSize, std::string title, std::string resPath, bool resizable)
     : resourcesPath(resPath) {
@@ -61,7 +61,6 @@ App::App(glm::uvec2 windowSize, std::string title, std::string resPath, bool res
     }
   }
 
-  using namespace procrocklib;
   std::string teststr = "hello world from library part";
   test(teststr);
 }
@@ -240,4 +239,4 @@ void App::onOpenGLDebugMessage(GLenum source, GLenum type, GLuint id, GLenum sev
   std::cout << std::endl;
   std::cout << std::endl;
 }
-}  // namespace procRock
+}  // namespace procrock

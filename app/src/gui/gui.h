@@ -8,7 +8,7 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
-namespace procRock {
+namespace procrock {
 namespace gui {
 
 void init(GLFWwindow* window);
@@ -60,4 +60,4 @@ extern StatusBar statusBar;
 
 }  // namespace gui
 
-}  // namespace procRock
+}  // namespace procrock

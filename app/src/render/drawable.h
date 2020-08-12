@@ -7,7 +7,7 @@
 #include "camera.h"
 #include "shader.h"
 
-namespace procRock {
+namespace procrock {
 class Drawable {
  public:
   enum class Primitive {
@@ -52,4 +52,4 @@ class Drawable {
 
   virtual void initIndexBuffer();
 };
-}  // namespace procRock
+}  // namespace procrock

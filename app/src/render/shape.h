@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 
-namespace procRock {
+namespace procrock {
 class Shape {
  public:
   const std::vector<glm::vec3>& getPositions() const;
@@ -47,4 +47,4 @@ class Shape {
   glm::mat4 modelMatrix = glm::mat4(1);
 };
 
-}  // namespace procRock
+}  // namespace procrock

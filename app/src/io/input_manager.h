@@ -5,7 +5,7 @@
 
 #include "../render/gl_includes.h"
 
-namespace procRock {
+namespace procrock {
 
 class InputReceiver {
  public:
@@ -36,4 +36,4 @@ class InputManager {
 
   static std::vector<InputReceiver*> inputReceivers;
 };
-}  // namespace procRock
+}  // namespace procrock

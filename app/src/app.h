@@ -10,7 +10,7 @@
 #include "render/point_light.h"
 #include "render/shader.h"
 
-namespace procRock {
+namespace procrock {
 
 class App {
  public:
@@ -46,4 +46,4 @@ class App {
   static void onOpenGLDebugMessage(GLenum source, GLenum type, GLuint id, GLenum severity,
                                    GLsizei length, const GLchar* message, const void* userParam);
 };
-}  // namespace procRock
+}  // namespace procrock

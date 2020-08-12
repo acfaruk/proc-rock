@@ -3,7 +3,7 @@
 #include "drawable.h"
 #include "shape.h"
 
-namespace procRock {
+namespace procrock {
 class DrawableShape : public Drawable, public Shape {
  public:
   const std::vector<glm::vec3>& getPositions() const override;
@@ -16,4 +16,4 @@ class DrawableShape : public Drawable, public Shape {
   virtual int getDrawElementsCount() const override;
   const std::vector<glm::uvec2>& getLineIndices() const override;
 };
-}  // namespace procRock
+}  // namespace procrock

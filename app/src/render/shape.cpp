@@ -2,7 +2,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-namespace procRock {
+namespace procrock {
 
 const std::vector<glm::vec3> &Shape::getPositions() const { return this->positions; }
 const std::vector<glm::vec3> &Shape::getNormals() const { return this->normals; }
@@ -42,4 +42,4 @@ void Shape::addColor(const glm::vec3 &color) { colors.push_back(color); }
 void Shape::addTexCoord(const glm::vec3 &texCoord) { texCoords.push_back(texCoord); }
 void Shape::addLine(const glm::uvec2 &line) { lineIndices.push_back(line); }
 
-}  // namespace procRock
+}  // namespace procrock

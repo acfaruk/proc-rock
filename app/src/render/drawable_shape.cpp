@@ -1,6 +1,6 @@
 #include "drawable_shape.h"
 
-namespace procRock {
+namespace procrock {
 
 const std::vector<glm::vec3>& DrawableShape::getPositions() const { return Shape::getPositions(); }
 const std::vector<glm::vec3>& DrawableShape::getNormals() const { return Shape::getNormals(); }
@@ -16,4 +16,4 @@ const std::vector<glm::uvec2>& DrawableShape::getLineIndices() const {
   return Shape::getLineIndices();
 }
 
-}  // namespace procRock
+}  // namespace procrock

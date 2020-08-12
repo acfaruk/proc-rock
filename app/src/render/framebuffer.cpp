@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-namespace procRock {
+namespace procrock {
 void bindDefaultFrameBuffer(glm::uvec2 size) {
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glViewport(0, 0, size.x, size.y);
@@ -62,4 +62,4 @@ void Framebuffer::resize(const glm::uvec2& size) {
 
 std::vector<unsigned int>& Framebuffer::getRenderedTextures() { return renderedTextures; }
 
-}  // namespace procRock
+}  // namespace procrock

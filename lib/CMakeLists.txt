@@ -16,4 +16,8 @@ target_include_directories(proc-rock-lib INTERFACE include)
 target_include_directories(proc-rock-lib PRIVATE include/procrocklib)
 target_include_directories(proc-rock-lib PRIVATE src)
 
+
+find_package(glm CONFIG REQUIRED)
+target_link_libraries(proc-rock-lib PRIVATE glm)
+
 target_compile_options(proc-rock-lib PUBLIC "$<$<BOOL:${MSVC}>:/permissive->")
