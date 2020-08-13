@@ -1,6 +1,7 @@
 #pragma once
 
 #include <imgui.h>
+#include <procrocklib/pipeline.h>
 
 #include <glm/glm.hpp>
 
@@ -12,10 +13,10 @@ namespace procrock {
 namespace gui {
 
 void init(GLFWwindow* window);
-void update(glm::uvec2 windowSize, Framebuffer& viewerFrame);
+void update(glm::uvec2 windowSize, Framebuffer& viewerFrame, Pipeline& pipeline);
 
 void updateMainMenu();
-void updateSideBar(glm::uvec2 windowSize);
+void updateSideBar(glm::uvec2 windowSize, Pipeline& pipeline);
 void updateViewer(glm::uvec2 windowSize, Framebuffer& viewerFrame);
 void updateStatusBar(glm::uvec2 windowSize);
 

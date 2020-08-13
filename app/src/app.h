@@ -1,10 +1,13 @@
 #pragma once
+#include <procrocklib/pipeline.h>
+
 #include <glm/glm.hpp>
 #include <memory>
 #include <string>
 
 #include "render/camera.h"
 #include "render/drawables/cube.h"
+#include "render/drawables/mesh.h"
 #include "render/framebuffer.h"
 #include "render/gl_includes.h"
 #include "render/point_light.h"
@@ -38,7 +41,8 @@ class App {
 
   std::unique_ptr<Camera> mainCam;
   std::unique_ptr<Shader> mainShader;
-  std::unique_ptr<Cube> testCube;
+  std::unique_ptr<Pipeline> pipeline;
+  std::unique_ptr<DrawableMesh> drawableMesh;
   std::unique_ptr<Framebuffer> viewerFramebuffer;
   std::unique_ptr<PointLight> pointLight;
 

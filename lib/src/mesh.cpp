@@ -2,6 +2,4 @@
 
 #include <iostream>
 
-namespace procrock {
-void test(std::string& test) { std::cout << test << std::endl; }
-}  // namespace procrock
+namespace procrock {}  // namespace procrock

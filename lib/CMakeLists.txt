@@ -12,12 +12,13 @@ file(GLOB_RECURSE PROC_ROCK_LIB_SOURCES
 add_library(proc-rock-lib STATIC ${PROC_ROCK_LIB_SOURCES})
 source_group(TREE ${PROJECT_SOURCE_DIR} FILES ${PROC_ROCK_LIB_SOURCES})
 
-target_include_directories(proc-rock-lib INTERFACE include)
-target_include_directories(proc-rock-lib PRIVATE include/procrocklib)
-target_include_directories(proc-rock-lib PRIVATE src)
+target_include_directories(proc-rock-lib PUBLIC include PRIVATE include/procrocklib)
 
 
 find_package(glm CONFIG REQUIRED)
-target_link_libraries(proc-rock-lib PRIVATE glm)
+target_link_libraries(proc-rock-lib PUBLIC glm)
+
+find_package(libigl CONFIG REQUIRED)
+target_link_libraries(proc-rock-lib PUBLIC igl::core igl::common)
 
 target_compile_options(proc-rock-lib PUBLIC "$<$<BOOL:${MSVC}>:/permissive->")

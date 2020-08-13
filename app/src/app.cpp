@@ -1,6 +1,6 @@
 #include "app.h"
 
-#include <procrocklib/mesh.h>
+#include <procrocklib/gen/cuboid_generator.h>
 
 #include <iostream>
 
@@ -60,9 +60,6 @@ App::App(glm::uvec2 windowSize, std::string title, std::string resPath, bool res
       glDebugMessageCallbackARB(onOpenGLDebugMessage, this);
     }
   }
-
-  std::string teststr = "hello world from library part";
-  test(teststr);
 }
 
 App::~App() {
@@ -100,7 +97,8 @@ bool App::init() {
   mainCam = std::make_unique<Camera>(getFrameBufferSize());
   mainCam->lookAt(glm::vec3(3, 3, 3), glm::vec3(0), glm::vec3(0, 1, 0));
 
-  testCube = std::make_unique<Cube>();
+  pipeline = std::make_unique<Pipeline>();
+  pipeline->setGenerator(std::make_unique<CuboidGenerator>());
 
   pointLight = std::make_unique<PointLight>(glm::vec3(7, 0, 0));
 
@@ -118,9 +116,12 @@ bool App::init() {
 }
 
 bool App::update() {
-  gui::update(this->getWindowSize(), *viewerFramebuffer.get());
+  gui::update(this->getWindowSize(), *viewerFramebuffer.get(), *pipeline.get());
   mainCam->setViewport(gui::viewer.size);
   mainShader->uniforms3f["camPos"] = mainCam->getPosition();
+
+  auto mesh = pipeline->getCurrentMesh();
+  drawableMesh = std::make_unique<DrawableMesh>(*mesh.get());
 
   pointLight->setEulerAngles(gui::sideBar.viewSettings.light.yaw,
                              gui::sideBar.viewSettings.light.pitch);
@@ -135,7 +136,8 @@ bool App::render() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   viewerFramebuffer->bind();
-  testCube->draw(*mainCam.get(), *mainShader.get());
+  // testCube->draw(*mainCam.get(), *mainShader.get());
+  drawableMesh->draw(*mainCam.get(), *mainShader.get());
   bindDefaultFrameBuffer(getFrameBufferSize());
   gui::render();
   return true;

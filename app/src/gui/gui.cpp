@@ -22,13 +22,13 @@ void init(GLFWwindow* window) {
   ImGui_ImplOpenGL3_Init("#version 150");
 }
 
-void update(glm::uvec2 windowSize, Framebuffer& viewerFrame) {
+void update(glm::uvec2 windowSize, Framebuffer& viewerFrame, Pipeline& pipeline) {
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
 
   updateMainMenu();
-  updateSideBar(windowSize);
+  updateSideBar(windowSize, pipeline);
   updateViewer(windowSize, viewerFrame);
   updateStatusBar(windowSize);
 
@@ -51,7 +51,7 @@ void updateMainMenu() {
   }
 }
 
-void updateSideBar(glm::uvec2 windowSize) {
+void updateSideBar(glm::uvec2 windowSize, Pipeline& pipeline) {
   ImGui::SetNextWindowPos(ImVec2(0, mainMenu.height));
   ImGui::SetNextWindowSize(
       ImVec2((float)sideBar.width, (float)windowSize.y - mainMenu.height - statusBar.height));
@@ -63,6 +63,10 @@ void updateSideBar(glm::uvec2 windowSize) {
 
   if (ImGui::BeginTabBar("Tab Bar", tabBarFlags)) {
     if (ImGui::BeginTabItem("Pipeline")) {
+      auto config = pipeline.getGenerator().getConfiguration();
+      for (auto var : config.floats) {
+        ImGui::DragFloat(var.name.c_str(), (float*)var.data);
+      }
       ImGui::EndTabItem();
     }
 

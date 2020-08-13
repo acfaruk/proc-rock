@@ -5,5 +5,5 @@ call bootstrap-vcpkg.bat
 
 SET VCPKG_DEFAULT_TRIPLET=x64-windows
 
-vcpkg install glfw3 tinyfiledialogs imgui glew glm
+vcpkg install glfw3 tinyfiledialogs imgui glew glm libigl
 pause
