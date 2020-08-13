@@ -4,11 +4,11 @@
 
 namespace procrock {
 std::shared_ptr<Mesh> CuboidGenerator::generate() {
-  Eigen::Matrix<float, 8, 3> vertices;
+  Eigen::Matrix<double, 8, 3> vertices;
 
-  float half_length = length / 2.0f;
-  float half_height = height / 2.0f;
-  float half_depth = depth / 2.0f;
+  double half_length = length / 2.0;
+  double half_height = height / 2.0;
+  double half_depth = depth / 2.0;
 
   vertices.row(0) << half_length, -half_depth, -half_height;
   vertices.row(1) << half_length, half_depth, -half_height;
@@ -43,7 +43,7 @@ std::shared_ptr<Mesh> CuboidGenerator::generate() {
   auto result = std::make_shared<Mesh>();
   result->vertices = vertices;
   result->faces = faces;
-  igl::per_vertex_normals(vertices, faces, result->normals);
+  igl::per_vertex_normals(result->vertices, result->faces, result->normals);
   return result;
 }
 

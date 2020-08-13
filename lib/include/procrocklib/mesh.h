@@ -3,8 +3,8 @@
 
 namespace procrock {
 struct Mesh {
-  Eigen::MatrixX3f vertices;
-  Eigen::MatrixX3f normals;
-  Eigen::MatrixX3i faces;
+  Eigen::MatrixXd vertices;
+  Eigen::MatrixXd normals;
+  Eigen::MatrixXi faces;
 };
 }  // namespace procrock
