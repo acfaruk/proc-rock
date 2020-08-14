@@ -4,6 +4,8 @@
 #include <memory>
 
 namespace procrock {
+class Generator;
+
 class Pipeline {
  public:
   void setGenerator(std::unique_ptr<Generator> generator);

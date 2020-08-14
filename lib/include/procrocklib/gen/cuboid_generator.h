@@ -8,10 +8,9 @@ class CuboidGenerator : public Generator {
   float height = 0.5f;
   float depth = 0.2f;
 
-  std::shared_ptr<Mesh> generate() override;
   virtual Configuration getConfiguration() override;
 
- private:
-  std::shared_ptr<Mesh> mesh;
+ protected:
+  std::shared_ptr<Mesh> generate() override;
 };
 }  // namespace procrock

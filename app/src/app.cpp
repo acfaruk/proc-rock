@@ -116,12 +116,12 @@ bool App::init() {
 }
 
 bool App::update() {
+  auto mesh = pipeline->getCurrentMesh();
+  drawableMesh = std::make_unique<DrawableMesh>(*mesh.get());
+
   gui::update(this->getWindowSize(), *viewerFramebuffer.get(), *pipeline.get());
   mainCam->setViewport(gui::viewer.size);
   mainShader->uniforms3f["camPos"] = mainCam->getPosition();
-
-  auto mesh = pipeline->getCurrentMesh();
-  drawableMesh = std::make_unique<DrawableMesh>(*mesh.get());
 
   pointLight->setEulerAngles(gui::sideBar.viewSettings.light.yaw,
                              gui::sideBar.viewSettings.light.pitch);

@@ -124,16 +124,23 @@ void updateViewSettings() {
 
 void updateConfigurable(Configurable& configurable) {
   auto config = configurable.getConfiguration();
+  bool changed = false;
 
   for (auto var : config.floats) {
     ImGui::SliderFloat(var.name.c_str(), var.data, var.min, var.max);
+    changed |= ImGui::IsItemEdited();
     ImGui::SameLine();
     helpMarker(var.description);
   }
 
   for (auto var : config.ints) {
     ImGui::SliderInt(var.name.c_str(), var.data, var.min, var.max);
+    changed |= ImGui::IsItemEdited();
+    ImGui::SameLine();
+    helpMarker(var.description);
   }
+
+  configurable.setChanged(changed);
 }
 
 void helpMarker(std::string& description) {

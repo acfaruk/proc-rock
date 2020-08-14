@@ -18,5 +18,11 @@ struct Configuration {
 class Configurable {
  public:
   virtual Configuration getConfiguration() = 0;
+
+  void inline setChanged(bool changed) { this->changed = changed; }
+  bool inline isChanged() { return changed; }
+
+ private:
+  bool changed = true;
 };
 }  // namespace procrock
