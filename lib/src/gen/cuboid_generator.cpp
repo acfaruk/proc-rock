@@ -10,15 +10,15 @@ std::shared_ptr<Mesh> CuboidGenerator::generate() {
   double half_height = height / 2.0;
   double half_depth = depth / 2.0;
 
-  vertices.row(0) << half_length, -half_depth, -half_height;
-  vertices.row(1) << half_length, half_depth, -half_height;
-  vertices.row(2) << -half_length, half_depth, -half_height;
-  vertices.row(3) << -half_length, -half_depth, -half_height;
+  vertices.row(0) << half_length, -half_height, -half_depth;
+  vertices.row(1) << half_length, half_height, -half_depth;
+  vertices.row(2) << -half_length, half_height, -half_depth;
+  vertices.row(3) << -half_length, -half_height, -half_depth;
 
-  vertices.row(4) << half_length, -half_depth, half_height;
-  vertices.row(5) << half_length, half_depth, half_height;
-  vertices.row(6) << -half_length, half_depth, half_height;
-  vertices.row(7) << -half_length, -half_depth, half_height;
+  vertices.row(4) << half_length, -half_height, half_depth;
+  vertices.row(5) << half_length, half_height, half_depth;
+  vertices.row(6) << -half_length, half_height, half_depth;
+  vertices.row(7) << -half_length, -half_height, half_depth;
 
   Eigen::Matrix<int, 12, 3> faces;
 
@@ -51,11 +51,11 @@ Configuration CuboidGenerator::getConfiguration() {
   Configuration result;
 
   result.floats.emplace_back(
-      Configuration::Entry<float>{"Length", "Length of the Cuboid to be generated", &length});
+      Configuration::BoundedEntry<float>{"Length", "Length of the Cuboid", &length, 0.1f, 1.0f});
   result.floats.emplace_back(
-      Configuration::Entry<float>{"Height", "Height of the Cuboid to be generated", &height});
+      Configuration::BoundedEntry<float>{"Height", "Height of the Cuboid", &height, 0.1f, 1.0f});
   result.floats.emplace_back(
-      Configuration::Entry<float>{"Depth ", "Depth of the Cuboid to be generated", &depth});
+      Configuration::BoundedEntry<float>{"Depth ", "Depth of the Cuboid", &depth, 0.1f, 1.0f});
   return result;
 }
 }  // namespace procrock

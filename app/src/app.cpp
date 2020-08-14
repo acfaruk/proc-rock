@@ -129,6 +129,10 @@ bool App::update() {
   mainShader->uniforms3f["lightColor"] = pointLight->getColor();
   mainShader->uniforms3f["ambientColor"] = gui::sideBar.viewSettings.light.ambientColor;
 
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  if (gui::sideBar.viewSettings.wireframe) {
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  }
   return true;
 }
 

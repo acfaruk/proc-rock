@@ -21,12 +21,16 @@ void updateViewer(glm::uvec2 windowSize, Framebuffer& viewerFrame);
 void updateStatusBar(glm::uvec2 windowSize);
 
 void updateViewSettings();
+void updateConfigurable(Configurable& configurable);
+
+void helpMarker(std::string& description);
 
 bool isCapturingMouse();
 
 void render();
 
 struct ViewSettings {
+  bool wireframe;
   struct Light {
     float yaw = 3.67f;
     float pitch = 4.01f;

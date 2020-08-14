@@ -63,10 +63,7 @@ void updateSideBar(glm::uvec2 windowSize, Pipeline& pipeline) {
 
   if (ImGui::BeginTabBar("Tab Bar", tabBarFlags)) {
     if (ImGui::BeginTabItem("Pipeline")) {
-      auto config = pipeline.getGenerator().getConfiguration();
-      for (auto var : config.floats) {
-        ImGui::DragFloat(var.name.c_str(), (float*)var.data);
-      }
+      updateConfigurable(pipeline.getGenerator());
       ImGui::EndTabItem();
     }
 
@@ -117,10 +114,36 @@ void updateStatusBar(glm::uvec2 windowSize) {
 }
 
 void updateViewSettings() {
+  ImGui::Checkbox("Wireframe Mode", &sideBar.viewSettings.wireframe);
   if (ImGui::CollapsingHeader("Light", ImGuiTreeNodeFlags_DefaultOpen)) {
     ImGui::SliderAngle("Yaw", &sideBar.viewSettings.light.yaw, 0.0f, 360.0f);
     ImGui::SliderAngle("Pitch", &sideBar.viewSettings.light.pitch, 0.0f, 360.0f);
     ImGui::ColorEdit3("Ambient", &sideBar.viewSettings.light.ambientColor[0]);
+  }
+}
+
+void updateConfigurable(Configurable& configurable) {
+  auto config = configurable.getConfiguration();
+
+  for (auto var : config.floats) {
+    ImGui::SliderFloat(var.name.c_str(), var.data, var.min, var.max);
+    ImGui::SameLine();
+    helpMarker(var.description);
+  }
+
+  for (auto var : config.ints) {
+    ImGui::SliderInt(var.name.c_str(), var.data, var.min, var.max);
+  }
+}
+
+void helpMarker(std::string& description) {
+  ImGui::TextDisabled("(?)");
+  if (ImGui::IsItemHovered()) {
+    ImGui::BeginTooltip();
+    ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+    ImGui::TextUnformatted(description.c_str());
+    ImGui::PopTextWrapPos();
+    ImGui::EndTooltip();
   }
 }
 

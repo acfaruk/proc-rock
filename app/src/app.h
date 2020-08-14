@@ -6,7 +6,6 @@
 #include <string>
 
 #include "render/camera.h"
-#include "render/drawables/cube.h"
 #include "render/drawables/mesh.h"
 #include "render/framebuffer.h"
 #include "render/gl_includes.h"

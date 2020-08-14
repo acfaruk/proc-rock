@@ -6,13 +6,14 @@
 namespace procrock {
 struct Configuration {
   template <typename T>
-  struct Entry {
+  struct BoundedEntry {
     std::string name;
     std::string description;
     T* data;
+    T min, max;
   };
-  std::vector<Entry<int>> ints;
-  std::vector<Entry<float>> floats;
+  std::vector<BoundedEntry<int>> ints;
+  std::vector<BoundedEntry<float>> floats;
 };
 class Configurable {
  public:
