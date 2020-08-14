@@ -1,7 +1,7 @@
 #include "generator.h"
 
 namespace procrock {
-std::shared_ptr<Mesh> Generator::getMesh() {
+std::shared_ptr<Mesh> Generator::run(Mesh* before) {
   if (isChanged()) {
     mesh = generate();
   }

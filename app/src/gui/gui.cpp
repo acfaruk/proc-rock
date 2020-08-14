@@ -64,6 +64,7 @@ void updateSideBar(glm::uvec2 windowSize, Pipeline& pipeline) {
   if (ImGui::BeginTabBar("Tab Bar", tabBarFlags)) {
     if (ImGui::BeginTabItem("Pipeline")) {
       updateConfigurable(pipeline.getGenerator());
+      updateConfigurable(pipeline.getModifier(0));
       ImGui::EndTabItem();
     }
 

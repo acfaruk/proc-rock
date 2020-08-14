@@ -6,6 +6,7 @@
 namespace procrock {
 
 class PipelineStage {
-  virtual std::shared_ptr<Mesh> getMesh() = 0;
+ public:
+  virtual std::shared_ptr<Mesh> run(Mesh* before = nullptr) = 0;
 };
 }  // namespace procrock

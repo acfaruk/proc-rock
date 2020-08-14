@@ -1,6 +1,7 @@
 #include "app.h"
 
 #include <procrocklib/gen/cuboid_generator.h>
+#include <procrocklib/mod/subdivision_modifier.h>
 
 #include <iostream>
 
@@ -99,6 +100,7 @@ bool App::init() {
 
   pipeline = std::make_unique<Pipeline>();
   pipeline->setGenerator(std::make_unique<CuboidGenerator>());
+  pipeline->addModifier(std::make_unique<SubdivisionModifier>());
 
   pointLight = std::make_unique<PointLight>(glm::vec3(7, 0, 0));
 
@@ -117,9 +119,9 @@ bool App::init() {
 
 bool App::update() {
   auto mesh = pipeline->getCurrentMesh();
-  drawableMesh = std::make_unique<DrawableMesh>(*mesh.get());
+  drawableMesh = std::make_unique<DrawableMesh>(*mesh);
 
-  gui::update(this->getWindowSize(), *viewerFramebuffer.get(), *pipeline.get());
+  gui::update(this->getWindowSize(), *viewerFramebuffer, *pipeline);
   mainCam->setViewport(gui::viewer.size);
   mainShader->uniforms3f["camPos"] = mainCam->getPosition();
 
