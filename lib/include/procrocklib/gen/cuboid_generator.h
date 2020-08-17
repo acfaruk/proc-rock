@@ -9,8 +9,13 @@ class CuboidGenerator : public Generator {
   float depth = 0.2f;
 
   virtual Configuration getConfiguration() override;
+  virtual PipelineStageInfo& getInfo() override;
 
  protected:
   std::shared_ptr<Mesh> generate() override;
+
+ private:
+  PipelineStageInfo info{"Cuboid Generator",
+                         "Generates a simple cuboid mesh based on width, length and depth"};
 };
 }  // namespace procrock

@@ -4,6 +4,7 @@
 #include <procrocklib/pipeline.h>
 
 #include <glm/glm.hpp>
+#include <map>
 
 #include "../render/framebuffer.h"
 #include "imgui_impl_glfw.h"
@@ -12,7 +13,7 @@
 namespace procrock {
 namespace gui {
 
-void init(GLFWwindow* window);
+void init(GLFWwindow* window, const std::string& path);
 void update(glm::uvec2 windowSize, Framebuffer& viewerFrame, Pipeline& pipeline);
 
 void updateMainMenu();
@@ -21,6 +22,9 @@ void updateViewer(glm::uvec2 windowSize, Framebuffer& viewerFrame);
 void updateStatusBar(glm::uvec2 windowSize);
 
 void updateViewSettings();
+
+void updatePipelineStage(PipelineStage& pipelineStage, bool moveable = true,
+                         bool deleteable = true);
 void updateConfigurable(Configurable& configurable);
 
 void helpMarker(std::string& description);
@@ -28,6 +32,10 @@ void helpMarker(std::string& description);
 bool isCapturingMouse();
 
 void render();
+
+struct StageSettings {
+  bool visible = false;
+};
 
 struct ViewSettings {
   bool wireframe;
@@ -45,6 +53,8 @@ struct MainMenu {
 struct SideBar {
   int width = 350;
   ViewSettings viewSettings;
+
+  std::map<std::string, StageSettings> stageSettings;
 };
 
 struct Viewer {
@@ -55,7 +65,7 @@ struct Viewer {
 };
 
 struct StatusBar {
-  const int height = 30;
+  const int height = 35;
 };
 
 extern MainMenu mainMenu;

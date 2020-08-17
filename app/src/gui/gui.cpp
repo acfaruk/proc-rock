@@ -4,6 +4,8 @@
 
 #include <iostream>
 
+#include "icons_font_awesome5.h"
+
 namespace procrock {
 namespace gui {
 
@@ -12,7 +14,7 @@ SideBar sideBar;
 Viewer viewer;
 StatusBar statusBar;
 
-void init(GLFWwindow* window) {
+void init(GLFWwindow* window, const std::string& path) {
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
   ImGui::StyleColorsDark();
@@ -20,6 +22,18 @@ void init(GLFWwindow* window) {
   // Setup Platform/Renderer bindings
   ImGui_ImplGlfw_InitForOpenGL(window, true);
   ImGui_ImplOpenGL3_Init("#version 150");
+
+  ImGuiIO io = ImGui::GetIO();
+  std::string font = path + "/fonts/RobotoMono-Regular.ttf";
+  io.Fonts->AddFontFromFileTTF(font.c_str(), 17.0f);
+
+  ImFontConfig config;
+  config.MergeMode = true;
+  config.GlyphMinAdvanceX = 17.0f;
+
+  static const ImWchar icon_ranges[] = {ICON_MIN_FA, ICON_MAX_FA, 0};
+  std::string icon_font = path + "/fonts/fa-solid-900.ttf";
+  io.Fonts->AddFontFromFileTTF(icon_font.c_str(), 17.0f, &config, icon_ranges);
 }
 
 void update(glm::uvec2 windowSize, Framebuffer& viewerFrame, Pipeline& pipeline) {
@@ -59,12 +73,20 @@ void updateSideBar(glm::uvec2 windowSize, Pipeline& pipeline) {
                ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
                    ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
   sideBar.width = (int)ImGui::GetWindowWidth();
-  ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
 
+  ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
   if (ImGui::BeginTabBar("Tab Bar", tabBarFlags)) {
     if (ImGui::BeginTabItem("Pipeline")) {
-      updateConfigurable(pipeline.getGenerator());
-      updateConfigurable(pipeline.getModifier(0));
+      if (ImGui::CollapsingHeader("Generator", ImGuiTreeNodeFlags_DefaultOpen)) {
+        auto& gen = pipeline.getGenerator();
+        updatePipelineStage(gen, false, false);
+      }
+
+      if (ImGui::CollapsingHeader("Modifiers", ImGuiTreeNodeFlags_DefaultOpen)) {
+        auto& mod = pipeline.getModifier(0);
+        updatePipelineStage(mod);
+      }
+
       ImGui::EndTabItem();
     }
 
@@ -85,7 +107,8 @@ void updateViewer(glm::uvec2 windowSize, Framebuffer& viewerFrame) {
 
   ImGui::Begin("Viewer", 0,
                ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
-                   ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
+                   ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove |
+                   ImGuiWindowFlags_NoBringToFrontOnFocus);
   viewer.position = glm::uvec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
   viewer.size = glm::uvec2(glm::uvec2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight()));
   viewer.focused = ImGui::IsWindowFocused();
@@ -106,8 +129,8 @@ void updateStatusBar(glm::uvec2 windowSize) {
                ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
                    ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
 
-  ImGui::Text("Ready");
-  ImGui::SameLine((float)windowSize.x - 330);
+  ImGui::Text("Proc-Rock InDev");
+  ImGui::SameLine((float)windowSize.x - 370);
   ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate,
               ImGui::GetIO().Framerate);
 
@@ -121,6 +144,47 @@ void updateViewSettings() {
     ImGui::SliderAngle("Pitch", &sideBar.viewSettings.light.pitch, 0.0f, 360.0f);
     ImGui::ColorEdit3("Ambient", &sideBar.viewSettings.light.ambientColor[0]);
   }
+}
+
+void updatePipelineStage(PipelineStage& pipelineStage, bool moveable, bool deleteable) {
+  auto info = pipelineStage.getInfo();
+  sideBar.stageSettings.insert(std::pair<std::string, StageSettings>(info.name, {false}));
+  ImGui::BeginChild(info.name.c_str(), ImVec2(0, 70), true);
+
+  // Info and description
+  ImGui::Text(info.name.c_str());
+  ImGui::SameLine();
+  helpMarker(info.description);
+
+  ImGui::SameLine();
+  ImGui::Dummy(ImVec2(0, 25));
+
+  if (deleteable) {
+    ImGui::SameLine((float)sideBar.width - 50);
+    ImGui::Button(ICON_FA_TIMES_CIRCLE);
+  }
+
+  if (ImGui::Button(ICON_FA_COG " Settings")) {
+    sideBar.stageSettings[info.name].visible = !sideBar.stageSettings[info.name].visible;
+  }
+
+  if (moveable) {
+    ImGui::SameLine((float)sideBar.width - 50);
+    ImGui::Button(ICON_FA_ARROW_ALT_CIRCLE_DOWN);
+    ImGui::SameLine((float)sideBar.width - 80);
+    ImGui::Button(ICON_FA_ARROW_ALT_CIRCLE_UP);
+  }
+
+  pipelineStage.setChanged(false);
+
+  // Configurable stuff of the stage
+  if (sideBar.stageSettings[info.name].visible) {
+    ImGui::SetNextWindowSize(ImVec2(sideBar.width, -1));
+    ImGui::Begin(info.name.c_str(), &sideBar.stageSettings[info.name].visible);
+    updateConfigurable(pipelineStage);
+    ImGui::End();
+  }
+  ImGui::EndChild();
 }
 
 void updateConfigurable(Configurable& configurable) {

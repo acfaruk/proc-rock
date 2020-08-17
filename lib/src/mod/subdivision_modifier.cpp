@@ -15,8 +15,9 @@ std::shared_ptr<Mesh> SubdivisionModifier::modify(Mesh& mesh) {
 Configuration SubdivisionModifier::getConfiguration() {
   Configuration result;
 
-  result.ints.emplace_back(Configuration::BoundedEntry<int>{
-      "Subdivisions", "How often to subdivide", &subdivisions, 1, 3});
+  result.ints.emplace_back(
+      Configuration::BoundedEntry<int>{"Subdivs", "How often to subdivide", &subdivisions, 1, 3});
   return result;
 }
+PipelineStageInfo& SubdivisionModifier::getInfo() { return info; }
 }  // namespace procrock

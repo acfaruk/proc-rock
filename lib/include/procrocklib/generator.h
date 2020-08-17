@@ -7,7 +7,7 @@
 
 namespace procrock {
 
-class Generator : public Configurable, PipelineStage {
+class Generator : public PipelineStage {
  public:
   std::shared_ptr<Mesh> run(Mesh* before = nullptr) override;
 

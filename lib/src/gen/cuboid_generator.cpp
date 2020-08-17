@@ -58,4 +58,6 @@ Configuration CuboidGenerator::getConfiguration() {
       Configuration::BoundedEntry<float>{"Depth ", "Depth of the Cuboid", &depth, 0.1f, 1.0f});
   return result;
 }
+PipelineStageInfo& CuboidGenerator::getInfo() { return info; }
+
 }  // namespace procrock

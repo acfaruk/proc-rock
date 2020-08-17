@@ -93,7 +93,7 @@ void App::run() {
 }
 
 bool App::init() {
-  gui::init(window);
+  gui::init(window, this->resourcesPath);
 
   mainCam = std::make_unique<Camera>(getFrameBufferSize());
   mainCam->lookAt(glm::vec3(3, 3, 3), glm::vec3(0), glm::vec3(0, 1, 0));
