@@ -15,7 +15,7 @@ class CuboidGenerator : public Generator {
   std::shared_ptr<Mesh> generate() override;
 
  private:
-  PipelineStageInfo info{"Cuboid Generator",
+  PipelineStageInfo info{PipelineStage_Gen_Cuboid,
                          "Generates a simple cuboid mesh based on width, length and depth"};
 };
 }  // namespace procrock

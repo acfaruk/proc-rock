@@ -13,5 +13,6 @@ class Modifier : public PipelineStage {
 
  private:
   std::shared_ptr<Mesh> mesh;
+  bool firstRun = true;
 };
 }  // namespace procrock

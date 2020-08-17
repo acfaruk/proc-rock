@@ -14,7 +14,10 @@ class Pipeline {
 
   int getModifierCount();
   void addModifier(std::unique_ptr<Modifier> modifier);
+  void addModifierFromId(unsigned int id);
   Modifier& getModifier(int index);
+
+  void removePipelineStage(PipelineStage* stage);
 
   const std::shared_ptr<Mesh> getCurrentMesh();
 

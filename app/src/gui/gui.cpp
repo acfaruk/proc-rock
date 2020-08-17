@@ -71,20 +71,36 @@ void updateSideBar(glm::uvec2 windowSize, Pipeline& pipeline) {
       ImVec2((float)sideBar.width, (float)windowSize.y - mainMenu.height - statusBar.height));
   ImGui::Begin("Settings", 0,
                ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
-                   ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
+                   ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove |
+                   ImGuiWindowFlags_NoBringToFrontOnFocus);
   sideBar.width = (int)ImGui::GetWindowWidth();
-
   ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
   if (ImGui::BeginTabBar("Tab Bar", tabBarFlags)) {
     if (ImGui::BeginTabItem("Pipeline")) {
       if (ImGui::CollapsingHeader("Generator", ImGuiTreeNodeFlags_DefaultOpen)) {
         auto& gen = pipeline.getGenerator();
-        updatePipelineStage(gen, false, false);
+        updatePipelineStage(pipeline, gen, false, false);
       }
 
       if (ImGui::CollapsingHeader("Modifiers", ImGuiTreeNodeFlags_DefaultOpen)) {
-        auto& mod = pipeline.getModifier(0);
-        updatePipelineStage(mod);
+        int selected_mod = -1;
+        if (ImGui::Button("Add Modifier...", ImVec2(-1, 0))) {
+          ImGui::OpenPopup("mod_select_popup");
+        }
+        if (ImGui::BeginPopup("mod_select_popup")) {
+          for (int i = 0; i < IM_ARRAYSIZE(PipelineStage_Mod_All); i++) {
+            if (ImGui::Selectable(PipelineStage_Mod_All[i])) {
+              selected_mod = i;
+              pipeline.addModifierFromId(i);
+            }
+          }
+          ImGui::EndPopup();
+        }
+
+        for (int i = 0; i < pipeline.getModifierCount(); i++) {
+          auto& mod = pipeline.getModifier(i);
+          updatePipelineStage(pipeline, mod);
+        }
       }
 
       ImGui::EndTabItem();
@@ -127,7 +143,8 @@ void updateStatusBar(glm::uvec2 windowSize) {
 
   ImGui::Begin("Status Bar", 0,
                ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
-                   ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
+                   ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove |
+                   ImGuiWindowFlags_NoBringToFrontOnFocus);
 
   ImGui::Text("Proc-Rock InDev");
   ImGui::SameLine((float)windowSize.x - 370);
@@ -146,10 +163,12 @@ void updateViewSettings() {
   }
 }
 
-void updatePipelineStage(PipelineStage& pipelineStage, bool moveable, bool deleteable) {
+void updatePipelineStage(Pipeline& pipeline, PipelineStage& pipelineStage, bool moveable,
+                         bool deleteable) {
   auto info = pipelineStage.getInfo();
-  sideBar.stageSettings.insert(std::pair<std::string, StageSettings>(info.name, {false}));
-  ImGui::BeginChild(info.name.c_str(), ImVec2(0, 70), true);
+  std::string id = pipelineStage.getId();
+  sideBar.stageSettings.insert(std::pair<std::string, StageSettings>(id, {false}));
+  ImGui::BeginChild(id.c_str(), ImVec2(0, 70), true);
 
   // Info and description
   ImGui::Text(info.name.c_str());
@@ -161,11 +180,14 @@ void updatePipelineStage(PipelineStage& pipelineStage, bool moveable, bool delet
 
   if (deleteable) {
     ImGui::SameLine((float)sideBar.width - 50);
-    ImGui::Button(ICON_FA_TIMES_CIRCLE);
+    if (ImGui::Button(ICON_FA_TIMES_CIRCLE)) {
+      pipeline.removePipelineStage(&pipelineStage);
+      sideBar.stageSettings[id].visible = false;
+    }
   }
 
   if (ImGui::Button(ICON_FA_COG " Settings")) {
-    sideBar.stageSettings[info.name].visible = !sideBar.stageSettings[info.name].visible;
+    sideBar.stageSettings[id].visible = !sideBar.stageSettings[id].visible;
   }
 
   if (moveable) {
@@ -178,9 +200,9 @@ void updatePipelineStage(PipelineStage& pipelineStage, bool moveable, bool delet
   pipelineStage.setChanged(false);
 
   // Configurable stuff of the stage
-  if (sideBar.stageSettings[info.name].visible) {
+  if (sideBar.stageSettings[id].visible) {
     ImGui::SetNextWindowSize(ImVec2(sideBar.width, -1));
-    ImGui::Begin(info.name.c_str(), &sideBar.stageSettings[info.name].visible);
+    ImGui::Begin(id.c_str(), &sideBar.stageSettings[id].visible);
     updateConfigurable(pipelineStage);
     ImGui::End();
   }

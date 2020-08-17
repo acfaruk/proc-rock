@@ -23,7 +23,7 @@ void updateStatusBar(glm::uvec2 windowSize);
 
 void updateViewSettings();
 
-void updatePipelineStage(PipelineStage& pipelineStage, bool moveable = true,
+void updatePipelineStage(Pipeline& pipeline, PipelineStage& pipelineStage, bool moveable = true,
                          bool deleteable = true);
 void updateConfigurable(Configurable& configurable);
 
@@ -32,6 +32,12 @@ void helpMarker(std::string& description);
 bool isCapturingMouse();
 
 void render();
+
+std::string inline addressToString(void const* address) {
+  std::ostringstream result;
+  result << address;
+  return result.str();
+}
 
 struct StageSettings {
   bool visible = false;
@@ -53,7 +59,6 @@ struct MainMenu {
 struct SideBar {
   int width = 350;
   ViewSettings viewSettings;
-
   std::map<std::string, StageSettings> stageSettings;
 };
 

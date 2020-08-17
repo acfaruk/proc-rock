@@ -23,6 +23,6 @@ class Configurable {
   bool inline isChanged() { return changed; }
 
  private:
-  bool changed = true;
+  bool changed = false;
 };
 }  // namespace procrock

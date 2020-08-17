@@ -1,5 +1,7 @@
 #include "pipeline.h"
 
+#include "mod/subdivision_modifier.h"
+
 namespace procrock {
 
 void Pipeline::setGenerator(std::unique_ptr<Generator> generator) {
@@ -13,15 +15,38 @@ void Pipeline::addModifier(std::unique_ptr<Modifier> modifier) {
   this->modifiers.push_back(std::move(modifier));
 }
 
+void Pipeline::addModifierFromId(unsigned int id) {
+  switch (id) {
+    case 0:
+      addModifier(std::make_unique<SubdivisionModifier>());
+      break;
+    default:
+      assert(false);
+      break;
+  }
+}
+
+void Pipeline::removePipelineStage(PipelineStage* stage) {
+  for (auto& mod : modifiers) {
+    if (static_cast<PipelineStage*>(mod.get()) == stage) {
+      modifiers.erase(std::find(modifiers.begin(), modifiers.end(), mod));
+      break;
+    }
+  }
+}
+
 Modifier& Pipeline::getModifier(int index) { return *this->modifiers[index]; }
 
 const std::shared_ptr<Mesh> Pipeline::getCurrentMesh() {
-  auto test = this->generator->run();
+  auto mesh = this->generator->run();
 
-  auto& mod = modifiers[0];
-  if (this->generator->isChanged()) mod->setChanged(true);
+  bool changed = generator->isChanged();
 
-  auto mesh = mod->run(test.get());
+  for (auto& mod : modifiers) {
+    mod->setChanged(mod->isChanged() || changed);
+    changed = mod->isChanged();
+    mesh = mod->run(mesh.get());
+  }
   return mesh;
 }
 }  // namespace procrock
