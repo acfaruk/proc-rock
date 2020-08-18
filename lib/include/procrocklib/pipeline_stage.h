@@ -26,8 +26,10 @@ class PipelineStage : public Configurable {
 
 static const char* PipelineStage_Gen_Cuboid = "Cuboid Generator";
 
-static const char* PipelineStage_Mod_Subdivsion = "Subdivision Modifier";  // 0
+static const char* PipelineStage_Mod_Subdivsion = "Subdivision Modifier";              // 0
+static const char* PipelineStage_Mod_DisplaceAlongNormals = "Displace Along Normals";  // 1
 
-static const char* const PipelineStage_Mod_All[] = {PipelineStage_Mod_Subdivsion};
+static const char* const PipelineStage_Mod_All[] = {PipelineStage_Mod_Subdivsion,
+                                                    PipelineStage_Mod_DisplaceAlongNormals};
 
 }  // namespace procrock

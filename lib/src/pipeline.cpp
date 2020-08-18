@@ -1,5 +1,6 @@
 #include "pipeline.h"
 
+#include "mod/displace_along_normals_modifier.h"
 #include "mod/subdivision_modifier.h"
 
 namespace procrock {
@@ -19,6 +20,9 @@ void Pipeline::addModifierFromId(unsigned int id) {
   switch (id) {
     case 0:
       addModifier(std::make_unique<SubdivisionModifier>());
+      break;
+    case 1:
+      addModifier(std::make_unique<DisplaceAlongNormalsModifier>());
       break;
     default:
       assert(false);
