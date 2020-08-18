@@ -5,15 +5,27 @@
 
 namespace procrock {
 struct Configuration {
-  template <typename T>
-  struct BoundedEntry {
+  struct Entry {
     std::string name;
     std::string description;
+  };
+
+  struct SingleChoiceEntry {
+    Entry entry;
+    std::vector<Entry> choices;
+    int* choice;
+  };
+
+  template <typename T>
+  struct BoundedEntry {
+    Entry entry;
     T* data;
     T min, max;
   };
   std::vector<BoundedEntry<int>> ints;
   std::vector<BoundedEntry<float>> floats;
+
+  std::vector<SingleChoiceEntry> singleChoices;
 };
 class Configurable {
  public:

@@ -33,6 +33,11 @@ void Pipeline::removePipelineStage(PipelineStage* stage) {
       break;
     }
   }
+
+  for (auto& mod : modifiers) {
+    mod->setChanged(true);
+  }
+  generator->setChanged(true);
 }
 
 Modifier& Pipeline::getModifier(int index) { return *this->modifiers[index]; }
