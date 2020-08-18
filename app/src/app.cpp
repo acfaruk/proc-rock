@@ -112,8 +112,8 @@ bool App::init() {
   InputManager::registerInputReceiver(mainCam.get());
 
   glEnable(GL_CULL_FACE);
+  glEnable(GL_DEPTH_TEST);
   glCullFace(GL_BACK);
-
   return true;
 }
 
@@ -142,7 +142,6 @@ bool App::render() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   viewerFramebuffer->bind();
-  // testCube->draw(*mainCam.get(), *mainShader.get());
   drawableMesh->draw(*mainCam.get(), *mainShader.get());
   bindDefaultFrameBuffer(getFrameBufferSize());
   gui::render();

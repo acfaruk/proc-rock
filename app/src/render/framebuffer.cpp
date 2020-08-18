@@ -10,7 +10,7 @@ void bindDefaultFrameBuffer(glm::uvec2 size) {
   glViewport(0, 0, size.x, size.y);
 }
 
-Framebuffer::Framebuffer(const glm::uvec2& size, unsigned int textureCount) {
+Framebuffer::Framebuffer(const glm::uvec2& size, unsigned int textureCount, bool depthBuffer) {
   assert(textureCount <= GL_MAX_COLOR_ATTACHMENTS && "To many textures for framebuffer");
 
   this->size = size;
@@ -28,6 +28,19 @@ Framebuffer::Framebuffer(const glm::uvec2& size, unsigned int textureCount) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     renderedTextures.push_back(renderedTexture);
+  }
+
+  // Create depth texture
+  if (depthTexture) {
+    glGenTextures(1, &depthTexture);
+    glBindTexture(GL_TEXTURE_2D, depthTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, size.x, size.y, 0, GL_DEPTH_COMPONENT,
+                 GL_FLOAT, 0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthTexture, 0);
   }
 
   // Assign textures to framebuffer
@@ -54,6 +67,10 @@ void Framebuffer::bind() {
 
 void Framebuffer::resize(const glm::uvec2& size) {
   this->size = size;
+
+  glBindTexture(GL_TEXTURE_2D, depthTexture);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, size.x, size.y, 0, GL_DEPTH_COMPONENT,
+               GL_FLOAT, 0);
   for (int i = 0; i < renderedTextures.size(); i++) {
     glBindTexture(GL_TEXTURE_2D, renderedTextures[i]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, size.x, size.y, 0, GL_RGBA, GL_FLOAT, NULL);

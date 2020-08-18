@@ -11,7 +11,7 @@ void bindDefaultFrameBuffer(glm::uvec2 size);
 
 class Framebuffer {
  public:
-  Framebuffer(const glm::uvec2 &size, unsigned int textureCount = 1);
+  Framebuffer(const glm::uvec2 &size, unsigned int textureCount = 1, bool depthBuffer = true);
   ~Framebuffer();
   void bind();
   void resize(const glm::uvec2 &size);
@@ -19,6 +19,7 @@ class Framebuffer {
 
  private:
   unsigned int ID;
+  unsigned int depthTexture;
   std::vector<unsigned int> renderedTextures;
   glm::uvec2 size;
 };
