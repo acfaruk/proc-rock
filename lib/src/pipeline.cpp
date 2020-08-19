@@ -1,5 +1,7 @@
 #include "pipeline.h"
 
+#include <algorithm>
+
 #include "mod/displace_along_normals_modifier.h"
 #include "mod/subdivision_modifier.h"
 
@@ -27,6 +29,31 @@ void Pipeline::addModifierFromId(unsigned int id) {
     default:
       assert(false);
       break;
+  }
+}
+
+void Pipeline::moveModifierUp(PipelineStage* modifier) {
+  for (int i = 0; i < modifiers.size(); i++) {
+    if (modifiers[i]->getId() == modifier->getId() && i != 0) {
+      std::iter_swap(modifiers.begin() + i, modifiers.begin() + i - 1);
+
+      modifiers[i]->setChanged(true);
+      generator->setChanged(true);
+      return;
+    }
+  }
+}
+
+void Pipeline::moveModifierDown(PipelineStage* modifier) {
+  for (int i = 0; i < modifiers.size(); i++) {
+    if (modifiers[i]->getId() == modifier->getId() && i != modifiers.size() - 1) {
+      std::iter_swap(modifiers.begin() + i, modifiers.begin() + i + 1);
+
+      modifiers[i]->setChanged(true);
+      modifiers[i + 1]->setChanged(true);
+      generator->setChanged(true);
+      return;
+    }
   }
 }
 

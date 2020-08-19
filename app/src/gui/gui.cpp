@@ -165,6 +165,8 @@ void updateViewSettings() {
 
 void updatePipelineStage(Pipeline& pipeline, PipelineStage& pipelineStage, bool moveable,
                          bool deleteable) {
+  pipelineStage.setChanged(false);
+
   auto info = pipelineStage.getInfo();
   std::string id = pipelineStage.getId();
   sideBar.stageSettings.insert(std::pair<std::string, StageSettings>(id, {false}));
@@ -192,12 +194,14 @@ void updatePipelineStage(Pipeline& pipeline, PipelineStage& pipelineStage, bool 
 
   if (moveable) {
     ImGui::SameLine((float)sideBar.width - 50);
-    ImGui::Button(ICON_FA_ARROW_ALT_CIRCLE_DOWN);
+    if (ImGui::Button(ICON_FA_ARROW_ALT_CIRCLE_DOWN)) {
+      pipeline.moveModifierDown(&pipelineStage);
+    }
     ImGui::SameLine((float)sideBar.width - 80);
-    ImGui::Button(ICON_FA_ARROW_ALT_CIRCLE_UP);
+    if (ImGui::Button(ICON_FA_ARROW_ALT_CIRCLE_UP)) {
+      pipeline.moveModifierUp(&pipelineStage);
+    }
   }
-
-  pipelineStage.setChanged(false);
 
   // Configurable stuff of the stage
   if (sideBar.stageSettings[id].visible) {
