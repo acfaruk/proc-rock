@@ -103,6 +103,11 @@ void updateSideBar(glm::uvec2 windowSize, Pipeline& pipeline) {
         }
       }
 
+      if (ImGui::CollapsingHeader("Parameterizer", ImGuiTreeNodeFlags_DefaultOpen)) {
+        auto& par = pipeline.getParameterizer();
+        updatePipelineStage(pipeline, par);
+      }
+
       ImGui::EndTabItem();
     }
 

@@ -79,16 +79,27 @@ void Pipeline::removePipelineStage(PipelineStage* stage) {
 
 Modifier& Pipeline::getModifier(int index) { return *this->modifiers[index]; }
 
+void Pipeline::setParameterizer(std::unique_ptr<Parameterizer> parameterizer) {
+  this->parameterizer = std::move(parameterizer);
+}
+
+Parameterizer& Pipeline::getParameterizer() const { return *this->parameterizer.get(); }
+
 const std::shared_ptr<Mesh> Pipeline::getCurrentMesh() {
   auto mesh = this->generator->run();
 
-  bool changed = generator->isChanged();
+  bool changed = generator->isChanged() || generator->isFirstRun();
 
   for (auto& mod : modifiers) {
-    mod->setChanged(mod->isChanged() || changed);
+    mod->setChanged(mod->isChanged() || mod->isFirstRun() || changed);
     changed = mod->isChanged();
     mesh = mod->run(mesh.get());
   }
+
+  parameterizer->setChanged(parameterizer->isChanged() || parameterizer->isFirstRun() || changed);
+  changed = parameterizer->isChanged();
+  mesh = parameterizer->run(mesh.get());
+
   return mesh;
 }
 }  // namespace procrock

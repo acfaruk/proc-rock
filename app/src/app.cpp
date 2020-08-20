@@ -2,6 +2,7 @@
 
 #include <procrocklib/gen/cuboid_generator.h>
 #include <procrocklib/mod/subdivision_modifier.h>
+#include <procrocklib/par/lscm_parameterizer.h>
 
 #include <iostream>
 
@@ -101,6 +102,7 @@ bool App::init() {
   pipeline = std::make_unique<Pipeline>();
   pipeline->setGenerator(std::make_unique<CuboidGenerator>());
   pipeline->addModifier(std::make_unique<SubdivisionModifier>());
+  pipeline->setParameterizer(std::make_unique<LSCM_Parameterizer>());
 
   pointLight = std::make_unique<PointLight>(glm::vec3(7, 0, 0));
 
