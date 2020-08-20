@@ -23,8 +23,7 @@ void updateStatusBar(glm::uvec2 windowSize);
 
 void updateViewSettings();
 
-void updatePipelineStage(Pipeline& pipeline, PipelineStage& pipelineStage, bool moveable = true,
-                         bool deleteable = true);
+void updatePipelineStage(Pipeline& pipeline, PipelineStage& stage);
 void updateConfigurable(Configurable& configurable);
 
 void helpMarker(std::string& description);
@@ -48,7 +47,7 @@ struct ViewSettings {
   struct Light {
     float yaw = 3.67f;
     float pitch = 4.01f;
-    glm::vec3 ambientColor = glm::vec3(0.5);
+    glm::vec3 ambientColor = glm::vec3(0.2);
   } light;
 };
 
@@ -59,7 +58,7 @@ struct MainMenu {
 struct SideBar {
   int width = 350;
   ViewSettings viewSettings;
-  std::map<std::string, StageSettings> stageSettings;
+  std::map<std::string, StageSettings> stageData;
 };
 
 struct Viewer {

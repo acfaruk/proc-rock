@@ -16,6 +16,9 @@ class PipelineStage : public Configurable {
   virtual std::shared_ptr<Mesh> run(Mesh* before = nullptr) = 0;
   virtual PipelineStageInfo& getInfo() = 0;
 
+  virtual bool isMoveable() const = 0;
+  virtual bool isRemovable() const = 0;
+
   inline std::string getId() {
     // Each instance gets its id from its name and memory location
     std::ostringstream oss;
@@ -24,10 +27,10 @@ class PipelineStage : public Configurable {
   }
 };
 
-static const char* PipelineStage_Gen_Cuboid = "Cuboid Generator";
+static const char* const PipelineStage_Gen_Cuboid = "Cuboid Generator";
 
-static const char* PipelineStage_Mod_Subdivsion = "Subdivision Modifier";              // 0
-static const char* PipelineStage_Mod_DisplaceAlongNormals = "Displace Along Normals";  // 1
+static const char* const PipelineStage_Mod_Subdivsion = "Subdivision Modifier";              // 0
+static const char* const PipelineStage_Mod_DisplaceAlongNormals = "Displace Along Normals";  // 1
 
 static const char* const PipelineStage_Mod_All[] = {PipelineStage_Mod_Subdivsion,
                                                     PipelineStage_Mod_DisplaceAlongNormals};

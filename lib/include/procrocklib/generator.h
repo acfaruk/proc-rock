@@ -11,6 +11,9 @@ class Generator : public PipelineStage {
  public:
   std::shared_ptr<Mesh> run(Mesh* before = nullptr) override;
 
+  virtual bool isMoveable() const override;
+  virtual bool isRemovable() const override;
+
  protected:
   virtual std::shared_ptr<Mesh> generate() = 0;
 

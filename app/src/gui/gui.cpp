@@ -79,7 +79,7 @@ void updateSideBar(glm::uvec2 windowSize, Pipeline& pipeline) {
     if (ImGui::BeginTabItem("Pipeline")) {
       if (ImGui::CollapsingHeader("Generator", ImGuiTreeNodeFlags_DefaultOpen)) {
         auto& gen = pipeline.getGenerator();
-        updatePipelineStage(pipeline, gen, false, false);
+        updatePipelineStage(pipeline, gen);
       }
 
       if (ImGui::CollapsingHeader("Modifiers", ImGuiTreeNodeFlags_DefaultOpen)) {
@@ -163,13 +163,12 @@ void updateViewSettings() {
   }
 }
 
-void updatePipelineStage(Pipeline& pipeline, PipelineStage& pipelineStage, bool moveable,
-                         bool deleteable) {
-  pipelineStage.setChanged(false);
+void updatePipelineStage(Pipeline& pipeline, PipelineStage& stage) {
+  stage.setChanged(false);
 
-  auto info = pipelineStage.getInfo();
-  std::string id = pipelineStage.getId();
-  sideBar.stageSettings.insert(std::pair<std::string, StageSettings>(id, {false}));
+  auto info = stage.getInfo();
+  std::string id = stage.getId();
+  sideBar.stageData.insert(std::pair<std::string, StageSettings>(id, {false}));
   ImGui::BeginChild(id.c_str(), ImVec2(0, 70), true);
 
   // Info and description
@@ -180,34 +179,36 @@ void updatePipelineStage(Pipeline& pipeline, PipelineStage& pipelineStage, bool 
   ImGui::SameLine();
   ImGui::Dummy(ImVec2(0, 25));
 
-  if (deleteable) {
+  if (stage.isRemovable()) {
     ImGui::SameLine((float)sideBar.width - 50);
     if (ImGui::Button(ICON_FA_TIMES_CIRCLE)) {
-      pipeline.removePipelineStage(&pipelineStage);
-      sideBar.stageSettings[id].visible = false;
+      ImGui::EndChild();
+      pipeline.removePipelineStage(&stage);
+      sideBar.stageData[id].visible = false;
+      return;
     }
   }
 
   if (ImGui::Button(ICON_FA_COG " Settings")) {
-    sideBar.stageSettings[id].visible = !sideBar.stageSettings[id].visible;
+    sideBar.stageData[id].visible = !sideBar.stageData[id].visible;
   }
 
-  if (moveable) {
+  if (stage.isMoveable()) {
     ImGui::SameLine((float)sideBar.width - 50);
     if (ImGui::Button(ICON_FA_ARROW_ALT_CIRCLE_DOWN)) {
-      pipeline.moveModifierDown(&pipelineStage);
+      pipeline.movePipelineStageDown(&stage);
     }
     ImGui::SameLine((float)sideBar.width - 80);
     if (ImGui::Button(ICON_FA_ARROW_ALT_CIRCLE_UP)) {
-      pipeline.moveModifierUp(&pipelineStage);
+      pipeline.movePipelineStageUp(&stage);
     }
   }
 
   // Configurable stuff of the stage
-  if (sideBar.stageSettings[id].visible) {
+  if (sideBar.stageData[id].visible) {
     ImGui::SetNextWindowSize(ImVec2(sideBar.width, -1));
-    ImGui::Begin(id.c_str(), &sideBar.stageSettings[id].visible);
-    updateConfigurable(pipelineStage);
+    ImGui::Begin(id.c_str(), &sideBar.stageData[id].visible);
+    updateConfigurable(stage);
     ImGui::End();
   }
   ImGui::EndChild();

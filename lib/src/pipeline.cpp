@@ -32,27 +32,33 @@ void Pipeline::addModifierFromId(unsigned int id) {
   }
 }
 
-void Pipeline::moveModifierUp(PipelineStage* modifier) {
-  for (int i = 0; i < modifiers.size(); i++) {
-    if (modifiers[i]->getId() == modifier->getId() && i != 0) {
-      std::iter_swap(modifiers.begin() + i, modifiers.begin() + i - 1);
+void Pipeline::movePipelineStageUp(PipelineStage* stage) {
+  auto modifier = dynamic_cast<Modifier*>(stage);
+  if (modifier != nullptr) {
+    for (int i = 0; i < modifiers.size(); i++) {
+      if (modifiers[i]->getId() == modifier->getId() && i != 0) {
+        std::iter_swap(modifiers.begin() + i, modifiers.begin() + i - 1);
 
-      modifiers[i]->setChanged(true);
-      generator->setChanged(true);
-      return;
+        modifiers[i]->setChanged(true);
+        generator->setChanged(true);
+        return;
+      }
     }
   }
 }
 
-void Pipeline::moveModifierDown(PipelineStage* modifier) {
-  for (int i = 0; i < modifiers.size(); i++) {
-    if (modifiers[i]->getId() == modifier->getId() && i != modifiers.size() - 1) {
-      std::iter_swap(modifiers.begin() + i, modifiers.begin() + i + 1);
+void Pipeline::movePipelineStageDown(PipelineStage* stage) {
+  auto modifier = dynamic_cast<Modifier*>(stage);
+  if (modifier != nullptr) {
+    for (int i = 0; i < modifiers.size(); i++) {
+      if (modifiers[i]->getId() == modifier->getId() && i != modifiers.size() - 1) {
+        std::iter_swap(modifiers.begin() + i, modifiers.begin() + i + 1);
 
-      modifiers[i]->setChanged(true);
-      modifiers[i + 1]->setChanged(true);
-      generator->setChanged(true);
-      return;
+        modifiers[i]->setChanged(true);
+        modifiers[i + 1]->setChanged(true);
+        generator->setChanged(true);
+        return;
+      }
     }
   }
 }

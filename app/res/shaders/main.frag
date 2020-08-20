@@ -33,7 +33,7 @@ void main()
 	float spec = 0.0;
 
 	vec3 halfwayDir = normalize(lightDir + viewDir);
-	spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0);
+	spec = pow(max(dot(normal, halfwayDir), 0.0), 8.0);
 
 	vec3 specular = lightColor * spec;
 
