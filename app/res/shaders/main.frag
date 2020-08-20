@@ -11,11 +11,13 @@ uniform vec3 lightPos;
 uniform vec3 lightColor;
 uniform vec3 ambientColor;
 
+uniform sampler2D albedo;
+
 layout(location = 0) out vec4 fragColor;
 
 void main()
 {
-	vec3 color = vertexColor;
+	vec3 color = texture(albedo, texCoord).xyz;
 
 	// ambient
 	vec3 ambient = ambientColor * lightColor * color;

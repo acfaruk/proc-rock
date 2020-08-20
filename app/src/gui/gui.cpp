@@ -41,6 +41,11 @@ void update(glm::uvec2 windowSize, Framebuffer& viewerFrame, Pipeline& pipeline)
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
 
+  /*ImGui::Begin("Test");
+  ImGui::Image((ImTextureID)(uint64_t)3, ImVec2((float)300, (float)300), ImVec2(0, 1),
+               ImVec2(1, 0));
+  ImGui::End();*/
+
   updateMainMenu();
   updateSideBar(windowSize, pipeline);
   updateViewer(windowSize, viewerFrame);
@@ -106,6 +111,11 @@ void updateSideBar(glm::uvec2 windowSize, Pipeline& pipeline) {
       if (ImGui::CollapsingHeader("Parameterizer", ImGuiTreeNodeFlags_DefaultOpen)) {
         auto& par = pipeline.getParameterizer();
         updatePipelineStage(pipeline, par);
+      }
+
+      if (ImGui::CollapsingHeader("Texture Generator", ImGuiTreeNodeFlags_DefaultOpen)) {
+        auto& texGen = pipeline.getTextureGenerator();
+        updatePipelineStage(pipeline, texGen);
       }
 
       ImGui::EndTabItem();

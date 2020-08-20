@@ -34,6 +34,8 @@ static const char* const PipelineStage_Mod_DisplaceAlongNormals = "Displace Alon
 
 static const char* const PipelineStage_Par_LSCM = "LSCM Parametrization";
 
+static const char* const PipelineStage_TexGen_Checkerboard = "Checkerboard Generator";
+
 static const char* const PipelineStage_Mod_All[] = {PipelineStage_Mod_Subdivsion,
                                                     PipelineStage_Mod_DisplaceAlongNormals};
 

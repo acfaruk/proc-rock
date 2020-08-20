@@ -3,6 +3,7 @@
 #include <procrocklib/gen/cuboid_generator.h>
 #include <procrocklib/mod/subdivision_modifier.h>
 #include <procrocklib/par/lscm_parameterizer.h>
+#include <procrocklib/texgen/checkerboard_texture_generator.h>
 
 #include <iostream>
 
@@ -103,6 +104,7 @@ bool App::init() {
   pipeline->setGenerator(std::make_unique<CuboidGenerator>());
   pipeline->addModifier(std::make_unique<SubdivisionModifier>());
   pipeline->setParameterizer(std::make_unique<LSCM_Parameterizer>());
+  pipeline->setTextureGenerator(std::make_unique<CheckerboardTextureGenerator>());
 
   pointLight = std::make_unique<PointLight>(glm::vec3(7, 0, 0));
 
@@ -110,6 +112,8 @@ bool App::init() {
                                         resourcesPath + "/shaders/main.frag");
 
   viewerFramebuffer = std::make_unique<Framebuffer>(glm::uvec2(200, 200));
+
+  renderTextureAlbedo = std::make_unique<RenderTexture>();
 
   InputManager::registerInputReceiver(mainCam.get());
 
@@ -123,7 +127,12 @@ bool App::update() {
   auto mesh = pipeline->getCurrentMesh();
   drawableMesh = std::make_unique<DrawableMesh>(*mesh);
 
+  renderTextureAlbedo->loadFromData(mesh->albedo.data.data(), mesh->albedo.width,
+                                    mesh->albedo.height);
+  mainShader->textures["albedo"] = renderTextureAlbedo.get();
+
   gui::update(this->getWindowSize(), *viewerFramebuffer, *pipeline);
+
   mainCam->setViewport(gui::viewer.size);
   mainShader->uniforms3f["camPos"] = mainCam->getPosition();
 

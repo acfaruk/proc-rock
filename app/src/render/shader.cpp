@@ -84,6 +84,15 @@ Shader::Shader(const std::string vertexPath, const std::string fragmentPath) {
 
 void Shader::bind() const {
   glUseProgram(ID);
+
+  int counter = 0;
+  for (auto& t : textures) {
+    glActiveTexture(GL_TEXTURE0 + counter);
+    t.second->bind();
+    glUniform1i(glGetUniformLocation(ID, t.first.c_str()), counter);
+    counter++;
+  }
+
   for (auto& u : uniformsi) {
     glUniform1i(glGetUniformLocation(ID, u.first.c_str()), u.second);
   }

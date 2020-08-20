@@ -85,6 +85,12 @@ void Pipeline::setParameterizer(std::unique_ptr<Parameterizer> parameterizer) {
 
 Parameterizer& Pipeline::getParameterizer() const { return *this->parameterizer.get(); }
 
+void Pipeline::setTextureGenerator(std::unique_ptr<TextureGenerator> textureGenerator) {
+  this->textureGenerator = std::move(textureGenerator);
+}
+
+TextureGenerator& Pipeline::getTextureGenerator() const { return *this->textureGenerator.get(); }
+
 const std::shared_ptr<Mesh> Pipeline::getCurrentMesh() {
   auto mesh = this->generator->run();
 
@@ -99,6 +105,11 @@ const std::shared_ptr<Mesh> Pipeline::getCurrentMesh() {
   parameterizer->setChanged(parameterizer->isChanged() || parameterizer->isFirstRun() || changed);
   changed = parameterizer->isChanged();
   mesh = parameterizer->run(mesh.get());
+
+  textureGenerator->setChanged(textureGenerator->isChanged() || textureGenerator->isFirstRun() ||
+                               changed);
+  changed = textureGenerator->isChanged();
+  mesh = textureGenerator->run(mesh.get());
 
   return mesh;
 }

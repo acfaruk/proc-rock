@@ -15,6 +15,11 @@ DrawableMesh::DrawableMesh(Mesh& mesh) {
     this->faces.emplace_back(row(0), row(1), row(2));
   }
 
+  for (Eigen::Index i = 0; i < mesh.uvs.rows(); ++i) {
+    auto row = mesh.uvs.row(i);
+    this->texCoords.emplace_back(row(0), row(1));
+  }
+
   createBuffers();
 }
 }  // namespace procrock

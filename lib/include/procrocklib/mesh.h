@@ -1,4 +1,6 @@
 #pragma once
+#include <procrocklib/texture.h>
+
 #include <Eigen/Core>
 
 namespace procrock {
@@ -7,5 +9,7 @@ struct Mesh {
   Eigen::MatrixXd normals;
   Eigen::MatrixXi faces;
   Eigen::MatrixXd uvs;
+
+  Texture albedo;
 };
 }  // namespace procrock

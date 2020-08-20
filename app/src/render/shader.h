@@ -4,6 +4,8 @@
 #include <map>
 #include <string>
 
+#include "render_texture.h"
+
 namespace procrock {
 
 class Shader {
@@ -25,6 +27,8 @@ class Shader {
 
   std::map<std::string, float> uniformsf;
   std::map<std::string, int> uniformsi;
+
+  std::map<std::string, RenderTexture*> textures;
 
  private:
   unsigned int ID;
