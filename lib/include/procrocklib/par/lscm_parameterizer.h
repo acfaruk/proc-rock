@@ -7,8 +7,6 @@ namespace procrock {
 class LSCM_Parameterizer : public Parameterizer {
  public:
   float scaling = 1;
-  int firstIndex = 0;
-  int secondIndex = 1;
 
   virtual Configuration getConfiguration() override;
   virtual PipelineStageInfo& getInfo() override;
