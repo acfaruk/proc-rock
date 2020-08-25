@@ -4,6 +4,8 @@
 #include <igl/boundary_loop.h>
 #include <igl/cut_mesh.h>
 #include <igl/lscm.h>
+#include <igl/mat_max.h>
+#include <igl/mat_min.h>
 #include <igl/per_vertex_normals.h>
 #include <igl/triangle_triangle_adjacency.h>
 
@@ -91,8 +93,21 @@ std::shared_ptr<Mesh> LSCM_Parameterizer::parameterize(Mesh* mesh) {
   Eigen::MatrixXd boundaryConditions(2, 2);
   boundaryConditions << 0, 0, 1, 0;
 
-  igl::lscm(result->vertices, result->faces, boundaryIndices, boundaryConditions, result->uvs);
-  result->uvs *= scaling;
+  Eigen::MatrixXd uvs;
+  igl::lscm(result->vertices, result->faces, boundaryIndices, boundaryConditions, uvs);
+
+  // Normalize uv's to stay between 0 and 1
+  Eigen::VectorXd minUVs;
+  Eigen::VectorXi indices;
+  igl::mat_min(uvs, 1, minUVs, indices);
+
+  uvs = uvs.rowwise() + (-minUVs.transpose());
+
+  Eigen::VectorXd maxUVs;
+  igl::mat_max(uvs, 1, maxUVs, indices);
+  uvs = uvs.array().rowwise() / (maxUVs.transpose().array());
+
+  result->uvs = uvs * scaling;
   igl::per_vertex_normals(result->vertices, result->faces, result->normals);
 
   return result;
@@ -101,7 +116,7 @@ std::shared_ptr<Mesh> LSCM_Parameterizer::parameterize(Mesh* mesh) {
 Configuration LSCM_Parameterizer::getConfiguration() {
   Configuration result;
   result.floats.emplace_back(Configuration::BoundedEntry<float>{
-      {"Scaling", "Scale the uv's by this amount"}, &scaling, 1, 10});
+      {"Scaling", "Scale the uv's by this amount"}, &scaling, 0.1, 1});
   return result;
 }
 
