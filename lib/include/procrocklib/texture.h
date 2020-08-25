@@ -4,8 +4,8 @@
 
 namespace procrock {
 struct Texture {
-  unsigned int width = 1024;
-  unsigned int height = 1024;
+  unsigned int width = 256;
+  unsigned int height = 256;
 
   std::vector<unsigned char> data;
 };

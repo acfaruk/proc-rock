@@ -5,6 +5,7 @@ namespace procrock {
 class CheckerboardTextureGenerator : public TextureGenerator {
  public:
   int squares = 10;
+  int mode = 0;
 
   virtual Configuration getConfiguration() override;
   virtual PipelineStageInfo& getInfo() override;
