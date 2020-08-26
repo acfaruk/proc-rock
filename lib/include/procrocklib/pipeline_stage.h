@@ -33,6 +33,7 @@ static const char* const PipelineStage_Mod_Subdivsion = "Subdivision Modifier"; 
 static const char* const PipelineStage_Mod_DisplaceAlongNormals = "Displace Along Normals";  // 1
 
 static const char* const PipelineStage_Par_LSCM = "LSCM Parametrization";
+static const char* const PipelineStage_Par_XATLAS = "XATLAS Parametrization";
 
 static const char* const PipelineStage_TexGen_Checkerboard = "Checkerboard Generator";
 

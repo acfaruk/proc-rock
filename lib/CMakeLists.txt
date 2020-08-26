@@ -12,7 +12,7 @@ file(GLOB_RECURSE PROC_ROCK_LIB_SOURCES
 add_library(proc-rock-lib STATIC ${PROC_ROCK_LIB_SOURCES})
 source_group(TREE ${PROJECT_SOURCE_DIR} FILES ${PROC_ROCK_LIB_SOURCES})
 
-target_include_directories(proc-rock-lib PUBLIC include PRIVATE include/procrocklib)
+target_include_directories(proc-rock-lib PUBLIC include PRIVATE include/procrocklib src)
 
 
 find_package(glm CONFIG REQUIRED)

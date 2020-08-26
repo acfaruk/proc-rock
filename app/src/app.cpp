@@ -3,6 +3,7 @@
 #include <procrocklib/gen/cuboid_generator.h>
 #include <procrocklib/mod/subdivision_modifier.h>
 #include <procrocklib/par/lscm_parameterizer.h>
+#include <procrocklib/par/xatlas_parameterizer.h>
 #include <procrocklib/texgen/checkerboard_texture_generator.h>
 
 #include <iostream>
@@ -103,7 +104,7 @@ bool App::init() {
   pipeline = std::make_unique<Pipeline>();
   pipeline->setGenerator(std::make_unique<CuboidGenerator>());
   pipeline->addModifier(std::make_unique<SubdivisionModifier>());
-  pipeline->setParameterizer(std::make_unique<LSCM_Parameterizer>());
+  pipeline->setParameterizer(std::make_unique<XAtlasParameterizer>());
   pipeline->setTextureGenerator(std::make_unique<CheckerboardTextureGenerator>());
 
   pointLight = std::make_unique<PointLight>(glm::vec3(7, 0, 0));
