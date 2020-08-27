@@ -31,7 +31,7 @@ Framebuffer::Framebuffer(const glm::uvec2& size, unsigned int textureCount, bool
   }
 
   // Create depth texture
-  if (depthTexture) {
+  if (depthBuffer) {
     glGenTextures(1, &depthTexture);
     glBindTexture(GL_TEXTURE_2D, depthTexture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, size.x, size.y, 0, GL_DEPTH_COMPONENT,
