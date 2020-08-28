@@ -18,6 +18,11 @@ class TextureGenerator : public PipelineStage {
 
  protected:
   virtual std::shared_ptr<Mesh> generate(Mesh* before) = 0;
+  void fillTextureFaceBased(const Mesh& mesh, Texture& tex,
+                            std::function<Eigen::Vector3i(Eigen::Vector3d)> colorFunction);
+
+  void fillTexturePixelBased(const Mesh& mesh, Texture& tex,
+                             std::function<Eigen::Vector3i(Eigen::Vector3d)> colorFunction);
 
  private:
   std::shared_ptr<Mesh> mesh;
