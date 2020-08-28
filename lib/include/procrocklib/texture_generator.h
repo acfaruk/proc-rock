@@ -28,4 +28,5 @@ class TextureGenerator : public PipelineStage {
   std::shared_ptr<Mesh> mesh;
   bool firstRun = true;
 };
+
 }  // namespace procrock

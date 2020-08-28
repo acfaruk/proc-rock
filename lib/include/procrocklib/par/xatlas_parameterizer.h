@@ -11,6 +11,6 @@ class XAtlasParameterizer : public Parameterizer {
   virtual std::shared_ptr<Mesh> parameterize(Mesh* mesh) override;
 
  private:
-  PipelineStageInfo info{PipelineStage_Par_XATLAS, "xatlas Library"};
+  PipelineStageInfo info{PipelineStageNames_Par[PipelineStage_Par_XATLAS], "xatlas Library"};
 };
 }  // namespace procrock

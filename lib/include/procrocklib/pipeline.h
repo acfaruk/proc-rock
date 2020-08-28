@@ -16,7 +16,6 @@ class Pipeline {
 
   int getModifierCount();
   void addModifier(std::unique_ptr<Modifier> modifier);
-  void addModifierFromId(unsigned int id);
   void movePipelineStageUp(PipelineStage* stage);
   void movePipelineStageDown(PipelineStage* stage);
   Modifier& getModifier(int index);

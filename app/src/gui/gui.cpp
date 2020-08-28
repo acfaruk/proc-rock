@@ -1,5 +1,6 @@
 #include "gui.h"
 
+#include <procrocklib/pipeline_stage_factory.h>
 #include <tinyfiledialogs/tinyfiledialogs.h>
 
 #include <iostream>
@@ -83,20 +84,30 @@ void updateSideBar(glm::uvec2 windowSize, Pipeline& pipeline) {
   if (ImGui::BeginTabBar("Tab Bar", tabBarFlags)) {
     if (ImGui::BeginTabItem("Pipeline")) {
       if (ImGui::CollapsingHeader("Generator", ImGuiTreeNodeFlags_DefaultOpen)) {
+        if (ImGui::Button("Select Generator...", ImVec2(-1, 0))) {
+          ImGui::OpenPopup("gen_select_popup");
+        }
+        if (ImGui::BeginPopup("gen_select_popup")) {
+          for (int i = 0; i < IM_ARRAYSIZE(PipelineStageNames_Gen); i++) {
+            if (ImGui::Selectable(PipelineStageNames_Gen[i])) {
+              pipeline.setGenerator(createGeneratorFromId(i));
+            }
+          }
+          ImGui::EndPopup();
+        }
+
         auto& gen = pipeline.getGenerator();
         updatePipelineStage(pipeline, gen);
       }
 
       if (ImGui::CollapsingHeader("Modifiers", ImGuiTreeNodeFlags_DefaultOpen)) {
-        int selected_mod = -1;
         if (ImGui::Button("Add Modifier...", ImVec2(-1, 0))) {
           ImGui::OpenPopup("mod_select_popup");
         }
         if (ImGui::BeginPopup("mod_select_popup")) {
-          for (int i = 0; i < IM_ARRAYSIZE(PipelineStage_Mod_All); i++) {
-            if (ImGui::Selectable(PipelineStage_Mod_All[i])) {
-              selected_mod = i;
-              pipeline.addModifierFromId(i);
+          for (int i = 0; i < IM_ARRAYSIZE(PipelineStageNames_Mod); i++) {
+            if (ImGui::Selectable(PipelineStageNames_Mod[i])) {
+              pipeline.addModifier(createModifierFromId(i));
             }
           }
           ImGui::EndPopup();
@@ -109,11 +120,35 @@ void updateSideBar(glm::uvec2 windowSize, Pipeline& pipeline) {
       }
 
       if (ImGui::CollapsingHeader("Parameterizer", ImGuiTreeNodeFlags_DefaultOpen)) {
+        if (ImGui::Button("Select Parameterizer...", ImVec2(-1, 0))) {
+          ImGui::OpenPopup("par_select_popup");
+        }
+        if (ImGui::BeginPopup("par_select_popup")) {
+          for (int i = 0; i < IM_ARRAYSIZE(PipelineStageNames_Par); i++) {
+            if (ImGui::Selectable(PipelineStageNames_Par[i])) {
+              pipeline.setParameterizer(createParameterizerFromId(i));
+            }
+          }
+          ImGui::EndPopup();
+        }
+
         auto& par = pipeline.getParameterizer();
         updatePipelineStage(pipeline, par);
       }
 
       if (ImGui::CollapsingHeader("Texture Generator", ImGuiTreeNodeFlags_DefaultOpen)) {
+        if (ImGui::Button("Select Texture Gen...", ImVec2(-1, 0))) {
+          ImGui::OpenPopup("texgen_select_popup");
+        }
+        if (ImGui::BeginPopup("texgen_select_popup")) {
+          for (int i = 0; i < IM_ARRAYSIZE(PipelineStageNames_TexGen); i++) {
+            if (ImGui::Selectable(PipelineStageNames_TexGen[i])) {
+              pipeline.setTextureGenerator(createTextureGeneratorFromId(i));
+            }
+          }
+          ImGui::EndPopup();
+        }
+
         auto& texGen = pipeline.getTextureGenerator();
         updatePipelineStage(pipeline, texGen);
       }

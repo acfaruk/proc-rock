@@ -14,7 +14,7 @@ class DisplaceAlongNormalsModifier : public Modifier {
   virtual PipelineStageInfo& getInfo() override;
 
  private:
-  PipelineStageInfo info{PipelineStage_Mod_DisplaceAlongNormals,
+  PipelineStageInfo info{PipelineStageNames_Mod[PipelineStage_Mod_DisplaceAlongNormals],
                          "Displace all vertices allong their respective normals"};
 
   std::mt19937 rng;

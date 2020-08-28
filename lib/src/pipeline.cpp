@@ -18,20 +18,6 @@ void Pipeline::addModifier(std::unique_ptr<Modifier> modifier) {
   this->modifiers.push_back(std::move(modifier));
 }
 
-void Pipeline::addModifierFromId(unsigned int id) {
-  switch (id) {
-    case 0:
-      addModifier(std::make_unique<SubdivisionModifier>());
-      break;
-    case 1:
-      addModifier(std::make_unique<DisplaceAlongNormalsModifier>());
-      break;
-    default:
-      assert(false);
-      break;
-  }
-}
-
 void Pipeline::movePipelineStageUp(PipelineStage* stage) {
   auto modifier = dynamic_cast<Modifier*>(stage);
   if (modifier != nullptr) {

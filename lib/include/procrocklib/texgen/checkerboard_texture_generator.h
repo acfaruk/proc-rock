@@ -14,7 +14,7 @@ class CheckerboardTextureGenerator : public TextureGenerator {
   std::shared_ptr<Mesh> generate(Mesh* before) override;
 
  private:
-  PipelineStageInfo info{PipelineStage_TexGen_Checkerboard,
+  PipelineStageInfo info{PipelineStageNames_TexGen[PipelineStage_TexGen_Checkerboard],
                          "Generates a simple checkerboard texture to test the parameterization."};
 };
 }  // namespace procrock

@@ -27,17 +27,25 @@ class PipelineStage : public Configurable {
   }
 };
 
-static const char* const PipelineStage_Gen_Cuboid = "Cuboid Generator";
+// Generators
+const unsigned int PipelineStage_Gen_Cuboid = 0;
 
-static const char* const PipelineStage_Mod_Subdivsion = "Subdivision Modifier";              // 0
-static const char* const PipelineStage_Mod_DisplaceAlongNormals = "Displace Along Normals";  // 1
+const char* const PipelineStageNames_Gen[] = {"Cuboid Generator"};
 
-static const char* const PipelineStage_Par_LSCM = "LSCM Parametrization";
-static const char* const PipelineStage_Par_XATLAS = "XATLAS Parametrization";
+// Modifiers
+const unsigned int PipelineStage_Mod_Subdivsion = 0;
+const unsigned int PipelineStage_Mod_DisplaceAlongNormals = 1;
 
-static const char* const PipelineStage_TexGen_Checkerboard = "Checkerboard Generator";
+const char* const PipelineStageNames_Mod[] = {"Subdivision Modifier", "Displace Along Normals"};
 
-static const char* const PipelineStage_Mod_All[] = {PipelineStage_Mod_Subdivsion,
-                                                    PipelineStage_Mod_DisplaceAlongNormals};
+// Parameterizers
+const unsigned int PipelineStage_Par_LSCM = 0;
+const unsigned int PipelineStage_Par_XATLAS = 1;
 
+const char* const PipelineStageNames_Par[] = {"LSCM Parameterizer", "xatlas Parameterizer"};
+
+// Texture Generators
+const unsigned int PipelineStage_TexGen_Checkerboard = 0;
+
+const char* const PipelineStageNames_TexGen[] = {"Checkerboard Generator"};
 }  // namespace procrock
