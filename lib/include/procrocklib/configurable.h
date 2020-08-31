@@ -1,6 +1,9 @@
 #pragma once
 
+#include <Eigen/Core>
+#include <map>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace procrock {
@@ -16,6 +19,11 @@ struct Configuration {
     int* choice;
   };
 
+  struct GradientColoringEntry {
+    Entry entry;
+    std::map<int, Eigen::Vector3f>* colors;
+  };
+
   template <typename T>
   struct BoundedEntry {
     Entry entry;
@@ -26,6 +34,7 @@ struct Configuration {
   std::vector<BoundedEntry<float>> floats;
 
   std::vector<SingleChoiceEntry> singleChoices;
+  std::vector<GradientColoringEntry> gradientColorings;
 };
 class Configurable {
  public:

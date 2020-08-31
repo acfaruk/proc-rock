@@ -12,6 +12,8 @@ class PerlinNoiseTextureGenerator : public TextureGenerator {
 
   int qualityChoice = 2;
 
+  std::map<int, Eigen::Vector3f> colorGradient{{0, {0, 0, 0}}, {100, {1.0f, 1.0f, 1.0f}}};
+
   virtual Configuration getConfiguration() override;
   virtual PipelineStageInfo& getInfo() override;
 

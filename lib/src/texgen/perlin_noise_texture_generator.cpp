@@ -17,7 +17,34 @@ std::shared_ptr<Mesh> PerlinNoiseTextureGenerator::generate(Mesh* before) {
     int value = (255 / 2) * (perlinModule.GetValue(worldPos.x(), worldPos.y(), worldPos.z()) + 1);
     value = std::min(255, value);
     value = std::max(0, value);
-    return Eigen::Vector3i{value, value, value};
+    float fvalue = value / 255.0;
+
+    if (colorGradient.size() == 0) return Eigen::Vector3i{0, 0, 0};
+    if (colorGradient.size() == 1) {
+      Eigen::Vector3i color = (255 * colorGradient.begin()->second).cast<int>();
+      return color;
+    }
+
+    int searchValue = fvalue * 100;
+    auto upper = colorGradient.upper_bound(searchValue);
+    if (upper == colorGradient.begin()) {
+      Eigen::Vector3i color = (255 * colorGradient.begin()->second).cast<int>();
+      return color;
+    }
+    int secondValue = upper->first;
+    Eigen::Vector3f secondColor = upper->second;
+
+    upper--;
+
+    int firstValue = upper->first;
+    Eigen::Vector3f firstColor = upper->second;
+
+    float fraction = (searchValue - firstValue) / (float)(secondValue - firstValue);
+
+    Eigen::Vector3i color =
+        (255 * ((secondColor - firstColor) * fraction + firstColor)).cast<int>();
+
+    return color;
   };
 
   fillTextureFaceBased(*result, result->albedo, colorFunction);
@@ -46,6 +73,12 @@ Configuration PerlinNoiseTextureGenerator::getConfiguration() {
                                         {"Standard Quality", "Standard Quality Noise"},
                                         {"High Quality", "High Quality Noise"}},
                                        &qualityChoice});
+
+  result.gradientColorings.push_back(Configuration::GradientColoringEntry(
+      {{"Coloring",
+        "Color the texture according to a user defined gradient. Color values are defined over the "
+        "range 0-100."},
+       &colorGradient}));
 
   return result;
 }
