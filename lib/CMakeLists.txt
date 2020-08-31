@@ -14,11 +14,15 @@ source_group(TREE ${PROJECT_SOURCE_DIR} FILES ${PROC_ROCK_LIB_SOURCES})
 
 target_include_directories(proc-rock-lib PUBLIC include PRIVATE include/procrocklib src)
 
-
-find_package(glm CONFIG REQUIRED)
-target_link_libraries(proc-rock-lib PUBLIC glm)
-
 find_package(libigl CONFIG REQUIRED)
 target_link_libraries(proc-rock-lib PUBLIC igl::core igl::common)
+
+if (UNIX)
+find_library(NOISELIB noise-static)
+else()
+find_library(NOISELIB noise)
+endif()
+
+target_link_libraries(proc-rock-lib PRIVATE ${NOISELIB})
 
 target_compile_options(proc-rock-lib PUBLIC "$<$<BOOL:${MSVC}>:/permissive->")

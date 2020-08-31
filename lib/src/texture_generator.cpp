@@ -18,7 +18,7 @@ bool TextureGenerator::isRemovable() const { return false; }
 
 void TextureGenerator::fillTextureFaceBased(
     const Mesh& mesh, Texture& tex, std::function<Eigen::Vector3i(Eigen::Vector3d)> colorFunction) {
-  tex.data.resize(tex.data.capacity());
+  tex.data.resize(tex.height * tex.width * 3);
   std::fill(tex.data.begin(), tex.data.end(), 255);
 
   // Loop through faces

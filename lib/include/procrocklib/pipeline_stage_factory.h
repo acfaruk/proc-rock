@@ -13,7 +13,7 @@ std::unique_ptr<Generator> inline createGeneratorFromId(unsigned int id) {
     case PipelineStage_Mod_Subdivsion:
       return std::make_unique<CuboidGenerator>();
     default:
-      assert(0);  // make sure all stages are handled!
+      assert(0 && "make sure all stages are handled!");
   }
 }
 
@@ -24,7 +24,7 @@ std::unique_ptr<Modifier> inline createModifierFromId(unsigned int id) {
     case PipelineStage_Mod_DisplaceAlongNormals:
       return std::make_unique<DisplaceAlongNormalsModifier>();
     default:
-      assert(0);  // make sure all stages are handled!
+      assert(0 && "make sure all stages are handled!");
   }
 }
 
@@ -35,7 +35,7 @@ std::unique_ptr<Parameterizer> inline createParameterizerFromId(unsigned int id)
     case PipelineStage_Mod_DisplaceAlongNormals:
       return std::make_unique<XAtlasParameterizer>();
     default:
-      assert(0);  // make sure all stages are handled!
+      assert(0 && "make sure all stages are handled!");
   }
 }
 
@@ -43,8 +43,10 @@ std::unique_ptr<TextureGenerator> inline createTextureGeneratorFromId(unsigned i
   switch (id) {
     case PipelineStage_TexGen_Checkerboard:
       return std::make_unique<CheckerboardTextureGenerator>();
+    case PipelineStage_TexGen_PerlinNoise:
+      return std::make_unique<PerlinNoiseTextureGenerator>();
     default:
-      assert(0);  // make sure all stages are handled!
+      assert(0 && "make sure all stages are handled!");
   }
 }
 }  // namespace procrock
