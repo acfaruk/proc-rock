@@ -2,6 +2,8 @@
 
 #include <noise/noise.h>
 
+#include "utils/colors.h"
+
 namespace procrock {
 std::shared_ptr<Mesh> PerlinNoiseTextureGenerator::generate(Mesh* before) {
   auto result = std::make_shared<Mesh>(*before);
@@ -14,37 +16,8 @@ std::shared_ptr<Mesh> PerlinNoiseTextureGenerator::generate(Mesh* before) {
   perlinModule.SetNoiseQuality(static_cast<noise::NoiseQuality>(qualityChoice));
 
   auto colorFunction = [&](Eigen::Vector3d worldPos) {
-    int value = (255 / 2) * (perlinModule.GetValue(worldPos.x(), worldPos.y(), worldPos.z()) + 1);
-    value = std::min(255, value);
-    value = std::max(0, value);
-    float fvalue = value / 255.0;
-
-    if (colorGradient.size() == 0) return Eigen::Vector3i{0, 0, 0};
-    if (colorGradient.size() == 1) {
-      Eigen::Vector3i color = (255 * colorGradient.begin()->second).cast<int>();
-      return color;
-    }
-
-    int searchValue = fvalue * 100;
-    auto upper = colorGradient.upper_bound(searchValue);
-    if (upper == colorGradient.begin()) {
-      Eigen::Vector3i color = (255 * colorGradient.begin()->second).cast<int>();
-      return color;
-    }
-    int secondValue = upper->first;
-    Eigen::Vector3f secondColor = upper->second;
-
-    upper--;
-
-    int firstValue = upper->first;
-    Eigen::Vector3f firstColor = upper->second;
-
-    float fraction = (searchValue - firstValue) / (float)(secondValue - firstValue);
-
-    Eigen::Vector3i color =
-        (255 * ((secondColor - firstColor) * fraction + firstColor)).cast<int>();
-
-    return color;
+    float value = perlinModule.GetValue(worldPos.x(), worldPos.y(), worldPos.z()) + 1;
+    return utils::computeColorGradient(colorGradient, 0, 100, value);
   };
 
   fillTextureFaceBased(*result, result->albedo, colorFunction);
