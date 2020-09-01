@@ -10,6 +10,6 @@ struct Mesh {
   Eigen::MatrixXi faces;
   Eigen::MatrixXd uvs;
 
-  Texture albedo;
+  TextureGroup textures;
 };
 }  // namespace procrock

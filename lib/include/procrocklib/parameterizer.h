@@ -16,6 +16,7 @@ class Parameterizer : public PipelineStage {
 
  protected:
   virtual std::shared_ptr<Mesh> parameterize(Mesh* mesh) = 0;
+  void fillTextureMapFaceBased(Mesh& mesh);
 
  private:
   std::shared_ptr<Mesh> mesh;

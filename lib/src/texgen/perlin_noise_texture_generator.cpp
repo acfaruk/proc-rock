@@ -20,8 +20,7 @@ std::shared_ptr<Mesh> PerlinNoiseTextureGenerator::generate(Mesh* before) {
     return utils::computeColorGradient(colorGradient, 0, 100, value);
   };
 
-  fillTextureFaceBased(*result, result->albedo, colorFunction);
-
+  fillTexture(result->textures, result->textures.albedoData, colorFunction);
   return result;
 }
 

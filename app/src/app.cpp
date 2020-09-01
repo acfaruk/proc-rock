@@ -128,8 +128,8 @@ bool App::update() {
   auto mesh = pipeline->getCurrentMesh();
   drawableMesh = std::make_unique<DrawableMesh>(*mesh);
 
-  renderTextureAlbedo->loadFromData(mesh->albedo.data.data(), mesh->albedo.width,
-                                    mesh->albedo.height);
+  renderTextureAlbedo->loadFromData(mesh->textures.albedoData.data(), mesh->textures.width,
+                                    mesh->textures.height);
   mainShader->textures["albedo"] = renderTextureAlbedo.get();
 
   gui::update(this->getWindowSize(), *viewerFramebuffer, *pipeline);

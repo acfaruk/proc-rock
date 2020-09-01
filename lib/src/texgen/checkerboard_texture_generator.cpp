@@ -6,25 +6,25 @@ namespace procrock {
 std::shared_ptr<Mesh> CheckerboardTextureGenerator::generate(Mesh* before) {
   auto result = std::make_shared<Mesh>(*before);
 
-  Texture albedo;
-  albedo.data.reserve(albedo.width * albedo.height * 3);
+  TextureGroup textures;
+  textures.albedoData.reserve(textures.width * textures.height * 3);
 
   switch (mode) {
     case 0:  // Normal UV based
     {
-      unsigned int squareWidth = albedo.width / squares;
-      for (int x = 0; x < albedo.width; x++) {
-        for (int y = 0; y < albedo.height; y++) {
+      unsigned int squareWidth = textures.width / squares;
+      for (int x = 0; x < textures.width; x++) {
+        for (int y = 0; y < textures.height; y++) {
           int rx = std::floor((x / (float)squareWidth));
           int ry = std::floor((y / (float)squareWidth));
           if ((rx + ry) % 2 == 0) {
-            albedo.data.emplace_back(255);
-            albedo.data.emplace_back(255);
-            albedo.data.emplace_back(255);
+            textures.albedoData.emplace_back(255);
+            textures.albedoData.emplace_back(255);
+            textures.albedoData.emplace_back(255);
           } else {
-            albedo.data.emplace_back(0);
-            albedo.data.emplace_back(0);
-            albedo.data.emplace_back(0);
+            textures.albedoData.emplace_back(0);
+            textures.albedoData.emplace_back(0);
+            textures.albedoData.emplace_back(0);
           }
         }
       }
@@ -41,11 +41,10 @@ std::shared_ptr<Mesh> CheckerboardTextureGenerator::generate(Mesh* before) {
         return Eigen::Vector3i{value, value, value};
       };
 
-      fillTextureFaceBased(*before, albedo, colorFunction);
-      // fillTexturePixelBased(*before, albedo, colorFunction);
+      fillTexture(result->textures, result->textures.albedoData, colorFunction);
     } break;
   }
-  result->albedo = albedo;
+  result->textures = textures;
   return result;
 }
 
