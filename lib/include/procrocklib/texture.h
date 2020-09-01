@@ -13,5 +13,6 @@ struct TextureGroup {
   std::vector<std::vector<Eigen::Vector3d>> worldMap;
 
   std::vector<unsigned char> albedoData;
+  std::vector<unsigned char> normalData;
 };
 }  // namespace procrock

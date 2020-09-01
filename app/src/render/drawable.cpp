@@ -15,6 +15,9 @@ Drawable::~Drawable() {
   if (this->normalBufferID != 0) {
     glDeleteBuffers(1, &this->normalBufferID);
   }
+  if (this->tangentBufferID != 0) {
+    glDeleteBuffers(1, &this->tangentBufferID);
+  }
   if (this->texCoordsBufferID != 0) {
     glDeleteBuffers(1, &this->texCoordsBufferID);
   }
@@ -43,10 +46,12 @@ void Drawable::draw(const Camera& cam, Shader& shader, bool updateMVP) const {
 }
 
 void Drawable::createBuffers(unsigned int posAttribLoc, unsigned int colAttribLoc,
-                             unsigned int normAttribLoc, unsigned int texCoordsAttribLoc) {
+                             unsigned int normAttribLoc, unsigned int tanAttribLoc,
+                             unsigned int texCoordsAttribLoc) {
   const std::vector<glm::vec3>& positions = getPositions();
   const std::vector<glm::vec3>& colors = getColors();
   const std::vector<glm::vec3>& normals = getNormals();
+  const std::vector<glm::vec3>& tangents = getTangents();
   const std::vector<glm::vec2>& texCoords = getTexCoords();
 
   // Initialize Vertex Array Object
@@ -71,6 +76,7 @@ void Drawable::createBuffers(unsigned int posAttribLoc, unsigned int colAttribLo
     glVertexAttribPointer(colAttribLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(colAttribLoc);
   }
+
   // normals
   if (normals.size() != 0) {
     glGenBuffers(1, &normalBufferID);
@@ -79,6 +85,16 @@ void Drawable::createBuffers(unsigned int posAttribLoc, unsigned int colAttribLo
                  GL_STATIC_DRAW);
     glVertexAttribPointer(normAttribLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(normAttribLoc);
+  }
+
+  // tangents
+  if (tangents.size() != 0) {
+    glGenBuffers(1, &tangentBufferID);
+    glBindBuffer(GL_ARRAY_BUFFER, tangentBufferID);
+    glBufferData(GL_ARRAY_BUFFER, tangents.size() * sizeof(glm::vec3), tangents.data(),
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(tanAttribLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(tanAttribLoc);
   }
 
   // texture coordinates

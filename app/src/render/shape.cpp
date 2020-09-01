@@ -8,6 +8,7 @@ const std::vector<glm::vec3> &Shape::getPositions() const { return this->positio
 const std::vector<glm::vec3> &Shape::getNormals() const { return this->normals; }
 const std::vector<glm::uvec3> &Shape::getFaces() const { return this->faces; }
 const std::vector<glm::vec3> &Shape::getFaceNormals() const { return this->faceNormals; }
+const std::vector<glm::vec3> &Shape::getTangents() const { return this->tangents; }
 const std::vector<glm::vec3> &Shape::getColors() const { return this->colors; }
 const std::vector<glm::vec2> &Shape::getTexCoords() const { return this->texCoords; }
 const std::vector<glm::uvec2> &Shape::getLineIndices() const { return lineIndices; }

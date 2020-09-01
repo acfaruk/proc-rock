@@ -26,7 +26,8 @@ class Drawable {
   virtual void draw(const Camera& cam, Shader& shader, bool updateMVP = true) const;
 
   void createBuffers(unsigned int posAttribLoc = 0, unsigned int colAttribLoc = 1,
-                     unsigned int normAttribLoc = 2, unsigned int texCoordsAttribLoc = 3);
+                     unsigned int normAttribLoc = 2, unsigned int tanAttribLoc = 3,
+                     unsigned int texCoordsAttribLoc = 4);
 
  protected:
   unsigned int getIndexBufferId() const;
@@ -38,6 +39,7 @@ class Drawable {
   unsigned int posBufferID = 0;
   unsigned int colorBufferID = 0;
   unsigned int normalBufferID = 0;
+  unsigned int tangentBufferID = 0;
   unsigned int texCoordsBufferID = 0;
   unsigned int indexBufferID = 0;
 
@@ -45,6 +47,7 @@ class Drawable {
   virtual const std::vector<glm::vec3>& getNormals() const = 0;
   virtual const std::vector<glm::uvec3>& getFaces() const = 0;
   virtual const std::vector<glm::vec3>& getFaceNormals() const = 0;
+  virtual const std::vector<glm::vec3>& getTangents() const = 0;
   virtual const std::vector<glm::vec3>& getColors() const = 0;
   virtual const std::vector<glm::vec2>& getTexCoords() const = 0;
   virtual const glm::mat4& getModelMatrix() const = 0;

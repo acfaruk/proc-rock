@@ -10,6 +10,7 @@ class Shape {
   const std::vector<glm::vec3>& getNormals() const;
   const std::vector<glm::uvec3>& getFaces() const;
   const std::vector<glm::vec3>& getFaceNormals() const;
+  const std::vector<glm::vec3>& getTangents() const;
   const std::vector<glm::vec3>& getColors() const;
   const std::vector<glm::vec2>& getTexCoords() const;
   const std::vector<glm::uvec2>& getLineIndices() const;

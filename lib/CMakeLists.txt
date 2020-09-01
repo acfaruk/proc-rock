@@ -17,6 +17,9 @@ target_include_directories(proc-rock-lib PUBLIC include PRIVATE include/procrock
 find_package(libigl CONFIG REQUIRED)
 target_link_libraries(proc-rock-lib PUBLIC igl::core igl::common)
 
+find_package(CImg CONFIG REQUIRED)
+target_link_libraries(proc-rock-lib PRIVATE CImg::CImg)
+
 if (UNIX)
 find_library(NOISELIB noise-static)
 else()

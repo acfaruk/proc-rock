@@ -20,6 +20,32 @@ DrawableMesh::DrawableMesh(Mesh& mesh) {
     this->texCoords.emplace_back(row(0), row(1));
   }
 
+  // Calculate tangents
+  tangents.resize(positions.size());
+  for (int i = 0; i < faces.size(); i++) {
+    glm::vec3& v0 = positions[faces[i].x];
+    glm::vec3& v1 = positions[faces[i].y];
+    glm::vec3& v2 = positions[faces[i].z];
+
+    glm::vec2& uv0 = texCoords[faces[i].x];
+    glm::vec2& uv1 = texCoords[faces[i].y];
+    glm::vec2& uv2 = texCoords[faces[i].z];
+
+    glm::vec3 deltaPos1 = v1 - v0;
+    glm::vec3 deltaPos2 = v2 - v0;
+
+    glm::vec2 deltaUV1 = uv1 - uv0;
+    glm::vec2 deltaUV2 = uv2 - uv0;
+
+    float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
+
+    glm::vec3 tangent = (deltaPos1 * deltaUV2.y - deltaPos2 * deltaUV1.y) * r;
+
+    tangents[faces[i].x] = tangent;
+    tangents[faces[i].y] = tangent;
+    tangents[faces[i].z] = tangent;
+  }
+
   createBuffers();
 }
 }  // namespace procrock

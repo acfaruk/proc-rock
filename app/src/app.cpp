@@ -115,6 +115,7 @@ bool App::init() {
   viewerFramebuffer = std::make_unique<Framebuffer>(glm::uvec2(200, 200));
 
   renderTextureAlbedo = std::make_unique<RenderTexture>();
+  renderTextureNormal = std::make_unique<RenderTexture>();
 
   InputManager::registerInputReceiver(mainCam.get());
 
@@ -130,7 +131,12 @@ bool App::update() {
 
   renderTextureAlbedo->loadFromData(mesh->textures.albedoData.data(), mesh->textures.width,
                                     mesh->textures.height);
+
+  renderTextureNormal->loadFromData(mesh->textures.normalData.data(), mesh->textures.width,
+                                    mesh->textures.height);
+
   mainShader->textures["albedo"] = renderTextureAlbedo.get();
+  mainShader->textures["normalMap"] = renderTextureNormal.get();
 
   gui::update(this->getWindowSize(), *viewerFramebuffer, *pipeline);
 

@@ -1,14 +1,15 @@
 #include "texture_generator.h"
 
+#include <CImg.h>
 #include <igl/barycentric_coordinates.h>
 
 #include <chrono>
-#include <iostream>
 
 namespace procrock {
 std::shared_ptr<Mesh> TextureGenerator::run(Mesh* before) {
   if (isChanged() || firstRun) {
     mesh = generate(before);
+    calculateNormals(mesh->textures, mesh->textures.normalData);
   }
 
   if (firstRun) firstRun = !firstRun;
@@ -39,6 +40,29 @@ void TextureGenerator::fillTexture(const TextureGroup& texGroup,
       dataToFill[(3 * index) + 2] = acc.z();
     }
     index++;
+  }
+}
+void TextureGenerator::calculateNormals(const TextureGroup& texGroup,
+                                        std::vector<unsigned char>& dataToFill) {
+  using namespace cimg_library;
+
+  dataToFill.clear();
+  dataToFill.resize(texGroup.width * texGroup.height * 3);
+
+  CImg<unsigned char> image(texGroup.albedoData.data(), 3, texGroup.width, texGroup.height);
+  image.permute_axes("YZCX");
+  auto gradients = image.get_gradient(0, 2);
+  for (int i = 0; i < texGroup.width * texGroup.height; i++) {
+    Eigen::Vector3f normal;
+    normal.x() = gradients[0].data()[i];
+    normal.y() = gradients[1].data()[i];
+    normal.z() = 1.0 / 2;
+    normal = normal.normalized();
+    normal = 255 * normal;
+
+    dataToFill[(3 * i)] = (int)normal.x();
+    dataToFill[(3 * i) + 1] = (int)normal.y();
+    dataToFill[(3 * i) + 2] = (int)normal.z();
   }
 }
 }  // namespace procrock

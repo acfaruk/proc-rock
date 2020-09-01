@@ -41,6 +41,7 @@ class App {
   std::unique_ptr<Camera> mainCam;
   std::unique_ptr<Shader> mainShader;
   std::unique_ptr<RenderTexture> renderTextureAlbedo;
+  std::unique_ptr<RenderTexture> renderTextureNormal;
 
   std::unique_ptr<Pipeline> pipeline;
   std::unique_ptr<DrawableMesh> drawableMesh;

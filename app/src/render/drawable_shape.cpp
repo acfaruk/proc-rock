@@ -8,6 +8,7 @@ const std::vector<glm::uvec3>& DrawableShape::getFaces() const { return Shape::g
 const std::vector<glm::vec3>& DrawableShape::getFaceNormals() const {
   return Shape::getFaceNormals();
 }
+const std::vector<glm::vec3>& DrawableShape::getTangents() const { return Shape::getTangents(); }
 const std::vector<glm::vec3>& DrawableShape::getColors() const { return Shape::getColors(); }
 const std::vector<glm::vec2>& DrawableShape::getTexCoords() const { return Shape::getTexCoords(); }
 const glm::mat4& DrawableShape::getModelMatrix() const { return Shape::getModelMatrix(); }
