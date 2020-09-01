@@ -3,8 +3,6 @@
 #include <CImg.h>
 #include <igl/barycentric_coordinates.h>
 
-#include <chrono>
-
 namespace procrock {
 std::shared_ptr<Mesh> TextureGenerator::run(Mesh* before) {
   if (isChanged() || firstRun) {
