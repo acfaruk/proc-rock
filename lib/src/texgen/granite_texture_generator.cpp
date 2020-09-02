@@ -83,7 +83,7 @@ Configuration GraniteTextureGenerator::getConfiguration() {
         "range 0-100."},
        &colorGradient}));
 
-  Configuration result;
+  Configuration result = getBaseConfiguration();
   result.configGroups.push_back(noiseGroup);
   result.configGroups.push_back(colorGroup);
   return result;

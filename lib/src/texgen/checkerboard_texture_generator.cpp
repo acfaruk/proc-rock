@@ -60,7 +60,7 @@ Configuration CheckerboardTextureGenerator::getConfiguration() {
        {"Global Mesh based", "Projects a 3D checkerboard to the texture."}},
       &mode});
 
-  Configuration result;
+  Configuration result = getBaseConfiguration();
   result.configGroups.push_back(group);
   return result;
 }

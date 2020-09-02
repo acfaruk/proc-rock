@@ -3,6 +3,8 @@
 #include <CImg.h>
 #include <igl/barycentric_coordinates.h>
 
+#include <iostream>
+
 namespace procrock {
 std::shared_ptr<Mesh> TextureGenerator::run(Mesh* before) {
   if (isChanged() || firstRun) {
@@ -17,6 +19,19 @@ std::shared_ptr<Mesh> TextureGenerator::run(Mesh* before) {
 // Texture Generators can be neither moved nor removed from the pipeline
 bool TextureGenerator::isMoveable() const { return false; }
 bool TextureGenerator::isRemovable() const { return false; }
+
+Configuration TextureGenerator::getBaseConfiguration() {
+  Configuration::ConfigurationGroup baseGroup;
+  baseGroup.entry = {"Base Settings", "Change General Texture generation settings"};
+  baseGroup.floats.emplace_back(Configuration::BoundedEntry<float>{
+      {"Normal Strength", "How \"deep / high\" the normals should be."},
+      &normalStrength,
+      0.001f,
+      2.0f});
+  Configuration result;
+  result.configGroups.push_back(baseGroup);
+  return result;
+}
 
 void TextureGenerator::fillTexture(const TextureGroup& texGroup,
                                    std::vector<unsigned char>& dataToFill,
@@ -49,12 +64,12 @@ void TextureGenerator::calculateNormals(const TextureGroup& texGroup,
 
   CImg<unsigned char> image(texGroup.albedoData.data(), 3, texGroup.width, texGroup.height);
   image.permute_axes("YZCX");
-  auto gradients = image.get_gradient(0, 2);
+  auto gradients = image.get_gradient("xy", 2);
   for (int i = 0; i < texGroup.width * texGroup.height; i++) {
     Eigen::Vector3f normal;
-    normal.x() = gradients[0].data()[i];
-    normal.y() = gradients[1].data()[i];
-    normal.z() = 1.0 / 2;
+    normal.x() = (gradients[0](i) + 1024) / 2048.0;
+    normal.y() = (gradients[1](i) + 1024) / 2048.0;
+    normal.z() = 1 / normalStrength;
     normal = normal.normalized();
     normal = 255 * normal;
 
