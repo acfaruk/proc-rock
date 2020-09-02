@@ -66,7 +66,7 @@ std::shared_ptr<Mesh> XAtlasParameterizer::parameterize(Mesh* mesh) {
 }
 
 Configuration XAtlasParameterizer::getConfiguration() {
-  Configuration result;
+  Configuration result = getBaseConfiguration();
   return result;
 }
 

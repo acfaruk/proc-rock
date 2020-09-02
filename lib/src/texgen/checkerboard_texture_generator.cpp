@@ -28,6 +28,7 @@ std::shared_ptr<Mesh> CheckerboardTextureGenerator::generate(Mesh* before) {
           }
         }
       }
+      result->textures = textures;
 
     } break;
     case 1:  // Global Mesh based
@@ -44,7 +45,6 @@ std::shared_ptr<Mesh> CheckerboardTextureGenerator::generate(Mesh* before) {
       fillTexture(result->textures, result->textures.albedoData, colorFunction);
     } break;
   }
-  result->textures = textures;
   return result;
 }
 

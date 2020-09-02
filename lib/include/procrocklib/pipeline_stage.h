@@ -19,6 +19,8 @@ class PipelineStage : public Configurable {
   virtual bool isMoveable() const = 0;
   virtual bool isRemovable() const = 0;
 
+  virtual inline Configuration getBaseConfiguration() { return Configuration(); };
+
   inline std::string getId() {
     // Each instance gets its id from its name and memory location
     std::ostringstream oss;

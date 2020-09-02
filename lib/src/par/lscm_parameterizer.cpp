@@ -119,7 +119,7 @@ Configuration LSCM_Parameterizer::getConfiguration() {
   group.floats.emplace_back(Configuration::BoundedEntry<float>{
       {"Scaling", "Scale the uv's by this amount"}, &scaling, 0.1, 1});
 
-  Configuration result;
+  Configuration result = getBaseConfiguration();
   result.configGroups.push_back(group);
   return result;
 }
