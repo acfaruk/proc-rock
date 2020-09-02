@@ -138,7 +138,7 @@ bool App::update() {
   mainShader->textures["albedo"] = renderTextureAlbedo.get();
   mainShader->textures["normalMap"] = renderTextureNormal.get();
 
-  gui::update(this->getWindowSize(), *viewerFramebuffer, *pipeline);
+  gui::update(this->getWindowSize(), *viewerFramebuffer, *pipeline, *mainShader);
 
   mainCam->setViewport(gui::viewer.size);
   mainShader->uniforms3f["camPos"] = mainCam->getPosition();

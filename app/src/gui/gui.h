@@ -7,6 +7,7 @@
 #include <map>
 
 #include "../render/framebuffer.h"
+#include "../render/shader.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
@@ -14,12 +15,14 @@ namespace procrock {
 namespace gui {
 
 void init(GLFWwindow* window, const std::string& path);
-void update(glm::uvec2 windowSize, Framebuffer& viewerFrame, Pipeline& pipeline);
+void update(glm::uvec2 windowSize, Framebuffer& viewerFrame, Pipeline& pipeline,
+            const Shader& shader);
 
 void updateMainMenu();
 void updateSideBar(glm::uvec2 windowSize, Pipeline& pipeline);
 void updateViewer(glm::uvec2 windowSize, Framebuffer& viewerFrame);
 void updateStatusBar(glm::uvec2 windowSize);
+void updateWindows(const Shader& shader);
 
 void updateViewSettings();
 
@@ -72,10 +75,19 @@ struct StatusBar {
   const int height = 35;
 };
 
+struct TextureWindow {
+  bool show = false;
+};
+
+struct Windows {
+  TextureWindow textureWindow;
+};
+
 extern MainMenu mainMenu;
 extern SideBar sideBar;
 extern Viewer viewer;
 extern StatusBar statusBar;
+extern Windows windows;
 
 }  // namespace gui
 

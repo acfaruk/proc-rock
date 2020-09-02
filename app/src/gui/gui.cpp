@@ -14,6 +14,7 @@ MainMenu mainMenu;
 SideBar sideBar;
 Viewer viewer;
 StatusBar statusBar;
+Windows windows;
 
 void init(GLFWwindow* window, const std::string& path) {
   IMGUI_CHECKVERSION();
@@ -37,20 +38,17 @@ void init(GLFWwindow* window, const std::string& path) {
   io.Fonts->AddFontFromFileTTF(icon_font.c_str(), 17.0f, &config, icon_ranges);
 }
 
-void update(glm::uvec2 windowSize, Framebuffer& viewerFrame, Pipeline& pipeline) {
+void update(glm::uvec2 windowSize, Framebuffer& viewerFrame, Pipeline& pipeline,
+            const Shader& shader) {
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
-
-  /*ImGui::Begin("Test");
-  ImGui::Image((ImTextureID)(uint64_t)3, ImVec2((float)300, (float)300), ImVec2(0, 1),
-               ImVec2(1, 0));
-  ImGui::End();*/
 
   updateMainMenu();
   updateSideBar(windowSize, pipeline);
   updateViewer(windowSize, viewerFrame);
   updateStatusBar(windowSize);
+  updateWindows(shader);
 
   ImGui::EndFrame();
   ImGui::Render();
@@ -67,6 +65,12 @@ void updateMainMenu() {
       }
       ImGui::EndMenu();
     }
+
+    if (ImGui::BeginMenu("Windows")) {
+      ImGui::MenuItem("Textures", 0, &windows.textureWindow.show);
+      ImGui::EndMenu();
+    }
+
     ImGui::EndMainMenuBar();
   }
 }
@@ -202,6 +206,29 @@ void updateStatusBar(glm::uvec2 windowSize) {
               ImGui::GetIO().Framerate);
 
   ImGui::End();
+}
+
+void updateWindows(const Shader& shader) {
+  if (windows.textureWindow.show) {
+    ImGui::SetNextWindowSizeConstraints(ImVec2(512, 580), ImVec2(512, 580));
+    ImGui::Begin("Textures", &windows.textureWindow.show);
+    ImGui::BeginTabBar("textures-tab-bar");
+
+    if (ImGui::BeginTabItem("Albedo")) {
+      ImGui::Image((ImTextureID)(uint64_t)shader.textures.at("albedo")->getID(),
+                   ImVec2((float)512, (float)512), ImVec2(0, 1), ImVec2(1, 0));
+      ImGui::EndTabItem();
+    }
+
+    if (ImGui::BeginTabItem("Normals")) {
+      ImGui::Image((ImTextureID)(uint64_t)shader.textures.at("normalMap")->getID(),
+                   ImVec2((float)512, (float)512), ImVec2(0, 1), ImVec2(1, 0));
+      ImGui::EndTabItem();
+    }
+
+    ImGui::EndTabBar();
+    ImGui::End();
+  }
 }
 
 void updateViewSettings() {
