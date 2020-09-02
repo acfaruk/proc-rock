@@ -10,32 +10,43 @@ out vec3 vertexColor;
 out vec3 vertexNormal;
 out vec3 vertexTangent;
 out vec3 fragPos;
-out vec3 worldPos;
 out vec2 texCoord;
-out mat3 TBN;
+
+out TangentSpace {
+	vec3 lightPos;
+	vec3 camPos;
+	vec3 fragPos;
+} tangentSpace;
 
 uniform mat4 modelMatrix;
 uniform mat4 mvpMatrix;
 uniform bool vertexColored;
+uniform vec3 camPos;
+uniform vec3 lightPos;
 
 void main(){
+
 	vec3 vBitangent = cross(vNormal, vTangent);
+	fragPos = vec3(modelMatrix * vec4(vPosition, 1));
 
-	vec3 T = normalize(vec3(modelMatrix * vec4(vTangent, 0.0)));
-	vec3 B = normalize(vec3(modelMatrix * vec4(vBitangent, 0.0)));
-	vec3 N = normalize(vec3(modelMatrix * vec4(vNormal, 0.0)));
-	TBN = mat3(T, B, N);
+	mat3 normalMatrix = transpose(inverse(mat3(modelMatrix)));
+	vec3 T = normalize(normalMatrix * vTangent);
+	vec3 N = normalize(normalMatrix * vNormal);
+	T = normalize(T - dot(T, N) * N);
+	vec3 B = cross(N, T);
+	mat3 TBN = transpose(mat3(T, B, N));
 
-	worldPos = vec3(modelMatrix * vec4(vPosition, 1));
+	tangentSpace.lightPos = TBN * lightPos;
+	tangentSpace.camPos = TBN * camPos;
+	tangentSpace.fragPos = TBN * fragPos;
+	
 	if (vertexColored){
 		vertexColor = vColor;
 	}else{
 		vertexColor = vec3(1, 1, 1);
 	}
-//	vertexColor = vColor;
 	vertexNormal = vNormal;
 	vertexTangent = vTangent;
 	texCoord = vTexCoords;
-	fragPos = vPosition;
 	gl_Position = mvpMatrix * vec4(vPosition, 1);
 }
