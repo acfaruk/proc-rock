@@ -30,11 +30,17 @@ struct Configuration {
     T* data;
     T min, max;
   };
-  std::vector<BoundedEntry<int>> ints;
-  std::vector<BoundedEntry<float>> floats;
 
-  std::vector<SingleChoiceEntry> singleChoices;
-  std::vector<GradientColoringEntry> gradientColorings;
+  struct ConfigurationGroup {
+    Entry entry;
+    std::vector<BoundedEntry<int>> ints;
+    std::vector<BoundedEntry<float>> floats;
+
+    std::vector<SingleChoiceEntry> singleChoices;
+    std::vector<GradientColoringEntry> gradientColorings;
+  };
+
+  std::vector<ConfigurationGroup> configGroups;
 };
 class Configurable {
  public:

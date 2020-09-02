@@ -24,13 +24,17 @@ std::shared_ptr<Mesh> DisplaceAlongNormalsModifier::modify(Mesh& mesh) {
   return result;
 }
 Configuration DisplaceAlongNormalsModifier::getConfiguration() {
-  Configuration result;
+  Configuration::ConfigurationGroup group;
 
-  result.ints.emplace_back(
+  group.entry = {"General Settings", "Set various parameters of the displacement."};
+  group.ints.emplace_back(
       Configuration::BoundedEntry<int>{{"Seed", "Seed for the rng"}, &seed, 0, 100000});
 
-  result.floats.emplace_back(Configuration::BoundedEntry<float>{
+  group.floats.emplace_back(Configuration::BoundedEntry<float>{
       {"Factor", "Amount of displacement"}, &factor, 0.001, 0.2});
+
+  Configuration result;
+  result.configGroups.push_back(group);
   return result;
 }
 PipelineStageInfo& DisplaceAlongNormalsModifier::getInfo() { return info; }

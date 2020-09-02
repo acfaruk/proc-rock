@@ -48,14 +48,17 @@ std::shared_ptr<Mesh> CuboidGenerator::generate() {
 }
 
 Configuration CuboidGenerator::getConfiguration() {
-  Configuration result;
-
-  result.floats.emplace_back(
+  Configuration::ConfigurationGroup group;
+  group.entry = {"General Settings", "Set various parameters of the cuboid."};
+  group.floats.emplace_back(
       Configuration::BoundedEntry<float>{"Length", "Length of the Cuboid", &length, 0.1f, 1.0f});
-  result.floats.emplace_back(
+  group.floats.emplace_back(
       Configuration::BoundedEntry<float>{"Height", "Height of the Cuboid", &height, 0.1f, 1.0f});
-  result.floats.emplace_back(
+  group.floats.emplace_back(
       Configuration::BoundedEntry<float>{"Depth ", "Depth of the Cuboid", &depth, 0.1f, 1.0f});
+
+  Configuration result;
+  result.configGroups.push_back(group);
   return result;
 }
 PipelineStageInfo& CuboidGenerator::getInfo() { return info; }

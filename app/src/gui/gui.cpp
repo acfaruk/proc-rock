@@ -256,7 +256,7 @@ void updatePipelineStage(Pipeline& pipeline, PipelineStage& stage) {
 
   // Configurable stuff of the stage
   if (sideBar.stageData[id].visible) {
-    ImGui::SetNextWindowSize(ImVec2(sideBar.width, -1));
+    ImGui::SetNextWindowSizeConstraints(ImVec2(sideBar.width, 100), ImVec2(FLT_MAX, FLT_MAX));
     ImGui::Begin(id.c_str(), &sideBar.stageData[id].visible);
     updateConfigurable(stage);
     ImGui::End();
@@ -268,46 +268,48 @@ void updateConfigurable(Configurable& configurable) {
   auto config = configurable.getConfiguration();
   bool changed = false;
 
-  for (auto var : config.singleChoices) {
-    const char* preview_value = var.choices[*var.choice].name.c_str();
-    if (ImGui::BeginCombo(var.entry.name.c_str(), preview_value)) {
-      for (int i = 0; i < var.choices.size(); i++) {
-        bool item_selected = i == *var.choice;
+  for (auto group : config.configGroups) {
+    ImGui::Text(group.entry.name.c_str());
+    ImGui::Separator();
+    ImGui::TextWrapped(group.entry.description.c_str());
+    for (auto var : group.singleChoices) {
+      const char* preview_value = var.choices[*var.choice].name.c_str();
+      if (ImGui::BeginCombo(var.entry.name.c_str(), preview_value)) {
+        for (int i = 0; i < var.choices.size(); i++) {
+          bool item_selected = i == *var.choice;
 
-        ImGui::PushID((void*)(intptr_t)i);
-        if (ImGui::Selectable(var.choices[i].name.c_str(), item_selected)) {
-          *var.choice = i;
-          changed = true;
+          ImGui::PushID((void*)(intptr_t)i);
+          if (ImGui::Selectable(var.choices[i].name.c_str(), item_selected)) {
+            *var.choice = i;
+            changed = true;
+          }
+          if (ImGui::IsItemActive() || ImGui::IsItemHovered()) {
+            ImGui::SetTooltip(var.choices[i].description.c_str());
+          }
+          if (item_selected) ImGui::SetItemDefaultFocus();
+          ImGui::PopID();
         }
-        if (ImGui::IsItemActive() || ImGui::IsItemHovered()) {
-          ImGui::SetTooltip(var.choices[i].description.c_str());
-        }
-        if (item_selected) ImGui::SetItemDefaultFocus();
-        ImGui::PopID();
+        ImGui::EndCombo();
       }
-      ImGui::EndCombo();
+      ImGui::SameLine();
+      helpMarker(var.entry.description);
     }
-    ImGui::SameLine();
-    helpMarker(var.entry.description);
-  }
-  for (auto var : config.floats) {
-    ImGui::SliderFloat(var.entry.name.c_str(), var.data, var.min, var.max);
-    changed |= ImGui::IsItemEdited();
-    ImGui::SameLine();
-    helpMarker(var.entry.description);
-  }
-
-  for (auto var : config.ints) {
-    ImGui::SliderInt(var.entry.name.c_str(), var.data, var.min, var.max);
-    changed |= ImGui::IsItemEdited();
-    ImGui::SameLine();
-    helpMarker(var.entry.description);
-  }
-
-  for (auto gradient : config.gradientColorings) {
-    if (ImGui::CollapsingHeader(gradient.entry.name.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
-      ImGui::TextWrapped(gradient.entry.description.c_str());
-
+    for (auto var : group.floats) {
+      ImGui::SliderFloat(var.entry.name.c_str(), var.data, var.min, var.max);
+      changed |= ImGui::IsItemEdited();
+      ImGui::SameLine();
+      helpMarker(var.entry.description);
+    }
+    for (auto var : group.ints) {
+      ImGui::SliderInt(var.entry.name.c_str(), var.data, var.min, var.max);
+      changed |= ImGui::IsItemEdited();
+      ImGui::SameLine();
+      helpMarker(var.entry.description);
+    }
+    for (auto gradient : group.gradientColorings) {
+      ImGui::Text(gradient.entry.name.c_str());
+      ImGui::SameLine();
+      helpMarker(gradient.entry.description);
       int to_be_removed = -1;
       int id = 0;
       for (auto& x : *gradient.colors) {
@@ -338,6 +340,7 @@ void updateConfigurable(Configurable& configurable) {
         changed = true;
       }
     }
+    ImGui::Dummy(ImVec2(0, 20));
   }
 
   configurable.setChanged(changed);

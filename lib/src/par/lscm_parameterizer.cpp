@@ -114,9 +114,13 @@ std::shared_ptr<Mesh> LSCM_Parameterizer::parameterize(Mesh* mesh) {
 }
 
 Configuration LSCM_Parameterizer::getConfiguration() {
-  Configuration result;
-  result.floats.emplace_back(Configuration::BoundedEntry<float>{
+  Configuration::ConfigurationGroup group;
+  group.entry = {"General Settings", "Set various parameters of the displacement."};
+  group.floats.emplace_back(Configuration::BoundedEntry<float>{
       {"Scaling", "Scale the uv's by this amount"}, &scaling, 0.1, 1});
+
+  Configuration result;
+  result.configGroups.push_back(group);
   return result;
 }
 

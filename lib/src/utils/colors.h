@@ -8,7 +8,7 @@ namespace procrock {
 namespace utils {
 Eigen::Vector3i inline computeColorGradient(std::map<int, Eigen::Vector3f>& gradient, int min,
                                             int max, float value) {
-  float cappedValue = std::min(255.0f, std::max(0.0f, value));
+  float cappedValue = std::min(1.0f, std::max(0.0f, value));
   int gradientValue = 100 * cappedValue;
 
   if (gradient.size() == 0) {

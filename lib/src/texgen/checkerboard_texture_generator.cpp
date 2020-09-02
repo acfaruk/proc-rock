@@ -49,16 +49,19 @@ std::shared_ptr<Mesh> CheckerboardTextureGenerator::generate(Mesh* before) {
 }
 
 Configuration CheckerboardTextureGenerator::getConfiguration() {
-  Configuration result;
-  result.ints.emplace_back(Configuration::BoundedEntry<int>{
+  Configuration::ConfigurationGroup group;
+  group.entry = {"General Settings", "Set various parameters of the checkerboard."};
+  group.ints.emplace_back(Configuration::BoundedEntry<int>{
       {"Squares", "How many squares per dimension"}, &squares, 2, 100});
 
-  result.singleChoices.emplace_back(Configuration::SingleChoiceEntry{
+  group.singleChoices.emplace_back(Configuration::SingleChoiceEntry{
       {"Type", "Select how the Checkerboard should be generated"},
       {{"Simple UV based", "Creates a 2D checkerboard texture."},
        {"Global Mesh based", "Projects a 3D checkerboard to the texture."}},
       &mode});
 
+  Configuration result;
+  result.configGroups.push_back(group);
   return result;
 }
 PipelineStageInfo& CheckerboardTextureGenerator::getInfo() { return info; }

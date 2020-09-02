@@ -39,16 +39,20 @@ std::shared_ptr<Mesh> SubdivisionModifier::modify(Mesh& mesh) {
   return result;
 }
 Configuration SubdivisionModifier::getConfiguration() {
-  Configuration result;
+  Configuration::ConfigurationGroup group;
 
-  result.ints.emplace_back(
+  group.entry = {"General Settings", "Set various parameters of the subdivision."};
+  group.ints.emplace_back(
       Configuration::BoundedEntry<int>{{"Subdivs", "How often to subdivide"}, &subdivisions, 1, 3});
-  result.singleChoices.emplace_back(Configuration::SingleChoiceEntry{
+  group.singleChoices.emplace_back(Configuration::SingleChoiceEntry{
       {"Type", "Select the type to subdivide"},
       {{"Loop", "Smoothes the mesh"},
        {"Upsample", "No smoothing"},
        {"False Barycentric", "Each triangle becomes 3 triangles at their center"}},
       &mode});
+
+  Configuration result;
+  result.configGroups.push_back(group);
   return result;
 }
 PipelineStageInfo& SubdivisionModifier::getInfo() { return info; }
