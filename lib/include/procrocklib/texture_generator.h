@@ -9,7 +9,7 @@ namespace procrock {
 
 class TextureGenerator : public PipelineStage {
  public:
-  float normalStrength = 1.5;
+  float normalStrength = 1.0;
 
   std::shared_ptr<Mesh> run(Mesh* before = nullptr) override;
 

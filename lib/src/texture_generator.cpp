@@ -26,8 +26,8 @@ Configuration TextureGenerator::getBaseConfiguration() {
   baseGroup.floats.emplace_back(Configuration::BoundedEntry<float>{
       {"Normal Strength", "How \"deep / high\" the normals should be."},
       &normalStrength,
-      0.001f,
-      2.0f});
+      1.0f,
+      1.9f});
   Configuration result;
   result.configGroups.push_back(baseGroup);
   return result;
@@ -70,7 +70,6 @@ void TextureGenerator::calculateNormals(const TextureGroup& texGroup,
     normal.x() = (gradients[0](i) + 1024) / 2048.0;
     normal.y() = (gradients[1](i) + 1024) / 2048.0;
     normal.z() = 1 / normalStrength;
-    normal = normal.normalized();
     normal = 255 * normal;
 
     dataToFill[(3 * i)] = (int)normal.x();
