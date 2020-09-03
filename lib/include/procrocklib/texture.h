@@ -14,5 +14,8 @@ struct TextureGroup {
 
   std::vector<unsigned char> albedoData;
   std::vector<unsigned char> normalData;
+  std::vector<unsigned char> roughnessData;
+  std::vector<unsigned char> metalData;
+  std::vector<unsigned char> ambientOccData;
 };
 }  // namespace procrock

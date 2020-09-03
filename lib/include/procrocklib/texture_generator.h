@@ -26,7 +26,10 @@ class TextureGenerator : public PipelineStage {
   void fillTexture(const TextureGroup& texGroup, std::vector<unsigned char>& dataToFill,
                    std::function<Eigen::Vector3i(Eigen::Vector3d)> colorFunction);
 
-  void calculateNormals(const TextureGroup& texGroup, std::vector<unsigned char>& dataToFill);
+  void calculateNormals(TextureGroup& texGroup);
+  void calculateRoughness(TextureGroup& texGroup);
+  void calculateMetal(TextureGroup& texGroup);
+  void calculateAmbientOcc(TextureGroup& texGroup);
 
  private:
   std::shared_ptr<Mesh> mesh;

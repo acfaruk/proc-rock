@@ -116,6 +116,9 @@ bool App::init() {
 
   renderTextureAlbedo = std::make_unique<RenderTexture>();
   renderTextureNormal = std::make_unique<RenderTexture>();
+  renderTextureRoughness = std::make_unique<RenderTexture>();
+  renderTextureMetal = std::make_unique<RenderTexture>();
+  renderTextureAmbientOcc = std::make_unique<RenderTexture>();
 
   InputManager::registerInputReceiver(mainCam.get());
 
@@ -135,8 +138,20 @@ bool App::update() {
   renderTextureNormal->loadFromData(mesh->textures.normalData.data(), mesh->textures.width,
                                     mesh->textures.height);
 
+  renderTextureRoughness->loadFromData(mesh->textures.roughnessData.data(), mesh->textures.width,
+                                       mesh->textures.height, 1);
+
+  renderTextureMetal->loadFromData(mesh->textures.metalData.data(), mesh->textures.width,
+                                   mesh->textures.height, 1);
+
+  renderTextureAmbientOcc->loadFromData(mesh->textures.ambientOccData.data(), mesh->textures.width,
+                                        mesh->textures.height, 1);
+
   mainShader->textures["albedo"] = renderTextureAlbedo.get();
   mainShader->textures["normalMap"] = renderTextureNormal.get();
+  mainShader->textures["roughnessMap"] = renderTextureRoughness.get();
+  mainShader->textures["metalMap"] = renderTextureMetal.get();
+  mainShader->textures["ambientOccMap"] = renderTextureAmbientOcc.get();
 
   gui::update(this->getWindowSize(), *viewerFramebuffer, *pipeline, *mainShader);
 

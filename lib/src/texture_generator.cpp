@@ -9,7 +9,10 @@ namespace procrock {
 std::shared_ptr<Mesh> TextureGenerator::run(Mesh* before) {
   if (isChanged() || firstRun) {
     mesh = generate(before);
-    calculateNormals(mesh->textures, mesh->textures.normalData);
+    calculateNormals(mesh->textures);
+    calculateRoughness(mesh->textures);
+    calculateMetal(mesh->textures);
+    calculateAmbientOcc(mesh->textures);
   }
 
   if (firstRun) firstRun = !firstRun;
@@ -55,12 +58,13 @@ void TextureGenerator::fillTexture(const TextureGroup& texGroup,
     index++;
   }
 }
-void TextureGenerator::calculateNormals(const TextureGroup& texGroup,
-                                        std::vector<unsigned char>& dataToFill) {
+void TextureGenerator::calculateNormals(TextureGroup& texGroup) {
   using namespace cimg_library;
 
-  dataToFill.clear();
-  dataToFill.resize(texGroup.width * texGroup.height * 3);
+  auto& data = texGroup.normalData;
+
+  data.clear();
+  data.resize(texGroup.width * texGroup.height * 3);
 
   CImg<unsigned char> image(texGroup.albedoData.data(), 3, texGroup.width, texGroup.height);
   image.permute_axes("YZCX");
@@ -72,9 +76,54 @@ void TextureGenerator::calculateNormals(const TextureGroup& texGroup,
     normal.z() = 1 / normalStrength;
     normal = 255 * normal;
 
-    dataToFill[(3 * i)] = (int)normal.x();
-    dataToFill[(3 * i) + 1] = (int)normal.y();
-    dataToFill[(3 * i) + 2] = (int)normal.z();
+    data[(3 * i)] = (int)normal.x();
+    data[(3 * i) + 1] = (int)normal.y();
+    data[(3 * i) + 2] = (int)normal.z();
+  }
+}
+void TextureGenerator::calculateRoughness(TextureGroup& texGroup) {
+  using namespace cimg_library;
+
+  auto& data = texGroup.roughnessData;
+
+  data.clear();
+  data.resize(texGroup.width * texGroup.height);
+
+  CImg<unsigned char> image(texGroup.albedoData.data(), 3, texGroup.width, texGroup.height);
+  image.permute_axes("YZCX");
+
+  for (int i = 0; i < texGroup.width * texGroup.height; i++) {
+    int value = 0;
+    int y = i / texGroup.width;
+    int x = i % texGroup.width;
+    value = 0.2989 * (float)image(x, y, 0, 0) + 0.5970 * (float)image(x, y, 0, 1) +
+            0.1140 * (float)image(x, y, 0, 2);
+
+    data[i] = std::min(255, value);
+  }
+}
+void TextureGenerator::calculateMetal(TextureGroup& texGroup) {
+  using namespace cimg_library;
+
+  auto& data = texGroup.metalData;
+
+  data.clear();
+  data.resize(texGroup.width * texGroup.height);
+
+  for (int i = 0; i < texGroup.width * texGroup.height; i++) {
+    data[i] = texGroup.roughnessData[i] < 10 ? 255 : 0;
+  }
+}
+void TextureGenerator::calculateAmbientOcc(TextureGroup& texGroup) {
+  using namespace cimg_library;
+
+  auto& data = texGroup.ambientOccData;
+
+  data.clear();
+  data.resize(texGroup.width * texGroup.height);
+
+  for (int i = 0; i < texGroup.width * texGroup.height; i++) {
+    data[i] = texGroup.roughnessData[i];
   }
 }
 }  // namespace procrock

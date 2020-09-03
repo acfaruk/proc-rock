@@ -19,6 +19,9 @@ uniform vec3 ambientColor;
 
 uniform sampler2D albedo;
 uniform sampler2D normalMap;
+uniform sampler2D roughnessMap;
+uniform sampler2D metalMap;
+uniform sampler2D ambientOccMap;
 
 layout(location = 0) out vec4 fragColor;
 
@@ -63,10 +66,10 @@ vec3 FresnelSchlick(float cosTheta, vec3 F0)
 
 void main()
 {
-	vec3 color = texture(albedo, texCoord).xyz;
-	float metallic = 0.0;
-	float roughness = 1.0;
-	float ambientOcc = 1.0;
+	vec3 color = texture(albedo, texCoord).rgb;
+	float metallic = texture(metalMap, texCoord).r;
+	float roughness = texture(roughnessMap, texCoord).r;
+	float ambientOcc = texture(ambientOccMap, texCoord).r;
 
 	vec3 normal = normalize(texture(normalMap, texCoord).rgb * 2.0 - 1.0);
 	vec3 viewDir = normalize(tangentSpace.camPos - tangentSpace.fragPos);

@@ -42,6 +42,9 @@ class App {
   std::unique_ptr<Shader> mainShader;
   std::unique_ptr<RenderTexture> renderTextureAlbedo;
   std::unique_ptr<RenderTexture> renderTextureNormal;
+  std::unique_ptr<RenderTexture> renderTextureRoughness;
+  std::unique_ptr<RenderTexture> renderTextureMetal;
+  std::unique_ptr<RenderTexture> renderTextureAmbientOcc;
 
   std::unique_ptr<Pipeline> pipeline;
   std::unique_ptr<DrawableMesh> drawableMesh;

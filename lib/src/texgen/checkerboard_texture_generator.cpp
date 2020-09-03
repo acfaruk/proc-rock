@@ -6,29 +6,28 @@ namespace procrock {
 std::shared_ptr<Mesh> CheckerboardTextureGenerator::generate(Mesh* before) {
   auto result = std::make_shared<Mesh>(*before);
 
-  TextureGroup textures;
-  textures.albedoData.reserve(textures.width * textures.height * 3);
-
   switch (mode) {
     case 0:  // Normal UV based
     {
-      unsigned int squareWidth = textures.width / squares;
-      for (int x = 0; x < textures.width; x++) {
-        for (int y = 0; y < textures.height; y++) {
+      result->textures.albedoData.clear();
+      result->textures.albedoData.resize(result->textures.width * result->textures.height * 3);
+      unsigned int squareWidth = result->textures.width / squares;
+      for (int x = 0; x < result->textures.width; x++) {
+        for (int y = 0; y < result->textures.height; y++) {
           int rx = std::floor((x / (float)squareWidth));
           int ry = std::floor((y / (float)squareWidth));
+          int i = 3 * (x + result->textures.width * y);
           if ((rx + ry) % 2 == 0) {
-            textures.albedoData.emplace_back(255);
-            textures.albedoData.emplace_back(255);
-            textures.albedoData.emplace_back(255);
+            result->textures.albedoData[i] = 255;
+            result->textures.albedoData[i + 1] = 255;
+            result->textures.albedoData[i + 2] = 255;
           } else {
-            textures.albedoData.emplace_back(0);
-            textures.albedoData.emplace_back(0);
-            textures.albedoData.emplace_back(0);
+            result->textures.albedoData[i] = 0;
+            result->textures.albedoData[i + 1] = 0;
+            result->textures.albedoData[i + 2] = 0;
           }
         }
       }
-      result->textures = textures;
 
     } break;
     case 1:  // Global Mesh based

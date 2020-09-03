@@ -11,7 +11,7 @@ void RenderTexture::bind() const {
   glBindTexture(GL_TEXTURE_2D, ID);
 }
 void RenderTexture::unbind() const { glBindTexture(GL_TEXTURE_2D, 0); }
-void RenderTexture::loadFromData(unsigned char* data, int width, int height) {
+void RenderTexture::loadFromData(unsigned char* data, int width, int height, int channels) {
   size.x = width;
   size.y = height;
 
@@ -21,8 +21,23 @@ void RenderTexture::loadFromData(unsigned char* data, int width, int height) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  switch (channels) {
+    case 1:
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, size.x, size.y, 0, GL_RED, GL_UNSIGNED_BYTE, data);
+      break;
+    case 2:
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RG8, size.x, size.y, 0, GL_RG, GL_UNSIGNED_BYTE, data);
+      break;
+    case 3:
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, size.x, size.y, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+      break;
+    case 4:
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, size.x, size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+      break;
+    default:
+      assert(true && "Only 1 - 4 channels supported.");
+  }
 
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, size.x, size.y, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
   glBindTexture(GL_TEXTURE_2D, 0);
 }
 const unsigned int RenderTexture::getID() const { return ID; }

@@ -214,16 +214,12 @@ void updateWindows(const Shader& shader) {
     ImGui::Begin("Textures", &windows.textureWindow.show);
     ImGui::BeginTabBar("textures-tab-bar");
 
-    if (ImGui::BeginTabItem("Albedo")) {
-      ImGui::Image((ImTextureID)(uint64_t)shader.textures.at("albedo")->getID(),
-                   ImVec2((float)512, (float)512), ImVec2(0, 1), ImVec2(1, 0));
-      ImGui::EndTabItem();
-    }
-
-    if (ImGui::BeginTabItem("Normals")) {
-      ImGui::Image((ImTextureID)(uint64_t)shader.textures.at("normalMap")->getID(),
-                   ImVec2((float)512, (float)512), ImVec2(0, 1), ImVec2(1, 0));
-      ImGui::EndTabItem();
+    for (auto& texture : shader.textures) {
+      if (ImGui::BeginTabItem(texture.first.c_str())) {
+        ImGui::Image((ImTextureID)(uint64_t)texture.second->getID(), ImVec2((float)512, (float)512),
+                     ImVec2(0, 1), ImVec2(1, 0));
+        ImGui::EndTabItem();
+      }
     }
 
     ImGui::EndTabBar();
