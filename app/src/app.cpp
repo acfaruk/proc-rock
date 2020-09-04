@@ -158,16 +158,22 @@ bool App::update() {
   mainCam->setViewport(gui::viewer.size);
   mainShader->uniforms3f["camPos"] = mainCam->getPosition();
 
-  pointLight->setEulerAngles(gui::sideBar.viewSettings.light.yaw,
-                             gui::sideBar.viewSettings.light.pitch);
+  pointLight->setEulerAngles(gui::windows.viewSettingsWindow.light.yaw,
+                             gui::windows.viewSettingsWindow.light.pitch);
   mainShader->uniforms3f["lightPos"] = pointLight->getPosition();
   mainShader->uniforms3f["lightColor"] = pointLight->getColor();
-  mainShader->uniforms3f["ambientColor"] = gui::sideBar.viewSettings.light.ambientColor;
+  mainShader->uniforms3f["ambientColor"] = gui::windows.viewSettingsWindow.light.ambientColor;
+
+  gui::windows.meshInfoWindow.vertices = mesh->vertices.rows();
+  gui::windows.meshInfoWindow.faces = mesh->faces.rows();
+  gui::windows.meshInfoWindow.textureWidth = mesh->textures.width;
+  gui::windows.meshInfoWindow.textureHeight = mesh->textures.height;
 
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-  if (gui::sideBar.viewSettings.wireframe) {
+  if (gui::windows.viewSettingsWindow.wireframe) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   }
+
   return true;
 }
 

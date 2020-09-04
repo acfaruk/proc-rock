@@ -68,6 +68,8 @@ void updateMainMenu() {
 
     if (ImGui::BeginMenu("Windows")) {
       ImGui::MenuItem("Textures", 0, &windows.textureWindow.show);
+      ImGui::MenuItem("View Settings", 0, &windows.viewSettingsWindow.show);
+      ImGui::MenuItem("Mesh Info", 0, &windows.meshInfoWindow.show);
       ImGui::EndMenu();
     }
 
@@ -86,86 +88,74 @@ void updateSideBar(glm::uvec2 windowSize, Pipeline& pipeline) {
                    ImGuiWindowFlags_AlwaysVerticalScrollbar);
   sideBar.width = (int)ImGui::GetWindowWidth();
   ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
-  if (ImGui::BeginTabBar("Tab Bar", tabBarFlags)) {
-    if (ImGui::BeginTabItem("Pipeline")) {
-      if (ImGui::CollapsingHeader("Generator", ImGuiTreeNodeFlags_DefaultOpen)) {
-        if (ImGui::Button("Select Generator...", ImVec2(-1, 0))) {
-          ImGui::OpenPopup("gen_select_popup");
-        }
-        if (ImGui::BeginPopup("gen_select_popup")) {
-          for (int i = 0; i < IM_ARRAYSIZE(PipelineStageNames_Gen); i++) {
-            if (ImGui::Selectable(PipelineStageNames_Gen[i])) {
-              pipeline.setGenerator(createGeneratorFromId(i));
-            }
-          }
-          ImGui::EndPopup();
-        }
-
-        auto& gen = pipeline.getGenerator();
-        updatePipelineStage(pipeline, gen);
-      }
-
-      if (ImGui::CollapsingHeader("Modifiers", ImGuiTreeNodeFlags_DefaultOpen)) {
-        if (ImGui::Button("Add Modifier...", ImVec2(-1, 0))) {
-          ImGui::OpenPopup("mod_select_popup");
-        }
-        if (ImGui::BeginPopup("mod_select_popup")) {
-          for (int i = 0; i < IM_ARRAYSIZE(PipelineStageNames_Mod); i++) {
-            if (ImGui::Selectable(PipelineStageNames_Mod[i])) {
-              pipeline.addModifier(createModifierFromId(i));
-            }
-          }
-          ImGui::EndPopup();
-        }
-
-        for (int i = 0; i < pipeline.getModifierCount(); i++) {
-          auto& mod = pipeline.getModifier(i);
-          updatePipelineStage(pipeline, mod);
+  if (ImGui::CollapsingHeader("Generator", ImGuiTreeNodeFlags_DefaultOpen)) {
+    if (ImGui::Button("Select Generator...", ImVec2(-1, 0))) {
+      ImGui::OpenPopup("gen_select_popup");
+    }
+    if (ImGui::BeginPopup("gen_select_popup")) {
+      for (int i = 0; i < IM_ARRAYSIZE(PipelineStageNames_Gen); i++) {
+        if (ImGui::Selectable(PipelineStageNames_Gen[i])) {
+          pipeline.setGenerator(createGeneratorFromId(i));
         }
       }
-
-      if (ImGui::CollapsingHeader("Parameterizer", ImGuiTreeNodeFlags_DefaultOpen)) {
-        if (ImGui::Button("Select Parameterizer...", ImVec2(-1, 0))) {
-          ImGui::OpenPopup("par_select_popup");
-        }
-        if (ImGui::BeginPopup("par_select_popup")) {
-          for (int i = 0; i < IM_ARRAYSIZE(PipelineStageNames_Par); i++) {
-            if (ImGui::Selectable(PipelineStageNames_Par[i])) {
-              pipeline.setParameterizer(createParameterizerFromId(i));
-            }
-          }
-          ImGui::EndPopup();
-        }
-
-        auto& par = pipeline.getParameterizer();
-        updatePipelineStage(pipeline, par);
-      }
-
-      if (ImGui::CollapsingHeader("Texture Generator", ImGuiTreeNodeFlags_DefaultOpen)) {
-        if (ImGui::Button("Select Texture Gen...", ImVec2(-1, 0))) {
-          ImGui::OpenPopup("texgen_select_popup");
-        }
-        if (ImGui::BeginPopup("texgen_select_popup")) {
-          for (int i = 0; i < IM_ARRAYSIZE(PipelineStageNames_TexGen); i++) {
-            if (ImGui::Selectable(PipelineStageNames_TexGen[i])) {
-              pipeline.setTextureGenerator(createTextureGeneratorFromId(i));
-            }
-          }
-          ImGui::EndPopup();
-        }
-
-        auto& texGen = pipeline.getTextureGenerator();
-        updatePipelineStage(pipeline, texGen);
-      }
-
-      ImGui::EndTabItem();
+      ImGui::EndPopup();
     }
 
-    if (ImGui::BeginTabItem("View")) {
-      updateViewSettings();
-      ImGui::EndTabItem();
+    auto& gen = pipeline.getGenerator();
+    updatePipelineStage(pipeline, gen);
+  }
+
+  if (ImGui::CollapsingHeader("Modifiers", ImGuiTreeNodeFlags_DefaultOpen)) {
+    if (ImGui::Button("Add Modifier...", ImVec2(-1, 0))) {
+      ImGui::OpenPopup("mod_select_popup");
     }
-    ImGui::EndTabBar();
+    if (ImGui::BeginPopup("mod_select_popup")) {
+      for (int i = 0; i < IM_ARRAYSIZE(PipelineStageNames_Mod); i++) {
+        if (ImGui::Selectable(PipelineStageNames_Mod[i])) {
+          pipeline.addModifier(createModifierFromId(i));
+        }
+      }
+      ImGui::EndPopup();
+    }
+
+    for (int i = 0; i < pipeline.getModifierCount(); i++) {
+      auto& mod = pipeline.getModifier(i);
+      updatePipelineStage(pipeline, mod);
+    }
+  }
+
+  if (ImGui::CollapsingHeader("Parameterizer", ImGuiTreeNodeFlags_DefaultOpen)) {
+    if (ImGui::Button("Select Parameterizer...", ImVec2(-1, 0))) {
+      ImGui::OpenPopup("par_select_popup");
+    }
+    if (ImGui::BeginPopup("par_select_popup")) {
+      for (int i = 0; i < IM_ARRAYSIZE(PipelineStageNames_Par); i++) {
+        if (ImGui::Selectable(PipelineStageNames_Par[i])) {
+          pipeline.setParameterizer(createParameterizerFromId(i));
+        }
+      }
+      ImGui::EndPopup();
+    }
+
+    auto& par = pipeline.getParameterizer();
+    updatePipelineStage(pipeline, par);
+  }
+
+  if (ImGui::CollapsingHeader("Texture Generator", ImGuiTreeNodeFlags_DefaultOpen)) {
+    if (ImGui::Button("Select Texture Gen...", ImVec2(-1, 0))) {
+      ImGui::OpenPopup("texgen_select_popup");
+    }
+    if (ImGui::BeginPopup("texgen_select_popup")) {
+      for (int i = 0; i < IM_ARRAYSIZE(PipelineStageNames_TexGen); i++) {
+        if (ImGui::Selectable(PipelineStageNames_TexGen[i])) {
+          pipeline.setTextureGenerator(createTextureGeneratorFromId(i));
+        }
+      }
+      ImGui::EndPopup();
+    }
+
+    auto& texGen = pipeline.getTextureGenerator();
+    updatePipelineStage(pipeline, texGen);
   }
   ImGui::End();
 }
@@ -226,14 +216,39 @@ void updateWindows(const Shader& shader) {
     ImGui::EndTabBar();
     ImGui::End();
   }
-}
 
-void updateViewSettings() {
-  ImGui::Checkbox("Wireframe Mode", &sideBar.viewSettings.wireframe);
-  if (ImGui::CollapsingHeader("Light", ImGuiTreeNodeFlags_DefaultOpen)) {
-    ImGui::SliderAngle("Yaw", &sideBar.viewSettings.light.yaw, 0.0f, 360.0f);
-    ImGui::SliderAngle("Pitch", &sideBar.viewSettings.light.pitch, 0.0f, 360.0f);
-    ImGui::ColorEdit3("Ambient", &sideBar.viewSettings.light.ambientColor[0]);
+  if (windows.viewSettingsWindow.show) {
+    ImGui::SetNextWindowSizeConstraints(ImVec2(sideBar.width, 0), ImVec2(FLT_MAX, FLT_MAX));
+    ImGui::Begin("View Settings", &windows.viewSettingsWindow.show);
+    ImGui::Checkbox("Wireframe Mode", &windows.viewSettingsWindow.wireframe);
+    if (ImGui::CollapsingHeader("Light", ImGuiTreeNodeFlags_DefaultOpen)) {
+      ImGui::SliderAngle("Yaw", &windows.viewSettingsWindow.light.yaw, 0.0f, 360.0f);
+      ImGui::SliderAngle("Pitch", &windows.viewSettingsWindow.light.pitch, 0.0f, 360.0f);
+      ImGui::ColorEdit3("Ambient", &windows.viewSettingsWindow.light.ambientColor[0]);
+    }
+    ImGui::End();
+  }
+
+  if (windows.meshInfoWindow.show) {
+    ImGui::SetNextWindowSizeConstraints(ImVec2(sideBar.width, 0), ImVec2(FLT_MAX, FLT_MAX));
+    ImGui::Begin("Mesh Info", &windows.meshInfoWindow.show);
+    ImGui::Columns(2);
+    ImGui::Text("Vertices");
+    ImGui::NextColumn();
+    ImGui::Text(std::to_string(windows.meshInfoWindow.vertices).c_str());
+    ImGui::NextColumn();
+    ImGui::Text("Faces");
+    ImGui::NextColumn();
+    ImGui::Text(std::to_string(windows.meshInfoWindow.faces).c_str());
+    ImGui::NextColumn();
+    ImGui::Text("Texture Width");
+    ImGui::NextColumn();
+    ImGui::Text(std::to_string(windows.meshInfoWindow.textureWidth).c_str());
+    ImGui::NextColumn();
+    ImGui::Text("Texture Height");
+    ImGui::NextColumn();
+    ImGui::Text(std::to_string(windows.meshInfoWindow.textureHeight).c_str());
+    ImGui::End();
   }
 }
 

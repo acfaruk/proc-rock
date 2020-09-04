@@ -24,8 +24,6 @@ void updateViewer(glm::uvec2 windowSize, Framebuffer& viewerFrame);
 void updateStatusBar(glm::uvec2 windowSize);
 void updateWindows(const Shader& shader);
 
-void updateViewSettings();
-
 void updatePipelineStage(Pipeline& pipeline, PipelineStage& stage);
 void updateConfigurable(Configurable& configurable);
 
@@ -45,22 +43,12 @@ struct StageSettings {
   bool visible = false;
 };
 
-struct ViewSettings {
-  bool wireframe;
-  struct Light {
-    float yaw = 3.67f;
-    float pitch = 4.01f;
-    glm::vec3 ambientColor = glm::vec3(0.05);
-  } light;
-};
-
 struct MainMenu {
   const int height = 20;
 };
 
 struct SideBar {
   int width = 350;
-  ViewSettings viewSettings;
   std::map<std::string, StageSettings> stageData;
 };
 
@@ -75,12 +63,32 @@ struct StatusBar {
   const int height = 35;
 };
 
-struct TextureWindow {
+struct Window {
   bool show = false;
+};
+
+struct TextureWindow : public Window {};
+
+struct ViewSettingsWindow : public Window {
+  bool wireframe = false;
+  struct Light {
+    float yaw = 3.67f;
+    float pitch = 4.01f;
+    glm::vec3 ambientColor = glm::vec3(0.01);
+  } light;
+};
+
+struct MeshInfoWindow : public Window {
+  int vertices = 0;
+  int faces = 0;
+  int textureWidth = 0;
+  int textureHeight = 0;
 };
 
 struct Windows {
   TextureWindow textureWindow;
+  ViewSettingsWindow viewSettingsWindow;
+  MeshInfoWindow meshInfoWindow;
 };
 
 extern MainMenu mainMenu;
