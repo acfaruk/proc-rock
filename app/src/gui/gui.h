@@ -50,7 +50,7 @@ struct ViewSettings {
   struct Light {
     float yaw = 3.67f;
     float pitch = 4.01f;
-    glm::vec3 ambientColor = glm::vec3(0.2);
+    glm::vec3 ambientColor = glm::vec3(0.05);
   } light;
 };
 

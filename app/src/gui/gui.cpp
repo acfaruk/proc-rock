@@ -82,7 +82,8 @@ void updateSideBar(glm::uvec2 windowSize, Pipeline& pipeline) {
   ImGui::Begin("Settings", 0,
                ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
                    ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove |
-                   ImGuiWindowFlags_NoBringToFrontOnFocus);
+                   ImGuiWindowFlags_NoBringToFrontOnFocus |
+                   ImGuiWindowFlags_AlwaysVerticalScrollbar);
   sideBar.width = (int)ImGui::GetWindowWidth();
   ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
   if (ImGui::BeginTabBar("Tab Bar", tabBarFlags)) {
@@ -174,21 +175,21 @@ void updateViewer(glm::uvec2 windowSize, Framebuffer& viewerFrame) {
   ImGui::SetNextWindowPos(ImVec2((float)sideBar.width, (float)mainMenu.height));
   ImGui::SetNextWindowSize(ImVec2((float)windowSize.x - sideBar.width,
                                   (float)windowSize.y - mainMenu.height - statusBar.height));
-
+  ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
   ImGui::Begin("Viewer", 0,
                ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
                    ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove |
                    ImGuiWindowFlags_NoBringToFrontOnFocus);
   viewer.position = glm::uvec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
-  viewer.size = glm::uvec2(glm::uvec2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight()));
+  viewer.size = glm::uvec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
   viewer.focused = ImGui::IsWindowFocused();
   viewer.howered = ImGui::IsWindowHovered();
   viewerFrame.resize(viewer.size);
 
   ImGui::Image((ImTextureID)(uint64_t)viewerFrame.getRenderedTextures()[0],
-               ImVec2((float)viewer.size.x, (float)viewer.size.y - statusBar.height), ImVec2(0, 1),
-               ImVec2(1, 0));
+               ImVec2((float)viewer.size.x, (float)viewer.size.y), ImVec2(0, 1), ImVec2(1, 0));
   ImGui::End();
+  ImGui::PopStyleVar();
 }
 
 void updateStatusBar(glm::uvec2 windowSize) {
@@ -253,7 +254,7 @@ void updatePipelineStage(Pipeline& pipeline, PipelineStage& stage) {
   ImGui::Dummy(ImVec2(0, 25));
 
   if (stage.isRemovable()) {
-    ImGui::SameLine((float)sideBar.width - 50);
+    ImGui::SameLine((float)sideBar.width - 60);
     if (ImGui::Button(ICON_FA_TIMES_CIRCLE)) {
       ImGui::EndChild();
       pipeline.removePipelineStage(&stage);
@@ -267,11 +268,11 @@ void updatePipelineStage(Pipeline& pipeline, PipelineStage& stage) {
   }
 
   if (stage.isMoveable()) {
-    ImGui::SameLine((float)sideBar.width - 50);
+    ImGui::SameLine((float)sideBar.width - 60);
     if (ImGui::Button(ICON_FA_ARROW_ALT_CIRCLE_DOWN)) {
       pipeline.movePipelineStageDown(&stage);
     }
-    ImGui::SameLine((float)sideBar.width - 80);
+    ImGui::SameLine((float)sideBar.width - 90);
     if (ImGui::Button(ICON_FA_ARROW_ALT_CIRCLE_UP)) {
       pipeline.movePipelineStageUp(&stage);
     }
@@ -319,13 +320,13 @@ void updateConfigurable(Configurable& configurable) {
     }
     for (auto var : group.floats) {
       ImGui::SliderFloat(var.entry.name.c_str(), var.data, var.min, var.max);
-      changed |= ImGui::IsItemEdited();
+      changed |= ImGui::IsItemDeactivatedAfterEdit();
       ImGui::SameLine();
       helpMarker(var.entry.description);
     }
     for (auto var : group.ints) {
       ImGui::SliderInt(var.entry.name.c_str(), var.data, var.min, var.max);
-      changed |= ImGui::IsItemEdited();
+      changed |= ImGui::IsItemDeactivatedAfterEdit();
       ImGui::SameLine();
       helpMarker(var.entry.description);
     }
@@ -341,7 +342,7 @@ void updateConfigurable(Configurable& configurable) {
         ImGui::SameLine(50);
         ImGui::ColorEdit3("", x.second.data(),
                           ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel);
-        changed |= ImGui::IsItemEdited();
+        changed |= ImGui::IsItemDeactivatedAfterEdit();
 
         ImGui::SameLine(200);
         if (ImGui::Button(ICON_FA_TIMES_CIRCLE)) {

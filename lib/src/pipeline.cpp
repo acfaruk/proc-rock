@@ -78,24 +78,27 @@ void Pipeline::setTextureGenerator(std::unique_ptr<TextureGenerator> textureGene
 TextureGenerator& Pipeline::getTextureGenerator() const { return *this->textureGenerator.get(); }
 
 const std::shared_ptr<Mesh> Pipeline::getCurrentMesh() {
-  auto mesh = this->generator->run();
-
   bool changed = generator->isChanged() || generator->isFirstRun();
+  auto mesh = this->generator->run();
+  generator->setChanged(false);
 
   for (auto& mod : modifiers) {
     mod->setChanged(mod->isChanged() || mod->isFirstRun() || changed);
     changed = mod->isChanged();
     mesh = mod->run(mesh.get());
+    mod->setChanged(false);
   }
 
   parameterizer->setChanged(parameterizer->isChanged() || parameterizer->isFirstRun() || changed);
   changed = parameterizer->isChanged();
   mesh = parameterizer->run(mesh.get());
+  parameterizer->setChanged(false);
 
   textureGenerator->setChanged(textureGenerator->isChanged() || textureGenerator->isFirstRun() ||
                                changed);
   changed = textureGenerator->isChanged();
   mesh = textureGenerator->run(mesh.get());
+  textureGenerator->setChanged(false);
 
   return mesh;
 }
