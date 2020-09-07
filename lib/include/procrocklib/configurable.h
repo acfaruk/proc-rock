@@ -31,10 +31,18 @@ struct Configuration {
     T min, max;
   };
 
+  template <typename T>
+  struct SimpleEntry {
+    Entry entry;
+    T* data;
+  };
+
   struct ConfigurationGroup {
     Entry entry;
     std::vector<BoundedEntry<int>> ints;
     std::vector<BoundedEntry<float>> floats;
+
+    std::vector<SimpleEntry<bool>> bools;
 
     std::vector<SingleChoiceEntry> singleChoices;
     std::vector<GradientColoringEntry> gradientColorings;
