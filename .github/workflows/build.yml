@@ -15,7 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: apt install
-      run: sudo apt install libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev libgl-dev mesa-common-dev
+      run: sudo apt-get update | sudo apt install libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev libgl-dev mesa-common-dev
       
     - name: cache setup
       id: cache-setup
