@@ -71,6 +71,7 @@ struct TextureWindow : public Window {};
 
 struct ViewSettingsWindow : public Window {
   bool wireframe = false;
+  glm::vec3 clearColor = glm::vec3(0.235);
   struct Light {
     float yaw = 3.67f;
     float pitch = 4.01f;

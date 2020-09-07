@@ -221,6 +221,7 @@ void updateWindows(const Shader& shader) {
     ImGui::SetNextWindowSizeConstraints(ImVec2(sideBar.width, 0), ImVec2(FLT_MAX, FLT_MAX));
     ImGui::Begin("View Settings", &windows.viewSettingsWindow.show);
     ImGui::Checkbox("Wireframe Mode", &windows.viewSettingsWindow.wireframe);
+    ImGui::ColorEdit3("Clear Color", &windows.viewSettingsWindow.clearColor[0]);
     if (ImGui::CollapsingHeader("Light", ImGuiTreeNodeFlags_DefaultOpen)) {
       ImGui::SliderAngle("Yaw", &windows.viewSettingsWindow.light.yaw, 0.0f, 360.0f);
       ImGui::SliderAngle("Pitch", &windows.viewSettingsWindow.light.pitch, 0.0f, 360.0f);

@@ -178,7 +178,8 @@ bool App::update() {
 }
 
 bool App::render() {
-  glClearColor(0.235, 0.235, 0.235, 1);
+  auto cColor = gui::windows.viewSettingsWindow.clearColor;
+  glClearColor(cColor.r, cColor.g, cColor.b, 1);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   viewerFramebuffer->bind();
