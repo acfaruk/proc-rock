@@ -1,24 +1,22 @@
-#include "texgen/perlin_noise_texture_generator.h"
+#include "texgen/billow_noise_texture_generator.h"
 
 #include <noise/noise.h>
-
-#include <iostream>
 
 #include "utils/colors.h"
 
 namespace procrock {
-std::shared_ptr<Mesh> PerlinNoiseTextureGenerator::generate(Mesh* before) {
+std::shared_ptr<Mesh> BillowNoiseTextureGenerator::generate(Mesh* before) {
   auto result = std::make_shared<Mesh>(*before);
-  noise::module::Perlin perlinModule;
-  perlinModule.SetFrequency(frequency);
-  perlinModule.SetLacunarity(lacunarity);
-  perlinModule.SetOctaveCount(octaveCount);
-  perlinModule.SetPersistence(persistence);
-  perlinModule.SetSeed(seed);
-  perlinModule.SetNoiseQuality(static_cast<noise::NoiseQuality>(qualityChoice));
+  noise::module::Billow billowModule;
+  billowModule.SetFrequency(frequency);
+  billowModule.SetLacunarity(lacunarity);
+  billowModule.SetOctaveCount(octaveCount);
+  billowModule.SetPersistence(persistence);
+  billowModule.SetSeed(seed);
+  billowModule.SetNoiseQuality(static_cast<noise::NoiseQuality>(qualityChoice));
 
   auto colorFunction = [&](Eigen::Vector3d worldPos) {
-    float value = (perlinModule.GetValue(worldPos.x(), worldPos.y(), worldPos.z()) + 1) / 2;
+    float value = (billowModule.GetValue(worldPos.x(), worldPos.y(), worldPos.z()) + 1) / 2;
     return utils::computeColorGradient(colorGradient, 0, 100, value);
   };
 
@@ -26,9 +24,8 @@ std::shared_ptr<Mesh> PerlinNoiseTextureGenerator::generate(Mesh* before) {
   return result;
 }
 
-PipelineStageInfo& PerlinNoiseTextureGenerator::getInfo() { return info; }
-
-Configuration PerlinNoiseTextureGenerator::getConfiguration() {
+PipelineStageInfo& BillowNoiseTextureGenerator::getInfo() { return info; }
+Configuration BillowNoiseTextureGenerator::getConfiguration() {
   Configuration::ConfigurationGroup noiseGroup;
 
   noiseGroup.entry = {"Noise Parameters", "Set the various parameters of the noise function(s)."};
@@ -37,11 +34,11 @@ Configuration PerlinNoiseTextureGenerator::getConfiguration() {
   noiseGroup.floats.push_back(Configuration::BoundedEntry<float>{
       {"Lacunarity", "Frequency Multiplier between successive octaves."}, &lacunarity, 1.5f, 3.5f});
   noiseGroup.floats.push_back(Configuration::BoundedEntry<float>{
-      {"Persistence", "Roughness of the Perlin Noise"}, &persistence, 0.0f, 1.0f});
+      {"Persistence", "Roughness of the Billow Noise"}, &persistence, 0.0f, 1.0f});
   noiseGroup.ints.push_back(Configuration::BoundedEntry<int>{
       {"Octaves", "Number of octaves that generate the noise."}, &octaveCount, 1, 10});
   noiseGroup.ints.push_back(Configuration::BoundedEntry<int>{
-      {"Seed", "Seed for the perlin Noise function."}, &seed, 1, 100000});
+      {"Seed", "Seed for the Billow Noise function."}, &seed, 1, 100000});
 
   noiseGroup.singleChoices.push_back(
       Configuration::SingleChoiceEntry{{"Quality", "Quality of Noise generation"},

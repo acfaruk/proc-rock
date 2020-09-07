@@ -49,8 +49,10 @@ const char* const PipelineStageNames_Par[] = {"LSCM Parameterizer", "xatlas Para
 // Texture Generators
 const unsigned int PipelineStage_TexGen_Checkerboard = 0;
 const unsigned int PipelineStage_TexGen_PerlinNoise = 1;
-const unsigned int PipelineStage_TexGen_Granite = 2;
+const unsigned int PipelineStage_TexGen_BillowNoise = 2;
+const unsigned int PipelineStage_TexGen_RidgedMultiNoise = 3;
+const unsigned int PipelineStage_TexGen_Granite = 4;
 
 const char* const PipelineStageNames_TexGen[] = {"Checkerboard Generator", "Perlin Noise",
-                                                 "Granite"};
+                                                 "Billow Noise", "Ridged Multi Noise", "Granite"};
 }  // namespace procrock

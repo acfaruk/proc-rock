@@ -5,7 +5,7 @@
 namespace procrock {
 class GraniteTextureGenerator : public TextureGenerator {
  public:
-  float frequency = 8.0f;
+  float frequency = 40.0f;
   float lacunarity = 2.18359375f;
   float persistence = 0.625f;
   float grainScaling = -0.5f;

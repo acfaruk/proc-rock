@@ -1,6 +1,7 @@
 #include "texgen/granite_texture_generator.h"
 
 #include <noise/noise.h>
+#include <noise/noiseutils.h>
 
 #include "utils/colors.h"
 
@@ -25,7 +26,7 @@ std::shared_ptr<Mesh> GraniteTextureGenerator::generate(Mesh* before) {
 
   noise::module::ScaleBias scaledSecondary;
   scaledSecondary.SetSourceModule(0, secondaryModule);
-  scaledSecondary.SetScale(-0.5);
+  scaledSecondary.SetScale(grainScaling);
   scaledSecondary.SetBias(0);
 
   noise::module::Add combinedModules;
@@ -54,7 +55,7 @@ Configuration GraniteTextureGenerator::getConfiguration() {
   Configuration::ConfigurationGroup noiseGroup;
   noiseGroup.entry = {"Noise Parameters", "Set the various parameters of the noise function(s)."};
   noiseGroup.floats.push_back(Configuration::BoundedEntry<float>{
-      {"Frequency", "Set frequency of the first octave"}, &frequency, 0.0f, 100.0f});
+      {"Frequency", "Set frequency of the first octave"}, &frequency, 0.1f, 100.0f});
   noiseGroup.floats.push_back(Configuration::BoundedEntry<float>{
       {"Lacunarity", "Frequency Multiplier between successive octaves."}, &lacunarity, 1.5f, 3.5f});
   noiseGroup.floats.push_back(Configuration::BoundedEntry<float>{

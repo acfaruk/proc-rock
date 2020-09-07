@@ -1,13 +1,13 @@
 #pragma once
+
 #include <procrocklib/texture_generator.h>
 
 namespace procrock {
-class PerlinNoiseTextureGenerator : public TextureGenerator {
- public:
-  float frequency = 31.0f;
-  float lacunarity = 2.5f;
-  float persistence = 0.6f;
-  int octaveCount = 3;
+class BillowNoiseTextureGenerator : public TextureGenerator {
+  float frequency = 8.0;
+  float lacunarity = 2.0;
+  float persistence = 0.5;
+  int octaveCount = 6;
   int seed = 0;
 
   int qualityChoice = 2;
@@ -25,7 +25,7 @@ class PerlinNoiseTextureGenerator : public TextureGenerator {
   std::shared_ptr<Mesh> generate(Mesh* before) override;
 
  private:
-  PipelineStageInfo info{PipelineStageNames_TexGen[PipelineStage_TexGen_PerlinNoise],
-                         "Generates Solid 3D Perlin Noise."};
+  PipelineStageInfo info{PipelineStageNames_TexGen[PipelineStage_TexGen_BillowNoise],
+                         "Generates Solid 3D Billow Noise."};
 };
 }  // namespace procrock
