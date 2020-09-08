@@ -295,4 +295,58 @@ noise::module::Module* CombinedNoiseModule::getModule() {
   result->SetSourceModule(1, *secondModule.getModule());
   return result;
 }
+void SelectedNoiseModule::addOwnGroups(Configuration& config, std::string& groupBaseName) {
+  Configuration::ConfigurationGroup selectionGroup;
+  selectionGroup.entry = {"Choose Selection Method", "How to select from the two noise functions."};
+  selectionGroup.singleChoices.push_back(Configuration::SingleChoiceEntry{
+      {"Method", "Which method to use for selecting the noises."},
+      {{"Blend", "Blend between two noise values with the help of a third one."},
+       {"Select", "Select either noise function."}},
+      &selection});
+
+  if (selection == 1) {
+    selectionGroup.floats.push_back(Configuration::BoundedEntry<float>{
+        {"Lower Bound", "Choose the lower bound of the selection range."},
+        &selectLowerBound,
+        -1.0f,
+        selectUpperBound});
+    selectionGroup.floats.push_back(Configuration::BoundedEntry<float>{
+        {"Upper Bound", "Choose the upper bound of the selection range."},
+        &selectUpperBound,
+        selectLowerBound,
+        1.0f});
+    selectionGroup.floats.push_back(Configuration::BoundedEntry<float>{
+        {"Edge Falloff", "Falloff value at edge transition."}, &selectEdgeFalloff, 0.0f, 1.0f});
+  }
+
+  config.configGroups[groupBaseName].push_back(selectionGroup);
+
+  std::string first = "First Noise Function";
+  firstModule.addOwnGroups(config, first);
+  std::string second = "Second Noise Function";
+  secondModule.addOwnGroups(config, second);
+  std::string control = "Control Noise Function";
+  selecterModule.addOwnGroups(config, control);
+}
+noise::module::Module* SelectedNoiseModule::getModule() {
+  noise::module::Module* result;
+
+  switch (selection) {
+    case 0:
+      result = &blendModule;
+      break;
+    case 1:
+      selectModule.SetBounds(selectLowerBound, selectUpperBound);
+      selectModule.SetEdgeFalloff(selectEdgeFalloff);
+      result = &selectModule;
+      break;
+    default:
+      assert(0 && "Handle all cases!");
+      break;
+  }
+  result->SetSourceModule(0, *firstModule.getModule());
+  result->SetSourceModule(1, *secondModule.getModule());
+  result->SetSourceModule(2, *selecterModule.getModule());
+  return result;
+}
 }  // namespace procrock

@@ -50,8 +50,9 @@ const char* const PipelineStageNames_Par[] = {"LSCM Parameterizer", "xatlas Para
 const unsigned int PipelineStage_TexGen_Checkerboard = 0;
 const unsigned int PipelineStage_TexGen_SingleNoise = 1;
 const unsigned int PipelineStage_TexGen_CombinedNoise = 2;
-const unsigned int PipelineStage_TexGen_Granite = 3;
+const unsigned int PipelineStage_TexGen_SelectedNoise = 3;
+const unsigned int PipelineStage_TexGen_Granite = 4;
 
 const char* const PipelineStageNames_TexGen[] = {"Checkerboard", "Single Noise", "Combined Noise",
-                                                 "Granite"};
+                                                 "Selected Noise", "Granite"};
 }  // namespace procrock

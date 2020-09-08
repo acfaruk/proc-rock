@@ -123,4 +123,23 @@ class CombinedNoiseModule : public NoiseModule {
   virtual void addOwnGroups(Configuration& config, std::string& groupBaseName) override;
   virtual noise::module::Module* getModule() override;
 };
+
+class SelectedNoiseModule : public NoiseModule {
+ public:
+  SingleNoiseModule firstModule;
+  SingleNoiseModule secondModule;
+  SingleNoiseModule selecterModule;
+
+  int selection = 0;  // 0 = Blend, 1 = Select
+
+  noise::module::Blend blendModule;
+
+  float selectLowerBound = -1.0f;
+  float selectUpperBound = 1.0f;
+  float selectEdgeFalloff = 0.0f;
+  noise::module::Select selectModule;
+
+  virtual void addOwnGroups(Configuration& config, std::string& groupBaseName) override;
+  virtual noise::module::Module* getModule() override;
+};
 }  // namespace procrock

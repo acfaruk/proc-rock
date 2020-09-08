@@ -47,6 +47,8 @@ std::unique_ptr<TextureGenerator> inline createTextureGeneratorFromId(unsigned i
       return std::make_unique<SingleNoiseTextureGenerator>();
     case PipelineStage_TexGen_CombinedNoise:
       return std::make_unique<CombinedNoiseTextureGenerator>();
+    case PipelineStage_TexGen_SelectedNoise:
+      return std::make_unique<SelectedNoiseTextureGenerator>();
     case PipelineStage_TexGen_Granite:
       return std::make_unique<GraniteTextureGenerator>();
     default:
