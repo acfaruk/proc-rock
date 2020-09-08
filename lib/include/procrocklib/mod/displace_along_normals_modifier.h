@@ -1,4 +1,5 @@
 #pragma once
+#include <procrocklib/configurables/noise.h>
 #include <procrocklib/modifier.h>
 
 #include <random>
@@ -6,6 +7,7 @@
 namespace procrock {
 class DisplaceAlongNormalsModifier : public Modifier {
  public:
+  int selection = 0;  // 0 = rng, 1 = single Noise, 2 = combined noise, 3 = selected noise
   int seed = 0;
   float factor = 0.001;
 
@@ -18,5 +20,8 @@ class DisplaceAlongNormalsModifier : public Modifier {
                          "Displace all vertices allong their respective normals"};
 
   std::mt19937 rng;
+  SingleNoiseModule singleNoiseModule;
+  CombinedNoiseModule combinedNoiseModule;
+  SelectedNoiseModule selectedNoiseModule;
 };
 }  // namespace procrock

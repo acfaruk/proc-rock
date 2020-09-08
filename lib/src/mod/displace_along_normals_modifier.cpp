@@ -12,10 +12,33 @@ std::shared_ptr<Mesh> DisplaceAlongNormalsModifier::modify(Mesh& mesh) {
   result->faces = mesh.faces;
 
   rng.seed(seed);
+  auto singleModule = singleNoiseModule.getModule();
+  auto combinedModule = combinedNoiseModule.getModule();
+  auto selectedModule = selectedNoiseModule.getModule();
+
   for (Eigen::Index i = 0; i < mesh.vertices.rows(); i++) {
-    float random = rng() / (float)rng.max();
+    auto pos = mesh.vertices.row(i);
+    float amount = 0;
+    switch (selection) {
+      case 0:
+        amount = rng() / (float)rng.max();
+        break;
+      case 1:
+        amount = (singleModule->GetValue(pos(0), pos(1), pos(2)) + 1) / 2.0;
+        break;
+      case 2:
+        amount = (combinedModule->GetValue(pos(0), pos(1), pos(2)) + 1) / 2.0;
+        break;
+      case 3:
+        amount = (selectedModule->GetValue(pos(0), pos(1), pos(2)) + 1) / 2.0;
+        break;
+      default:
+        assert(0 && "Handle all cases!");
+        break;
+    }
+    amount = std::min(1.0f, std::max(0.0f, amount));
     auto translation =
-        Eigen::Translation<double, 3>((factor * random * mesh.normals.row(i).normalized()));
+        Eigen::Translation<double, 3>((factor * amount * mesh.normals.row(i).normalized()));
     auto transformedPos = translation * Eigen::Vector3d(mesh.vertices.row(i));
     result->vertices.row(i) = transformedPos;
   }
@@ -27,14 +50,44 @@ Configuration DisplaceAlongNormalsModifier::getConfiguration() {
   Configuration::ConfigurationGroup group;
 
   group.entry = {"General Settings", "Set various parameters of the displacement."};
-  group.ints.emplace_back(
-      Configuration::BoundedEntry<int>{{"Seed", "Seed for the rng"}, &seed, 0, 100000});
+  group.singleChoices.push_back(Configuration::SingleChoiceEntry{
+      {"Type", "Choose how the displacement should be calculated."},
+      {{"RNG", "Simple random number generator."},
+       {"Single Noise", "Based on a single noise function."},
+       {"Combined Noise", "Based on two noise functions."},
+       {"Selected Noise",
+        "Based on two noise functions where the value is choosen by a third one."}},
+      &selection});
 
   group.floats.emplace_back(Configuration::BoundedEntry<float>{
       {"Factor", "Amount of displacement"}, &factor, 0.001, 0.2});
 
+  if (selection == 0) {
+    group.ints.emplace_back(
+        Configuration::BoundedEntry<int>{{"Seed", "Seed for the rng"}, &seed, 0, 100000});
+  }
+
   Configuration result;
   result.configGroups["General"].push_back(group);
+
+  std::string noise;
+  switch (selection) {
+    case 1:
+      noise = "Noise";
+      singleNoiseModule.addOwnGroups(result, noise);
+      break;
+    case 2:
+      noise = "Combined Noise";
+      combinedNoiseModule.addOwnGroups(result, noise);
+      break;
+    case 3:
+      noise = "Selected Noise";
+      selectedNoiseModule.addOwnGroups(result, noise);
+      break;
+    default:
+      assert(0 && "Handle all cases!");
+      break;
+  }
   return result;
 }
 PipelineStageInfo& DisplaceAlongNormalsModifier::getInfo() { return info; }
