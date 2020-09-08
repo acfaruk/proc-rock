@@ -314,6 +314,14 @@ void updateConfigurable(Configurable& configurable) {
         ImGui::Text(group.entry.name.c_str());
         ImGui::Separator();
         ImGui::TextWrapped(group.entry.description.c_str());
+
+        for (auto var : group.bools) {
+          ImGui::Checkbox(var.entry.name.c_str(), var.data);
+          changed |= ImGui::IsItemDeactivatedAfterEdit();
+          ImGui::SameLine();
+          helpMarker(var.entry.description);
+        }
+
         for (auto var : group.singleChoices) {
           const char* preview_value = var.choices[*var.choice].name.c_str();
           if (ImGui::BeginCombo(var.entry.name.c_str(), preview_value)) {
