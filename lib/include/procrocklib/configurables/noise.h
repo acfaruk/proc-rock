@@ -83,6 +83,26 @@ class SingleNoiseModule : public NoiseModule {
   RidgedMultiNoiseModule ridgedMultiModule;
   VoronoiNoiseModule voronoiModule;
 
+  bool useAbsModule;
+  noise::module::Abs absModule;
+
+  bool useClampModule;
+  float clampLowerBound = -0.5f;
+  float clampUpperBound = 0.5f;
+  noise::module::Clamp clampModule;
+
+  bool useExponentModule;
+  float exponentExponent = 1.0f;
+  noise::module::Exponent exponentModule;
+
+  bool useInvertModule;
+  noise::module::Invert invertModule;
+
+  bool useScaleBiasModule;
+  float scaleBiasBias = 0.0f;
+  float scaleBiasScale = 1.0f;
+  noise::module::ScaleBias scaleBiasModule;
+
   virtual void addOwnGroups(Configuration& config, std::string& groupBaseName) override;
   virtual noise::module::Module* getModule() override;
 };

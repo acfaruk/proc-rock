@@ -151,20 +151,103 @@ void SingleNoiseModule::addOwnGroups(Configuration& config, std::string& groupBa
       assert(0 && "You forgot a case!");
       break;
   }
+
+  Configuration::ConfigurationGroup modifierGroup;
+  modifierGroup.entry = {"Modifiers", "Select modifiers to apply to the noise."};
+  modifierGroup.bools.push_back(Configuration::SimpleEntry<bool>{
+      {"Abs", "Return the absolute value of the noise."}, &useAbsModule});
+  modifierGroup.bools.push_back(Configuration::SimpleEntry<bool>{
+      {"Clamp", "Clamp the noise between two values."}, &useClampModule});
+  modifierGroup.bools.push_back(Configuration::SimpleEntry<bool>{
+      {"Exponent", "Return the exponent value of the noise."}, &useExponentModule});
+  modifierGroup.bools.push_back(Configuration::SimpleEntry<bool>{
+      {"Invert", "Return the inverted value of the noise."}, &useInvertModule});
+  modifierGroup.bools.push_back(Configuration::SimpleEntry<bool>{
+      {"Scale & Bias", "Add a scale and bias to the noise."}, &useScaleBiasModule});
+
+  config.configGroups[groupBaseName].push_back(modifierGroup);
+
+  if (useClampModule || useExponentModule || useScaleBiasModule) {
+    Configuration::ConfigurationGroup modifierSettings;
+    modifierSettings.entry = {"Modifiers Configuration",
+                              "Configure modifiers to apply to the noise."};
+    if (useClampModule) {
+      modifierSettings.floats.push_back(Configuration::BoundedEntry<float>{
+          {"Lower Bound", "Set the lower Bound of the clamping."},
+          &clampLowerBound,
+          -1.0f,
+          clampUpperBound});
+      modifierSettings.floats.push_back(Configuration::BoundedEntry<float>{
+          {"Upper Bound", "Set the upper Bound of the clamping."},
+          &clampUpperBound,
+          clampLowerBound,
+          1.0f});
+    }
+
+    if (useExponentModule) {
+      modifierSettings.floats.push_back(Configuration::BoundedEntry<float>{
+          {"Exponent", "The exponent to apply."}, &exponentExponent, 0.0f, 5.0f});
+    }
+
+    if (useScaleBiasModule) {
+      modifierSettings.floats.push_back(Configuration::BoundedEntry<float>{
+          {"Bias", "Bias to apply to the noise."}, &scaleBiasBias, -2.0f, 2.0f});
+      modifierSettings.floats.push_back(Configuration::BoundedEntry<float>{
+          {"Scale", "Scale to apply to the noise."}, &scaleBiasScale, -2.0f, 2.0f});
+    }
+    config.configGroups[groupBaseName].push_back(modifierSettings);
+  }
 }
 noise::module::Module* SingleNoiseModule::getModule() {
+  noise::module::Module* current;
   switch (selection) {
     case 0:
-      return perlinModule.getModule();
+      current = perlinModule.getModule();
+      break;
     case 1:
-      return billowModule.getModule();
+      current = billowModule.getModule();
+      break;
     case 2:
-      return ridgedMultiModule.getModule();
+      current = ridgedMultiModule.getModule();
+      break;
     case 3:
-      return voronoiModule.getModule();
+      current = voronoiModule.getModule();
+      break;
     default:
       assert(0 && "You forgot a case!");
       break;
   }
+
+  noise::module::Module* result = current;
+  if (useAbsModule) {
+    absModule.SetSourceModule(0, *result);
+    result = &absModule;
+  }
+
+  if (useClampModule) {
+    clampModule.SetSourceModule(0, *result);
+    clampModule.SetBounds(clampLowerBound, clampUpperBound);
+    result = &clampModule;
+  }
+
+  if (useExponentModule) {
+    exponentModule.SetSourceModule(0, *result);
+    exponentModule.SetExponent(exponentExponent);
+    result = &exponentModule;
+  }
+
+  if (useInvertModule) {
+    invertModule.SetSourceModule(0, *result);
+    result = &invertModule;
+  }
+
+  if (useScaleBiasModule) {
+    scaleBiasModule.SetSourceModule(0, *result);
+    scaleBiasModule.SetBias(scaleBiasBias);
+    scaleBiasModule.SetScale(scaleBiasScale);
+    result = &scaleBiasModule;
+  }
+
+  return result;
 }
 }  // namespace procrock
