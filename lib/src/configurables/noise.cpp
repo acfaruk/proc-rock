@@ -250,4 +250,49 @@ noise::module::Module* SingleNoiseModule::getModule() {
 
   return result;
 }
+void CombinedNoiseModule::addOwnGroups(Configuration& config, std::string& groupBaseName) {
+  Configuration::ConfigurationGroup selectionGroup;
+  selectionGroup.entry = {"Select Combination Method", "How to combine the two noise functions."};
+  selectionGroup.singleChoices.push_back(Configuration::SingleChoiceEntry{
+      {"Method", "Which method to use for combining the noises."},
+      {{"Add", "Add the two input noise values."},
+       {"Max", "Get the maximum of the two input noise values."},
+       {"Min", "Get the minimum of the two input noise values."},
+       {"Multiply", "Multiply the two input noise values."},
+       {"Power", "Raise on noise value to the power of the other one."}},
+      &selection});
+  config.configGroups[groupBaseName].push_back(selectionGroup);
+
+  std::string first = "First Noise Function";
+  firstModule.addOwnGroups(config, first);
+  std::string second = "Second Noise Function";
+  secondModule.addOwnGroups(config, second);
+}
+noise::module::Module* CombinedNoiseModule::getModule() {
+  noise::module::Module* result;
+
+  switch (selection) {
+    case 0:
+      result = &addModule;
+      break;
+    case 1:
+      result = &maxModule;
+      break;
+    case 2:
+      result = &minModule;
+      break;
+    case 3:
+      result = &multiplyModule;
+      break;
+    case 4:
+      result = &powerModule;
+      break;
+    default:
+      assert(0 && "Handle all cases!");
+      break;
+  }
+  result->SetSourceModule(0, *firstModule.getModule());
+  result->SetSourceModule(1, *secondModule.getModule());
+  return result;
+}
 }  // namespace procrock

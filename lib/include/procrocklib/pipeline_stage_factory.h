@@ -45,6 +45,8 @@ std::unique_ptr<TextureGenerator> inline createTextureGeneratorFromId(unsigned i
       return std::make_unique<CheckerboardTextureGenerator>();
     case PipelineStage_TexGen_SingleNoise:
       return std::make_unique<SingleNoiseTextureGenerator>();
+    case PipelineStage_TexGen_CombinedNoise:
+      return std::make_unique<CombinedNoiseTextureGenerator>();
     case PipelineStage_TexGen_Granite:
       return std::make_unique<GraniteTextureGenerator>();
     default:

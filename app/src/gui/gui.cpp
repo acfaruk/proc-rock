@@ -307,9 +307,10 @@ void updatePipelineStage(Pipeline& pipeline, PipelineStage& stage) {
 void updateConfigurable(Configurable& configurable) {
   auto config = configurable.getConfiguration();
   bool changed = false;
-
+  int idCounter = 0;
   for (auto mainGroup : config.configGroups) {
     if (ImGui::CollapsingHeader(mainGroup.first.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+      ImGui::PushID(idCounter++);
       for (auto group : mainGroup.second) {
         ImGui::Text(group.entry.name.c_str());
         ImGui::Separator();
@@ -392,6 +393,7 @@ void updateConfigurable(Configurable& configurable) {
         }
         ImGui::Dummy(ImVec2(0, 20));
       }
+      ImGui::PopID();
     }
   }
 

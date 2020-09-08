@@ -106,4 +106,21 @@ class SingleNoiseModule : public NoiseModule {
   virtual void addOwnGroups(Configuration& config, std::string& groupBaseName) override;
   virtual noise::module::Module* getModule() override;
 };
+
+class CombinedNoiseModule : public NoiseModule {
+ public:
+  SingleNoiseModule firstModule;
+  SingleNoiseModule secondModule;
+
+  int selection = 0;  // 0 = add, 1 = max, 2 = min, 3 = multiply, 4 = power
+
+  noise::module::Add addModule;
+  noise::module::Max maxModule;
+  noise::module::Min minModule;
+  noise::module::Multiply multiplyModule;
+  noise::module::Power powerModule;
+
+  virtual void addOwnGroups(Configuration& config, std::string& groupBaseName) override;
+  virtual noise::module::Module* getModule() override;
+};
 }  // namespace procrock

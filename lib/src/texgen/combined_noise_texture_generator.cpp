@@ -1,11 +1,10 @@
-#include "texgen/single_noise_texture_generator.h"
-
-#include <noise/noise.h>
+#include "texgen/combined_noise_texture_generator.h"
 
 #include "utils/colors.h"
 
 namespace procrock {
-std::shared_ptr<Mesh> SingleNoiseTextureGenerator::generate(Mesh* before) {
+
+std::shared_ptr<Mesh> CombinedNoiseTextureGenerator::generate(Mesh* before) {
   auto result = std::make_shared<Mesh>(*before);
 
   auto noiseModule = module.getModule();
@@ -18,9 +17,8 @@ std::shared_ptr<Mesh> SingleNoiseTextureGenerator::generate(Mesh* before) {
   return result;
 }
 
-PipelineStageInfo& SingleNoiseTextureGenerator::getInfo() { return info; }
-
-Configuration SingleNoiseTextureGenerator::getConfiguration() {
+PipelineStageInfo& CombinedNoiseTextureGenerator::getInfo() { return info; }
+Configuration CombinedNoiseTextureGenerator::getConfiguration() {
   Configuration::ConfigurationGroup colorGroup;
   colorGroup.entry = {"Coloring Settings", "Create colors for the texture."};
   colorGroup.gradientColorings.push_back(Configuration::GradientColoringEntry(
@@ -30,7 +28,7 @@ Configuration SingleNoiseTextureGenerator::getConfiguration() {
        &colorGradient}));
 
   Configuration result = getBaseConfiguration();
-  std::string baseGroupName = "Noise Function";
+  std::string baseGroupName = "Combined Noise";
   module.addOwnGroups(result, baseGroupName);
   result.configGroups["Coloring"].push_back(colorGroup);
   return result;
