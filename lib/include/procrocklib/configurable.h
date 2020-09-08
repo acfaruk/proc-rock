@@ -48,7 +48,7 @@ struct Configuration {
     std::vector<GradientColoringEntry> gradientColorings;
   };
 
-  std::vector<ConfigurationGroup> configGroups;
+  std::map<std::string, std::vector<ConfigurationGroup>> configGroups;
 };
 class Configurable {
  public:

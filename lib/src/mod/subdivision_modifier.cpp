@@ -52,7 +52,7 @@ Configuration SubdivisionModifier::getConfiguration() {
       &mode});
 
   Configuration result;
-  result.configGroups.push_back(group);
+  result.configGroups["General"].push_back(group);
   return result;
 }
 PipelineStageInfo& SubdivisionModifier::getInfo() { return info; }

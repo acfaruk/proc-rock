@@ -296,7 +296,7 @@ void updatePipelineStage(Pipeline& pipeline, PipelineStage& stage) {
 
   // Configurable stuff of the stage
   if (sideBar.stageData[id].visible) {
-    ImGui::SetNextWindowSizeConstraints(ImVec2(sideBar.width, 100), ImVec2(FLT_MAX, FLT_MAX));
+    ImGui::SetNextWindowSizeConstraints(ImVec2(sideBar.width, 100), ImVec2(FLT_MAX, viewer.size.y));
     ImGui::Begin(id.c_str(), &sideBar.stageData[id].visible);
     updateConfigurable(stage);
     ImGui::End();
@@ -308,79 +308,83 @@ void updateConfigurable(Configurable& configurable) {
   auto config = configurable.getConfiguration();
   bool changed = false;
 
-  for (auto group : config.configGroups) {
-    ImGui::Text(group.entry.name.c_str());
-    ImGui::Separator();
-    ImGui::TextWrapped(group.entry.description.c_str());
-    for (auto var : group.singleChoices) {
-      const char* preview_value = var.choices[*var.choice].name.c_str();
-      if (ImGui::BeginCombo(var.entry.name.c_str(), preview_value)) {
-        for (int i = 0; i < var.choices.size(); i++) {
-          bool item_selected = i == *var.choice;
+  for (auto mainGroup : config.configGroups) {
+    if (ImGui::CollapsingHeader(mainGroup.first.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+      for (auto group : mainGroup.second) {
+        ImGui::Text(group.entry.name.c_str());
+        ImGui::Separator();
+        ImGui::TextWrapped(group.entry.description.c_str());
+        for (auto var : group.singleChoices) {
+          const char* preview_value = var.choices[*var.choice].name.c_str();
+          if (ImGui::BeginCombo(var.entry.name.c_str(), preview_value)) {
+            for (int i = 0; i < var.choices.size(); i++) {
+              bool item_selected = i == *var.choice;
 
-          ImGui::PushID((void*)(intptr_t)i);
-          if (ImGui::Selectable(var.choices[i].name.c_str(), item_selected)) {
-            *var.choice = i;
+              ImGui::PushID((void*)(intptr_t)i);
+              if (ImGui::Selectable(var.choices[i].name.c_str(), item_selected)) {
+                *var.choice = i;
+                changed = true;
+              }
+              if (ImGui::IsItemActive() || ImGui::IsItemHovered()) {
+                ImGui::SetTooltip(var.choices[i].description.c_str());
+              }
+              if (item_selected) ImGui::SetItemDefaultFocus();
+              ImGui::PopID();
+            }
+            ImGui::EndCombo();
+          }
+          ImGui::SameLine();
+          helpMarker(var.entry.description);
+        }
+        for (auto var : group.floats) {
+          ImGui::SliderFloat(var.entry.name.c_str(), var.data, var.min, var.max);
+          changed |= ImGui::IsItemDeactivatedAfterEdit();
+          ImGui::SameLine();
+          helpMarker(var.entry.description);
+        }
+        for (auto var : group.ints) {
+          ImGui::SliderInt(var.entry.name.c_str(), var.data, var.min, var.max);
+          changed |= ImGui::IsItemDeactivatedAfterEdit();
+          ImGui::SameLine();
+          helpMarker(var.entry.description);
+        }
+        for (auto gradient : group.gradientColorings) {
+          ImGui::Text(gradient.entry.name.c_str());
+          ImGui::SameLine();
+          helpMarker(gradient.entry.description);
+          int to_be_removed = -1;
+          int id = 0;
+          for (auto& x : *gradient.colors) {
+            ImGui::PushID(id++);
+            ImGui::Text(std::to_string(x.first).c_str());
+            ImGui::SameLine(50);
+            ImGui::ColorEdit3("", x.second.data(),
+                              ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel);
+            changed |= ImGui::IsItemDeactivatedAfterEdit();
+
+            ImGui::SameLine(200);
+            if (ImGui::Button(ICON_FA_TIMES_CIRCLE)) {
+              to_be_removed = x.first;
+              changed = true;
+            }
+            ImGui::PopID();
+          }
+
+          if (to_be_removed != -1) {
+            gradient.colors->erase(to_be_removed);
+          }
+
+          static int to_be_added = 0;
+          ImGui::SliderInt("", &to_be_added, 1, 100);
+          ImGui::SameLine();
+          if (ImGui::Button(ICON_FA_PLUS_CIRCLE)) {
+            gradient.colors->emplace(to_be_added, Eigen::Vector3f{0, 0, 0});
             changed = true;
           }
-          if (ImGui::IsItemActive() || ImGui::IsItemHovered()) {
-            ImGui::SetTooltip(var.choices[i].description.c_str());
-          }
-          if (item_selected) ImGui::SetItemDefaultFocus();
-          ImGui::PopID();
         }
-        ImGui::EndCombo();
-      }
-      ImGui::SameLine();
-      helpMarker(var.entry.description);
-    }
-    for (auto var : group.floats) {
-      ImGui::SliderFloat(var.entry.name.c_str(), var.data, var.min, var.max);
-      changed |= ImGui::IsItemDeactivatedAfterEdit();
-      ImGui::SameLine();
-      helpMarker(var.entry.description);
-    }
-    for (auto var : group.ints) {
-      ImGui::SliderInt(var.entry.name.c_str(), var.data, var.min, var.max);
-      changed |= ImGui::IsItemDeactivatedAfterEdit();
-      ImGui::SameLine();
-      helpMarker(var.entry.description);
-    }
-    for (auto gradient : group.gradientColorings) {
-      ImGui::Text(gradient.entry.name.c_str());
-      ImGui::SameLine();
-      helpMarker(gradient.entry.description);
-      int to_be_removed = -1;
-      int id = 0;
-      for (auto& x : *gradient.colors) {
-        ImGui::PushID(id++);
-        ImGui::Text(std::to_string(x.first).c_str());
-        ImGui::SameLine(50);
-        ImGui::ColorEdit3("", x.second.data(),
-                          ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel);
-        changed |= ImGui::IsItemDeactivatedAfterEdit();
-
-        ImGui::SameLine(200);
-        if (ImGui::Button(ICON_FA_TIMES_CIRCLE)) {
-          to_be_removed = x.first;
-          changed = true;
-        }
-        ImGui::PopID();
-      }
-
-      if (to_be_removed != -1) {
-        gradient.colors->erase(to_be_removed);
-      }
-
-      static int to_be_added = 0;
-      ImGui::SliderInt("", &to_be_added, 1, 100);
-      ImGui::SameLine();
-      if (ImGui::Button(ICON_FA_PLUS_CIRCLE)) {
-        gradient.colors->emplace(to_be_added, Eigen::Vector3f{0, 0, 0});
-        changed = true;
+        ImGui::Dummy(ImVec2(0, 20));
       }
     }
-    ImGui::Dummy(ImVec2(0, 20));
   }
 
   configurable.setChanged(changed);

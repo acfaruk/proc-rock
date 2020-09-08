@@ -34,7 +34,7 @@ Configuration DisplaceAlongNormalsModifier::getConfiguration() {
       {"Factor", "Amount of displacement"}, &factor, 0.001, 0.2});
 
   Configuration result;
-  result.configGroups.push_back(group);
+  result.configGroups["General"].push_back(group);
   return result;
 }
 PipelineStageInfo& DisplaceAlongNormalsModifier::getInfo() { return info; }

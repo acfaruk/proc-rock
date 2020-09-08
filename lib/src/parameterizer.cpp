@@ -31,7 +31,7 @@ Configuration Parameterizer::getBaseConfiguration() {
                                         {"4096x4096", "Extreme Quality"}},
                                        &textureSizeChoice});
   Configuration result;
-  result.configGroups.push_back(group);
+  result.configGroups["Texture"].push_back(group);
   return result;
 }
 

@@ -3,7 +3,7 @@
 namespace procrock {
 
 // Perlin
-void PerlinNoiseModule::addOwnGroups(Configuration& config) {
+void PerlinNoiseModule::addOwnGroups(Configuration& config, std::string& groupBaseName) {
   Configuration::ConfigurationGroup noiseGroup;
 
   noiseGroup.entry = {"Perlin Noise", "Set the various parameters of the noise function(s)."};
@@ -24,20 +24,19 @@ void PerlinNoiseModule::addOwnGroups(Configuration& config) {
                                         {"Standard Quality", "Standard Quality Noise"},
                                         {"High Quality", "High Quality Noise"}},
                                        &qualityChoice});
-  config.configGroups.push_back(noiseGroup);
+  config.configGroups[groupBaseName].push_back(noiseGroup);
 }
-std::unique_ptr<noise::module::Module> PerlinNoiseModule::getModule() {
-  auto module = std::make_unique<noise::module::Perlin>();
-  module->SetFrequency(frequency);
-  module->SetLacunarity(lacunarity);
-  module->SetPersistence(persistence);
-  module->SetOctaveCount(octaveCount);
-  module->SetSeed(seed);
-  module->SetNoiseQuality(static_cast<noise::NoiseQuality>(qualityChoice));
-  return std::move(module);
+noise::module::Module* PerlinNoiseModule::getModule() {
+  module.SetFrequency(frequency);
+  module.SetLacunarity(lacunarity);
+  module.SetPersistence(persistence);
+  module.SetOctaveCount(octaveCount);
+  module.SetSeed(seed);
+  module.SetNoiseQuality(static_cast<noise::NoiseQuality>(qualityChoice));
+  return &module;
 }
 
-void BillowNoiseModule::addOwnGroups(Configuration& config) {
+void BillowNoiseModule::addOwnGroups(Configuration& config, std::string& groupBaseName) {
   Configuration::ConfigurationGroup noiseGroup;
 
   noiseGroup.entry = {"Billow Noise", "Set the various parameters of the noise function(s)."};
@@ -58,20 +57,19 @@ void BillowNoiseModule::addOwnGroups(Configuration& config) {
                                         {"Standard Quality", "Standard Quality Noise"},
                                         {"High Quality", "High Quality Noise"}},
                                        &qualityChoice});
-  config.configGroups.push_back(noiseGroup);
+  config.configGroups[groupBaseName].push_back(noiseGroup);
 }
-std::unique_ptr<noise::module::Module> BillowNoiseModule::getModule() {
-  auto module = std::make_unique<noise::module::Billow>();
-  module->SetFrequency(frequency);
-  module->SetLacunarity(lacunarity);
-  module->SetPersistence(persistence);
-  module->SetOctaveCount(octaveCount);
-  module->SetSeed(seed);
-  module->SetNoiseQuality(static_cast<noise::NoiseQuality>(qualityChoice));
-  return std::move(module);
+noise::module::Module* BillowNoiseModule::getModule() {
+  module.SetFrequency(frequency);
+  module.SetLacunarity(lacunarity);
+  module.SetPersistence(persistence);
+  module.SetOctaveCount(octaveCount);
+  module.SetSeed(seed);
+  module.SetNoiseQuality(static_cast<noise::NoiseQuality>(qualityChoice));
+  return &module;
 }
 
-void RidgedMultiNoiseModule::addOwnGroups(Configuration& config) {
+void RidgedMultiNoiseModule::addOwnGroups(Configuration& config, std::string& groupBaseName) {
   Configuration::ConfigurationGroup noiseGroup;
 
   noiseGroup.entry = {"Ridged Multi Noise", "Set the various parameters of the noise function(s)."};
@@ -90,19 +88,18 @@ void RidgedMultiNoiseModule::addOwnGroups(Configuration& config) {
                                         {"Standard Quality", "Standard Quality Noise"},
                                         {"High Quality", "High Quality Noise"}},
                                        &qualityChoice});
-  config.configGroups.push_back(noiseGroup);
+  config.configGroups[groupBaseName].push_back(noiseGroup);
 }
-std::unique_ptr<noise::module::Module> RidgedMultiNoiseModule::getModule() {
-  auto module = std::make_unique<noise::module::RidgedMulti>();
-  module->SetFrequency(frequency);
-  module->SetLacunarity(lacunarity);
-  module->SetOctaveCount(octaveCount);
-  module->SetSeed(seed);
-  module->SetNoiseQuality(static_cast<noise::NoiseQuality>(qualityChoice));
-  return std::move(module);
+noise::module::Module* RidgedMultiNoiseModule::getModule() {
+  module.SetFrequency(frequency);
+  module.SetLacunarity(lacunarity);
+  module.SetOctaveCount(octaveCount);
+  module.SetSeed(seed);
+  module.SetNoiseQuality(static_cast<noise::NoiseQuality>(qualityChoice));
+  return &module;
 }
 
-void VoronoiNoiseModule::addOwnGroups(Configuration& config) {
+void VoronoiNoiseModule::addOwnGroups(Configuration& config, std::string& groupBaseName) {
   Configuration::ConfigurationGroup noiseGroup;
 
   noiseGroup.entry = {"Voronoi Cells", "Set the various parameters of the noise function(s)."};
@@ -115,18 +112,17 @@ void VoronoiNoiseModule::addOwnGroups(Configuration& config) {
   noiseGroup.ints.push_back(
       Configuration::BoundedEntry<int>{{"Seed", "Seed for the Vornoi Cells."}, &seed, 1, 100000});
 
-  config.configGroups.push_back(noiseGroup);
+  config.configGroups[groupBaseName].push_back(noiseGroup);
 }
-std::unique_ptr<noise::module::Module> VoronoiNoiseModule::getModule() {
-  auto module = std::make_unique<noise::module::Voronoi>();
-  module->SetFrequency(frequency);
-  module->SetSeed(seed);
-  module->EnableDistance(distance);
-  module->SetDisplacement(displacement);
-  return std::move(module);
+noise::module::Module* VoronoiNoiseModule::getModule() {
+  module.SetFrequency(frequency);
+  module.SetSeed(seed);
+  module.EnableDistance(distance);
+  module.SetDisplacement(displacement);
+  return &module;
 }
 
-void SingleNoiseModule::addOwnGroups(Configuration& config) {
+void SingleNoiseModule::addOwnGroups(Configuration& config, std::string& groupBaseName) {
   Configuration::ConfigurationGroup selectionGroup;
   selectionGroup.entry = {"Select Noise", "Choose noise method."};
   selectionGroup.singleChoices.push_back(
@@ -136,36 +132,36 @@ void SingleNoiseModule::addOwnGroups(Configuration& config) {
                                         {"RidgedMulti", "Ridged Multi Noise"},
                                         {"Voronoi", "Voronoi Cells"}},
                                        &selection});
-  config.configGroups.push_back(selectionGroup);
+  config.configGroups[groupBaseName].push_back(selectionGroup);
 
   switch (selection) {
     case 0:
-      perlinModule.addOwnGroups(config);
+      perlinModule.addOwnGroups(config, groupBaseName);
       break;
     case 1:
-      billowModule.addOwnGroups(config);
+      billowModule.addOwnGroups(config, groupBaseName);
       break;
     case 2:
-      ridgedMultiModule.addOwnGroups(config);
+      ridgedMultiModule.addOwnGroups(config, groupBaseName);
       break;
     case 3:
-      voronoiModule.addOwnGroups(config);
+      voronoiModule.addOwnGroups(config, groupBaseName);
       break;
     default:
       assert(0 && "You forgot a case!");
       break;
   }
 }
-std::unique_ptr<noise::module::Module> SingleNoiseModule::getModule() {
+noise::module::Module* SingleNoiseModule::getModule() {
   switch (selection) {
     case 0:
-      return std::move(perlinModule.getModule());
+      return perlinModule.getModule();
     case 1:
-      return std::move(billowModule.getModule());
+      return billowModule.getModule();
     case 2:
-      return std::move(ridgedMultiModule.getModule());
+      return ridgedMultiModule.getModule();
     case 3:
-      return std::move(voronoiModule.getModule());
+      return voronoiModule.getModule();
     default:
       assert(0 && "You forgot a case!");
       break;

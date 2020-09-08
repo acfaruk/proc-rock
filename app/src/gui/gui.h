@@ -33,12 +33,6 @@ bool isCapturingMouse();
 
 void render();
 
-std::string inline addressToString(void const* address) {
-  std::ostringstream result;
-  result << address;
-  return result.str();
-}
-
 struct StageSettings {
   bool visible = false;
 };

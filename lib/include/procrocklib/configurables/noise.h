@@ -10,7 +10,7 @@
 namespace procrock {
 class NoiseModule : public ConfigurableExtender {
  public:
-  virtual std::unique_ptr<noise::module::Module> getModule() = 0;
+  virtual noise::module::Module* getModule() = 0;
 };
 
 class PerlinNoiseModule : public NoiseModule {
@@ -23,8 +23,10 @@ class PerlinNoiseModule : public NoiseModule {
 
   int qualityChoice = 2;
 
-  virtual void addOwnGroups(Configuration& config) override;
-  virtual std::unique_ptr<noise::module::Module> getModule() override;
+  noise::module::Perlin module;
+
+  virtual void addOwnGroups(Configuration& config, std::string& groupBaseName) override;
+  virtual noise::module::Module* getModule() override;
 };
 
 class BillowNoiseModule : public NoiseModule {
@@ -37,8 +39,10 @@ class BillowNoiseModule : public NoiseModule {
 
   int qualityChoice = 2;
 
-  virtual void addOwnGroups(Configuration& config) override;
-  virtual std::unique_ptr<noise::module::Module> getModule() override;
+  noise::module::Billow module;
+
+  virtual void addOwnGroups(Configuration& config, std::string& groupBaseName) override;
+  virtual noise::module::Module* getModule() override;
 };
 
 class RidgedMultiNoiseModule : public NoiseModule {
@@ -50,8 +54,10 @@ class RidgedMultiNoiseModule : public NoiseModule {
 
   int qualityChoice = 2;
 
-  virtual void addOwnGroups(Configuration& config) override;
-  virtual std::unique_ptr<noise::module::Module> getModule() override;
+  noise::module::RidgedMulti module;
+
+  virtual void addOwnGroups(Configuration& config, std::string& groupBaseName) override;
+  virtual noise::module::Module* getModule() override;
 };
 
 class VoronoiNoiseModule : public NoiseModule {
@@ -62,8 +68,10 @@ class VoronoiNoiseModule : public NoiseModule {
   int seed = 0;
   bool distance = false;
 
-  virtual void addOwnGroups(Configuration& config) override;
-  virtual std::unique_ptr<noise::module::Module> getModule() override;
+  noise::module::Voronoi module;
+
+  virtual void addOwnGroups(Configuration& config, std::string& groupBaseName) override;
+  virtual noise::module::Module* getModule() override;
 };
 
 class SingleNoiseModule : public NoiseModule {
@@ -75,7 +83,7 @@ class SingleNoiseModule : public NoiseModule {
   RidgedMultiNoiseModule ridgedMultiModule;
   VoronoiNoiseModule voronoiModule;
 
-  virtual void addOwnGroups(Configuration& config) override;
-  virtual std::unique_ptr<noise::module::Module> getModule() override;
+  virtual void addOwnGroups(Configuration& config, std::string& groupBaseName) override;
+  virtual noise::module::Module* getModule() override;
 };
 }  // namespace procrock

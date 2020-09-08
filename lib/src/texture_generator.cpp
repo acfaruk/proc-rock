@@ -32,7 +32,7 @@ Configuration TextureGenerator::getBaseConfiguration() {
       1.0f,
       1.9f});
   Configuration result;
-  result.configGroups.push_back(baseGroup);
+  result.configGroups["Base Texture"].push_back(baseGroup);
   return result;
 }
 

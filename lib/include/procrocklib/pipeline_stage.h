@@ -25,7 +25,7 @@ class PipelineStage : public Configurable {
     // Each instance gets its id from its name and memory location
     std::ostringstream oss;
     oss << (void*)this;
-    return getInfo().name + "(" + oss.str() + ")";
+    return getInfo().name + "##(" + oss.str() + ")";
   }
 };
 

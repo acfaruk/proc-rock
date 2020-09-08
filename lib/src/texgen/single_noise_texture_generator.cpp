@@ -32,8 +32,9 @@ Configuration SingleNoiseTextureGenerator::getConfiguration() {
        &colorGradient}));
 
   Configuration result = getBaseConfiguration();
-  module.addOwnGroups(result);
-  result.configGroups.push_back(colorGroup);
+  std::string baseGroupName = "Noise Function";
+  module.addOwnGroups(result, baseGroupName);
+  result.configGroups["Coloring"].push_back(colorGroup);
   return result;
 }
 }  // namespace procrock

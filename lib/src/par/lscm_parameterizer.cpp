@@ -120,7 +120,7 @@ Configuration LSCM_Parameterizer::getConfiguration() {
       {"Scaling", "Scale the uv's by this amount"}, &scaling, 0.1, 1});
 
   Configuration result = getBaseConfiguration();
-  result.configGroups.push_back(group);
+  result.configGroups["General"].push_back(group);
   return result;
 }
 
