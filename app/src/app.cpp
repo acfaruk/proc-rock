@@ -1,10 +1,9 @@
 #include "app.h"
 
-#include <procrocklib/gen/cuboid_generator.h>
+#include <procrocklib/gen/icosahedron_generator.h>
 #include <procrocklib/mod/subdivision_modifier.h>
-#include <procrocklib/par/lscm_parameterizer.h>
 #include <procrocklib/par/xatlas_parameterizer.h>
-#include <procrocklib/texgen/checkerboard_texture_generator.h>
+#include <procrocklib/texgen/single_noise_texture_generator.h>
 
 #include <iostream>
 
@@ -102,10 +101,10 @@ bool App::init() {
   mainCam->lookAt(glm::vec3(3, 3, 3), glm::vec3(0), glm::vec3(0, 1, 0));
 
   pipeline = std::make_unique<Pipeline>();
-  pipeline->setGenerator(std::make_unique<CuboidGenerator>());
+  pipeline->setGenerator(std::make_unique<IcosahedronGenerator>());
   pipeline->addModifier(std::make_unique<SubdivisionModifier>());
   pipeline->setParameterizer(std::make_unique<XAtlasParameterizer>());
-  pipeline->setTextureGenerator(std::make_unique<CheckerboardTextureGenerator>());
+  pipeline->setTextureGenerator(std::make_unique<SingleNoiseTextureGenerator>());
 
   pointLight = std::make_unique<PointLight>(glm::vec3(7, 0, 0));
 

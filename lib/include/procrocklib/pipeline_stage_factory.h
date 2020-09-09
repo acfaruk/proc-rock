@@ -10,8 +10,10 @@ namespace procrock {
 
 std::unique_ptr<Generator> inline createGeneratorFromId(unsigned int id) {
   switch (id) {
-    case PipelineStage_Mod_Subdivsion:
+    case PipelineStage_Gen_Cuboid:
       return std::make_unique<CuboidGenerator>();
+    case PipelineStage_Gen_Icosahedron:
+      return std::make_unique<IcosahedronGenerator>();
     default:
       assert(0 && "make sure all stages are handled!");
   }
@@ -30,9 +32,9 @@ std::unique_ptr<Modifier> inline createModifierFromId(unsigned int id) {
 
 std::unique_ptr<Parameterizer> inline createParameterizerFromId(unsigned int id) {
   switch (id) {
-    case PipelineStage_Mod_Subdivsion:
+    case PipelineStage_Par_LSCM:
       return std::make_unique<LSCM_Parameterizer>();
-    case PipelineStage_Mod_DisplaceAlongNormals:
+    case PipelineStage_Par_XATLAS:
       return std::make_unique<XAtlasParameterizer>();
     default:
       assert(0 && "make sure all stages are handled!");

@@ -31,14 +31,15 @@ class PipelineStage : public Configurable {
 
 // Generators
 const unsigned int PipelineStage_Gen_Cuboid = 0;
+const unsigned int PipelineStage_Gen_Icosahedron = 1;
 
-const char* const PipelineStageNames_Gen[] = {"Cuboid Generator"};
+const char* const PipelineStageNames_Gen[] = {"Cuboid", "Icosahedron"};
 
 // Modifiers
 const unsigned int PipelineStage_Mod_Subdivsion = 0;
 const unsigned int PipelineStage_Mod_DisplaceAlongNormals = 1;
 
-const char* const PipelineStageNames_Mod[] = {"Subdivision Modifier", "Displace Along Normals"};
+const char* const PipelineStageNames_Mod[] = {"Subdivision", "Displace Along Normals"};
 
 // Parameterizers
 const unsigned int PipelineStage_Par_LSCM = 0;

@@ -7,7 +7,7 @@
 namespace procrock {
 class Parameterizer : public PipelineStage {
  public:
-  int textureSizeChoice = 0;
+  int textureSizeChoice = 1;
 
   virtual std::shared_ptr<Mesh> run(Mesh* before = nullptr) override;
 
