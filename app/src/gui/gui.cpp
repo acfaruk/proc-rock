@@ -308,7 +308,7 @@ void updateConfigurable(Configurable& configurable) {
   auto config = configurable.getConfiguration();
   bool changed = false;
   int idCounter = 0;
-  for (auto mainGroup : config.configGroups) {
+  for (auto mainGroup : config.getConfigGroups()) {
     if (ImGui::CollapsingHeader(mainGroup.first.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
       ImGui::PushID(idCounter++);
       for (auto group : mainGroup.second) {

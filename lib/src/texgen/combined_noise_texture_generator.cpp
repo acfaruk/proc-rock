@@ -30,7 +30,7 @@ Configuration CombinedNoiseTextureGenerator::getConfiguration() {
   Configuration result = getBaseConfiguration();
   std::string baseGroupName = "Combined Noise";
   module.addOwnGroups(result, baseGroupName);
-  result.configGroups["Coloring"].push_back(colorGroup);
+  result.insertToConfigGroups("Coloring", colorGroup);
   return result;
 }
 }  // namespace procrock

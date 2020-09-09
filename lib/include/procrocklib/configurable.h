@@ -48,7 +48,27 @@ struct Configuration {
     std::vector<GradientColoringEntry> gradientColorings;
   };
 
-  std::map<std::string, std::vector<ConfigurationGroup>> configGroups;
+ private:
+  typedef std::pair<std::string, std::vector<ConfigurationGroup>> ConfigurationGroupsElement;
+  std::vector<ConfigurationGroupsElement> configGroups;
+
+ public:
+  inline void insertToConfigGroups(std::string name, ConfigurationGroup& group) {
+    int index = -1;
+    for (int i = 0; i < configGroups.size(); i++) {
+      if (configGroups[i].first == name) {
+        index = i;
+        break;
+      }
+    }
+
+    if (index == -1) {
+      configGroups.emplace_back(ConfigurationGroupsElement{name, {group}});
+    } else {
+      configGroups[index].second.push_back(group);
+    }
+  }
+  inline std::vector<ConfigurationGroupsElement>& getConfigGroups() { return configGroups; }
 };
 class Configurable {
  public:

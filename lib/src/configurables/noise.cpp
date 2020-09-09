@@ -3,7 +3,7 @@
 namespace procrock {
 
 // Perlin
-void PerlinNoiseModule::addOwnGroups(Configuration& config, std::string& groupBaseName) {
+void PerlinNoiseModule::addOwnGroups(Configuration& config, std::string newGroupName) {
   Configuration::ConfigurationGroup noiseGroup;
 
   noiseGroup.entry = {"Perlin Noise", "Set the various parameters of the noise function(s)."};
@@ -24,7 +24,7 @@ void PerlinNoiseModule::addOwnGroups(Configuration& config, std::string& groupBa
                                         {"Standard Quality", "Standard Quality Noise"},
                                         {"High Quality", "High Quality Noise"}},
                                        &qualityChoice});
-  config.configGroups[groupBaseName].push_back(noiseGroup);
+  config.insertToConfigGroups(newGroupName, noiseGroup);
 }
 noise::module::Module* PerlinNoiseModule::getModule() {
   module.SetFrequency(frequency);
@@ -36,7 +36,7 @@ noise::module::Module* PerlinNoiseModule::getModule() {
   return &module;
 }
 
-void BillowNoiseModule::addOwnGroups(Configuration& config, std::string& groupBaseName) {
+void BillowNoiseModule::addOwnGroups(Configuration& config, std::string newGroupName) {
   Configuration::ConfigurationGroup noiseGroup;
 
   noiseGroup.entry = {"Billow Noise", "Set the various parameters of the noise function(s)."};
@@ -57,7 +57,7 @@ void BillowNoiseModule::addOwnGroups(Configuration& config, std::string& groupBa
                                         {"Standard Quality", "Standard Quality Noise"},
                                         {"High Quality", "High Quality Noise"}},
                                        &qualityChoice});
-  config.configGroups[groupBaseName].push_back(noiseGroup);
+  config.insertToConfigGroups(newGroupName, noiseGroup);
 }
 noise::module::Module* BillowNoiseModule::getModule() {
   module.SetFrequency(frequency);
@@ -69,7 +69,7 @@ noise::module::Module* BillowNoiseModule::getModule() {
   return &module;
 }
 
-void RidgedMultiNoiseModule::addOwnGroups(Configuration& config, std::string& groupBaseName) {
+void RidgedMultiNoiseModule::addOwnGroups(Configuration& config, std::string newGroupName) {
   Configuration::ConfigurationGroup noiseGroup;
 
   noiseGroup.entry = {"Ridged Multi Noise", "Set the various parameters of the noise function(s)."};
@@ -88,7 +88,7 @@ void RidgedMultiNoiseModule::addOwnGroups(Configuration& config, std::string& gr
                                         {"Standard Quality", "Standard Quality Noise"},
                                         {"High Quality", "High Quality Noise"}},
                                        &qualityChoice});
-  config.configGroups[groupBaseName].push_back(noiseGroup);
+  config.insertToConfigGroups(newGroupName, noiseGroup);
 }
 noise::module::Module* RidgedMultiNoiseModule::getModule() {
   module.SetFrequency(frequency);
@@ -99,7 +99,7 @@ noise::module::Module* RidgedMultiNoiseModule::getModule() {
   return &module;
 }
 
-void VoronoiNoiseModule::addOwnGroups(Configuration& config, std::string& groupBaseName) {
+void VoronoiNoiseModule::addOwnGroups(Configuration& config, std::string newGroupName) {
   Configuration::ConfigurationGroup noiseGroup;
 
   noiseGroup.entry = {"Voronoi Cells", "Set the various parameters of the noise function(s)."};
@@ -112,7 +112,7 @@ void VoronoiNoiseModule::addOwnGroups(Configuration& config, std::string& groupB
   noiseGroup.ints.push_back(
       Configuration::BoundedEntry<int>{{"Seed", "Seed for the Vornoi Cells."}, &seed, 1, 100000});
 
-  config.configGroups[groupBaseName].push_back(noiseGroup);
+  config.insertToConfigGroups(newGroupName, noiseGroup);
 }
 noise::module::Module* VoronoiNoiseModule::getModule() {
   module.SetFrequency(frequency);
@@ -122,7 +122,7 @@ noise::module::Module* VoronoiNoiseModule::getModule() {
   return &module;
 }
 
-void SingleNoiseModule::addOwnGroups(Configuration& config, std::string& groupBaseName) {
+void SingleNoiseModule::addOwnGroups(Configuration& config, std::string newGroupName) {
   Configuration::ConfigurationGroup selectionGroup;
   selectionGroup.entry = {"Select Noise", "Choose noise method."};
   selectionGroup.singleChoices.push_back(
@@ -132,20 +132,20 @@ void SingleNoiseModule::addOwnGroups(Configuration& config, std::string& groupBa
                                         {"RidgedMulti", "Ridged Multi Noise"},
                                         {"Voronoi", "Voronoi Cells"}},
                                        &selection});
-  config.configGroups[groupBaseName].push_back(selectionGroup);
+  config.insertToConfigGroups(newGroupName, selectionGroup);
 
   switch (selection) {
     case 0:
-      perlinModule.addOwnGroups(config, groupBaseName);
+      perlinModule.addOwnGroups(config, newGroupName);
       break;
     case 1:
-      billowModule.addOwnGroups(config, groupBaseName);
+      billowModule.addOwnGroups(config, newGroupName);
       break;
     case 2:
-      ridgedMultiModule.addOwnGroups(config, groupBaseName);
+      ridgedMultiModule.addOwnGroups(config, newGroupName);
       break;
     case 3:
-      voronoiModule.addOwnGroups(config, groupBaseName);
+      voronoiModule.addOwnGroups(config, newGroupName);
       break;
     default:
       assert(0 && "You forgot a case!");
@@ -165,7 +165,7 @@ void SingleNoiseModule::addOwnGroups(Configuration& config, std::string& groupBa
   modifierGroup.bools.push_back(Configuration::SimpleEntry<bool>{
       {"Scale & Bias", "Add a scale and bias to the noise."}, &useScaleBiasModule});
 
-  config.configGroups[groupBaseName].push_back(modifierGroup);
+  config.insertToConfigGroups(newGroupName, modifierGroup);
 
   if (useClampModule || useExponentModule || useScaleBiasModule) {
     Configuration::ConfigurationGroup modifierSettings;
@@ -195,7 +195,7 @@ void SingleNoiseModule::addOwnGroups(Configuration& config, std::string& groupBa
       modifierSettings.floats.push_back(Configuration::BoundedEntry<float>{
           {"Scale", "Scale to apply to the noise."}, &scaleBiasScale, -2.0f, 2.0f});
     }
-    config.configGroups[groupBaseName].push_back(modifierSettings);
+    config.insertToConfigGroups(newGroupName, modifierSettings);
   }
 }
 noise::module::Module* SingleNoiseModule::getModule() {
@@ -250,7 +250,7 @@ noise::module::Module* SingleNoiseModule::getModule() {
 
   return result;
 }
-void CombinedNoiseModule::addOwnGroups(Configuration& config, std::string& groupBaseName) {
+void CombinedNoiseModule::addOwnGroups(Configuration& config, std::string newGroupName) {
   Configuration::ConfigurationGroup selectionGroup;
   selectionGroup.entry = {"Select Combination Method", "How to combine the two noise functions."};
   selectionGroup.singleChoices.push_back(Configuration::SingleChoiceEntry{
@@ -261,12 +261,11 @@ void CombinedNoiseModule::addOwnGroups(Configuration& config, std::string& group
        {"Multiply", "Multiply the two input noise values."},
        {"Power", "Raise on noise value to the power of the other one."}},
       &selection});
-  config.configGroups[groupBaseName].push_back(selectionGroup);
 
-  std::string first = "First Noise Function";
-  firstModule.addOwnGroups(config, first);
-  std::string second = "Second Noise Function";
-  secondModule.addOwnGroups(config, second);
+  config.insertToConfigGroups(newGroupName, selectionGroup);
+
+  firstModule.addOwnGroups(config, "First Noise Function");
+  secondModule.addOwnGroups(config, "Second Noise Function");
 }
 noise::module::Module* CombinedNoiseModule::getModule() {
   noise::module::Module* result;
@@ -295,7 +294,7 @@ noise::module::Module* CombinedNoiseModule::getModule() {
   result->SetSourceModule(1, *secondModule.getModule());
   return result;
 }
-void SelectedNoiseModule::addOwnGroups(Configuration& config, std::string& groupBaseName) {
+void SelectedNoiseModule::addOwnGroups(Configuration& config, std::string newGroupName) {
   Configuration::ConfigurationGroup selectionGroup;
   selectionGroup.entry = {"Choose Selection Method", "How to select from the two noise functions."};
   selectionGroup.singleChoices.push_back(Configuration::SingleChoiceEntry{
@@ -319,14 +318,11 @@ void SelectedNoiseModule::addOwnGroups(Configuration& config, std::string& group
         {"Edge Falloff", "Falloff value at edge transition."}, &selectEdgeFalloff, 0.0f, 1.0f});
   }
 
-  config.configGroups[groupBaseName].push_back(selectionGroup);
+  config.insertToConfigGroups(newGroupName, selectionGroup);
 
-  std::string first = "First Noise Function";
-  firstModule.addOwnGroups(config, first);
-  std::string second = "Second Noise Function";
-  secondModule.addOwnGroups(config, second);
-  std::string control = "Control Noise Function";
-  selecterModule.addOwnGroups(config, control);
+  firstModule.addOwnGroups(config, "First Noise Function");
+  secondModule.addOwnGroups(config, "Second Noise Function");
+  selecterModule.addOwnGroups(config, "Control Noise Function");
 }
 noise::module::Module* SelectedNoiseModule::getModule() {
   noise::module::Module* result;

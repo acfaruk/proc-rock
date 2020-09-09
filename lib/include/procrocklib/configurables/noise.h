@@ -25,7 +25,7 @@ class PerlinNoiseModule : public NoiseModule {
 
   noise::module::Perlin module;
 
-  virtual void addOwnGroups(Configuration& config, std::string& groupBaseName) override;
+  virtual void addOwnGroups(Configuration& config, std::string newGroupName) override;
   virtual noise::module::Module* getModule() override;
 };
 
@@ -41,7 +41,7 @@ class BillowNoiseModule : public NoiseModule {
 
   noise::module::Billow module;
 
-  virtual void addOwnGroups(Configuration& config, std::string& groupBaseName) override;
+  virtual void addOwnGroups(Configuration& config, std::string newGroupName) override;
   virtual noise::module::Module* getModule() override;
 };
 
@@ -56,7 +56,7 @@ class RidgedMultiNoiseModule : public NoiseModule {
 
   noise::module::RidgedMulti module;
 
-  virtual void addOwnGroups(Configuration& config, std::string& groupBaseName) override;
+  virtual void addOwnGroups(Configuration& config, std::string newGroupName) override;
   virtual noise::module::Module* getModule() override;
 };
 
@@ -70,7 +70,7 @@ class VoronoiNoiseModule : public NoiseModule {
 
   noise::module::Voronoi module;
 
-  virtual void addOwnGroups(Configuration& config, std::string& groupBaseName) override;
+  virtual void addOwnGroups(Configuration& config, std::string newGroupName) override;
   virtual noise::module::Module* getModule() override;
 };
 
@@ -103,7 +103,7 @@ class SingleNoiseModule : public NoiseModule {
   float scaleBiasScale = 1.0f;
   noise::module::ScaleBias scaleBiasModule;
 
-  virtual void addOwnGroups(Configuration& config, std::string& groupBaseName) override;
+  virtual void addOwnGroups(Configuration& config, std::string newGroupName) override;
   virtual noise::module::Module* getModule() override;
 };
 
@@ -120,7 +120,7 @@ class CombinedNoiseModule : public NoiseModule {
   noise::module::Multiply multiplyModule;
   noise::module::Power powerModule;
 
-  virtual void addOwnGroups(Configuration& config, std::string& groupBaseName) override;
+  virtual void addOwnGroups(Configuration& config, std::string newGroupName) override;
   virtual noise::module::Module* getModule() override;
 };
 
@@ -139,7 +139,7 @@ class SelectedNoiseModule : public NoiseModule {
   float selectEdgeFalloff = 0.0f;
   noise::module::Select selectModule;
 
-  virtual void addOwnGroups(Configuration& config, std::string& groupBaseName) override;
+  virtual void addOwnGroups(Configuration& config, std::string newGroupName) override;
   virtual noise::module::Module* getModule() override;
 };
 }  // namespace procrock

@@ -85,8 +85,8 @@ Configuration GraniteTextureGenerator::getConfiguration() {
        &colorGradient}));
 
   Configuration result = getBaseConfiguration();
-  result.configGroups["Noise Function"].push_back(noiseGroup);
-  result.configGroups["Coloring"].push_back(colorGroup);
+  result.insertToConfigGroups("Noise Function", noiseGroup);
+  result.insertToConfigGroups("Coloring", colorGroup);
   return result;
 }
 }  // namespace procrock

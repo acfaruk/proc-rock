@@ -68,21 +68,17 @@ Configuration DisplaceAlongNormalsModifier::getConfiguration() {
   }
 
   Configuration result;
-  result.configGroups["General"].push_back(group);
+  result.insertToConfigGroups("General", group);
 
-  std::string noise;
   switch (selection) {
     case 1:
-      noise = "Noise";
-      singleNoiseModule.addOwnGroups(result, noise);
+      singleNoiseModule.addOwnGroups(result, "Noise");
       break;
     case 2:
-      noise = "Combined Noise";
-      combinedNoiseModule.addOwnGroups(result, noise);
+      combinedNoiseModule.addOwnGroups(result, "Combined Noise");
       break;
     case 3:
-      noise = "Selected Noise";
-      selectedNoiseModule.addOwnGroups(result, noise);
+      selectedNoiseModule.addOwnGroups(result, "Selected Noise");
       break;
     default:
       assert(0 && "Handle all cases!");

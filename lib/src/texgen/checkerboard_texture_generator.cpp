@@ -60,7 +60,7 @@ Configuration CheckerboardTextureGenerator::getConfiguration() {
       &mode});
 
   Configuration result = getBaseConfiguration();
-  result.configGroups["General"].push_back(group);
+  result.insertToConfigGroups("General", group);
   return result;
 }
 PipelineStageInfo& CheckerboardTextureGenerator::getInfo() { return info; }

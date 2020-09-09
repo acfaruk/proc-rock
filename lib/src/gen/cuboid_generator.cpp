@@ -58,7 +58,7 @@ Configuration CuboidGenerator::getConfiguration() {
       Configuration::BoundedEntry<float>{"Depth ", "Depth of the Cuboid", &depth, 0.1f, 1.0f});
 
   Configuration result;
-  result.configGroups["General"].push_back(group);
+  result.insertToConfigGroups("General", group);
   return result;
 }
 PipelineStageInfo& CuboidGenerator::getInfo() { return info; }

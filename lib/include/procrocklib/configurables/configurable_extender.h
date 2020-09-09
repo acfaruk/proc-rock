@@ -3,6 +3,6 @@
 
 namespace procrock {
 class ConfigurableExtender {
-  virtual void addOwnGroups(Configuration& config, std::string& groupBaseName) = 0;
+  virtual void addOwnGroups(Configuration& config, std::string newGroupName) = 0;
 };
 }  // namespace procrock
