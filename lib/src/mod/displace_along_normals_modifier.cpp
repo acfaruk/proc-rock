@@ -8,7 +8,8 @@
 namespace procrock {
 std::shared_ptr<Mesh> DisplaceAlongNormalsModifier::modify(Mesh& mesh) {
   std::shared_ptr<Mesh> result = std::make_shared<Mesh>();
-  result->vertices.resize(mesh.vertices.rows(), mesh.vertices.cols());
+  vertexCount = mesh.vertices.rows();
+  result->vertices = mesh.vertices;
   result->faces = mesh.faces;
 
   rng.seed(seed);
@@ -16,8 +17,10 @@ std::shared_ptr<Mesh> DisplaceAlongNormalsModifier::modify(Mesh& mesh) {
   auto combinedModule = combinedNoiseModule.getModule();
   auto selectedModule = selectedNoiseModule.getModule();
 
-  for (Eigen::Index i = 0; i < mesh.vertices.rows(); i++) {
-    auto pos = mesh.vertices.row(i);
+  auto verticesToModify = pickSet(vertexCount, vertexCount - ignoredVerticesCount);
+
+  for (int v : verticesToModify) {
+    auto pos = mesh.vertices.row(v);
     float amount = 0;
     switch (selection) {
       case 0:
@@ -38,9 +41,9 @@ std::shared_ptr<Mesh> DisplaceAlongNormalsModifier::modify(Mesh& mesh) {
     }
     amount = std::min(1.0f, std::max(0.0f, amount));
     auto translation =
-        Eigen::Translation<double, 3>((factor * amount * mesh.normals.row(i).normalized()));
-    auto transformedPos = translation * Eigen::Vector3d(mesh.vertices.row(i));
-    result->vertices.row(i) = transformedPos;
+        Eigen::Translation<double, 3>((factor * amount * mesh.normals.row(v).normalized()));
+    auto transformedPos = translation * Eigen::Vector3d(mesh.vertices.row(v));
+    result->vertices.row(v) = transformedPos;
   }
   igl::per_vertex_normals(result->vertices, result->faces, result->normals);
 
@@ -59,13 +62,17 @@ Configuration DisplaceAlongNormalsModifier::getConfiguration() {
         "Based on two noise functions where the value is choosen by a third one."}},
       &selection});
 
-  group.floats.emplace_back(Configuration::BoundedEntry<float>{
-      {"Factor", "Amount of displacement"}, &factor, 0.001, 0.2});
+  group.floats.emplace_back(
+      Configuration::BoundedEntry<float>{{"Factor", "Amount of displacement"}, &factor, 0.001, 1});
 
-  if (selection == 0) {
-    group.ints.emplace_back(
-        Configuration::BoundedEntry<int>{{"Seed", "Seed for the rng"}, &seed, 0, 100000});
-  }
+  group.ints.emplace_back(
+      Configuration::BoundedEntry<int>{{"Seed", "Seed for the rng"}, &seed, 0, 100000});
+
+  group.ints.emplace_back(Configuration::BoundedEntry<int>{
+      {"Ignored Verts", "How many vertices should NOT be modified?"},
+      &ignoredVerticesCount,
+      0,
+      vertexCount - 1});
 
   Configuration result;
   result.insertToConfigGroups("General", group);
@@ -87,4 +94,15 @@ Configuration DisplaceAlongNormalsModifier::getConfiguration() {
   return result;
 }
 PipelineStageInfo& DisplaceAlongNormalsModifier::getInfo() { return info; }
+
+std::set<int> DisplaceAlongNormalsModifier::pickSet(int N, int k) {
+  std::set<int> elems;
+  for (int r = N - k; r < N; ++r) {
+    int v = std::uniform_int_distribution<>(0, r)(rng);
+    if (!elems.insert(v).second) {
+      elems.insert(r);
+    }
+  }
+  return elems;
+}
 }  // namespace procrock

@@ -3,12 +3,14 @@
 #include <procrocklib/modifier.h>
 
 #include <random>
+#include <set>
 
 namespace procrock {
 class DisplaceAlongNormalsModifier : public Modifier {
  public:
   int selection = 0;  // 0 = rng, 1 = single Noise, 2 = combined noise, 3 = selected noise
   int seed = 0;
+  int ignoredVerticesCount = 0;
   float factor = 0.001;
 
   virtual std::shared_ptr<Mesh> modify(Mesh& mesh) override;
@@ -23,5 +25,9 @@ class DisplaceAlongNormalsModifier : public Modifier {
   SingleNoiseModule singleNoiseModule;
   CombinedNoiseModule combinedNoiseModule;
   SelectedNoiseModule selectedNoiseModule;
+
+  int vertexCount = 0;
+
+  std::set<int> pickSet(int N, int k);
 };
 }  // namespace procrock
