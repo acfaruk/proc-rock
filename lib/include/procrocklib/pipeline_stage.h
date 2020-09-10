@@ -37,9 +37,11 @@ const char* const PipelineStageNames_Gen[] = {"Cuboid", "Icosahedron"};
 
 // Modifiers
 const unsigned int PipelineStage_Mod_Subdivsion = 0;
-const unsigned int PipelineStage_Mod_DisplaceAlongNormals = 1;
+const unsigned int PipelineStage_Mod_Decimate = 1;
+const unsigned int PipelineStage_Mod_DisplaceAlongNormals = 2;
 
-const char* const PipelineStageNames_Mod[] = {"Subdivision", "Displace Along Normals"};
+const char* const PipelineStageNames_Mod[] = {"Subdivision", "Decimation",
+                                              "Displace Along Normals"};
 
 // Parameterizers
 const unsigned int PipelineStage_Par_LSCM = 0;
