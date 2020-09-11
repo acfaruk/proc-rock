@@ -357,6 +357,14 @@ void updateConfigurable(Configurable& configurable) {
           ImGui::SameLine();
           helpMarker(var.entry.description);
         }
+
+        for (auto var : group.float3s) {
+          ImGui::SliderFloat3(var.entry.name.c_str(), var.data->data(), var.min.x(), var.max.x());
+          changed |= ImGui::IsItemDeactivatedAfterEdit();
+          ImGui::SameLine();
+          helpMarker(var.entry.description);
+        }
+
         for (auto gradient : group.gradientColorings) {
           ImGui::Text(gradient.entry.name.c_str());
           ImGui::SameLine();

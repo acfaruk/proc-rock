@@ -42,6 +42,8 @@ struct Configuration {
     std::vector<BoundedEntry<int>> ints;
     std::vector<BoundedEntry<float>> floats;
 
+    std::vector<BoundedEntry<Eigen::Vector3f>> float3s;
+
     std::vector<SimpleEntry<bool>> bools;
 
     std::vector<SingleChoiceEntry> singleChoices;

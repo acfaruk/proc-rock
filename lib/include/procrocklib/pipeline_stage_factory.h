@@ -21,6 +21,8 @@ std::unique_ptr<Generator> inline createGeneratorFromId(unsigned int id) {
 
 std::unique_ptr<Modifier> inline createModifierFromId(unsigned int id) {
   switch (id) {
+    case PipelineStage_Mod_Transform:
+      return std::make_unique<TransformationModifier>();
     case PipelineStage_Mod_Subdivsion:
       return std::make_unique<SubdivisionModifier>();
     case PipelineStage_Mod_Decimate:

@@ -30,4 +30,4 @@ target_link_libraries(proc-rock-lib PRIVATE ${NOISELIB})
 
 target_compile_options(proc-rock-lib PUBLIC "$<$<BOOL:${MSVC}>:/permissive->")
 
-target_compile_definitions(proc-rock-lib PRIVATE cimg_display=0)
+target_compile_definitions(proc-rock-lib PRIVATE cimg_display=0 _USE_MATH_DEFINES)
