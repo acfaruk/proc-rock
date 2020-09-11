@@ -63,7 +63,7 @@ Configuration DisplaceAlongNormalsModifier::getConfiguration() {
       &selection});
 
   group.floats.emplace_back(
-      Configuration::BoundedEntry<float>{{"Factor", "Amount of displacement"}, &factor, 0.001, 1});
+      Configuration::BoundedEntry<float>{{"Factor", "Amount of displacement"}, &factor, -1, 1});
 
   group.ints.emplace_back(
       Configuration::BoundedEntry<int>{{"Seed", "Seed for the rng"}, &seed, 0, 100000});
