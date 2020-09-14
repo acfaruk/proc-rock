@@ -164,10 +164,15 @@ void SingleNoiseModule::addOwnGroups(Configuration& config, std::string newGroup
       {"Invert", "Return the inverted value of the noise."}, &useInvertModule});
   modifierGroup.bools.push_back(Configuration::SimpleEntry<bool>{
       {"Scale & Bias", "Add a scale and bias to the noise."}, &useScaleBiasModule});
+  modifierGroup.bools.push_back(Configuration::SimpleEntry<bool>{
+      {"Scale Point", "Scale the input point of the noise."}, &useScalePointModule});
+  modifierGroup.bools.push_back(Configuration::SimpleEntry<bool>{
+      {"Turbulence", "Displace input point randomly."}, &useTurbulenceModule});
 
   config.insertToConfigGroups(newGroupName, modifierGroup);
 
-  if (useClampModule || useExponentModule || useScaleBiasModule) {
+  if (useClampModule || useExponentModule || useScaleBiasModule || useTurbulenceModule ||
+      useScalePointModule) {
     Configuration::ConfigurationGroup modifierSettings;
     modifierSettings.entry = {"Modifiers Configuration",
                               "Configure modifiers to apply to the noise."};
@@ -195,6 +200,26 @@ void SingleNoiseModule::addOwnGroups(Configuration& config, std::string newGroup
       modifierSettings.floats.push_back(Configuration::BoundedEntry<float>{
           {"Scale", "Scale to apply to the noise."}, &scaleBiasScale, -2.0f, 2.0f});
     }
+
+    if (useScalePointModule) {
+      modifierSettings.float3s.push_back(Configuration::BoundedEntry<Eigen::Vector3f>{
+          {"Scale Point", "Scale the input by these values."},
+          &scalePoint,
+          {-50, -50, -50},
+          {50, 50, 50}});
+    }
+
+    if (useTurbulenceModule) {
+      modifierSettings.floats.push_back(Configuration::BoundedEntry<float>{
+          {"Frequency", "Frequency of the turbulence."}, &turbulenceFrequency, 0.1, 800});
+      modifierSettings.floats.push_back(Configuration::BoundedEntry<float>{
+          {"Power", "Scaling factor for displacement amount."}, &turbulencePower, 0.1, 800});
+      modifierSettings.ints.push_back(Configuration::BoundedEntry<int>{
+          {"Roughness", "Roughness of the displacement changes."}, &turbulenceRoughness, 1, 50});
+      modifierSettings.ints.push_back(Configuration::BoundedEntry<int>{
+          {"Seed", "Seed for the randomnes."}, &turbulenceSeed, 0, 100000});
+    }
+
     config.insertToConfigGroups(newGroupName, modifierSettings);
   }
 }
@@ -248,6 +273,21 @@ noise::module::Module* SingleNoiseModule::getModule() {
     result = &scaleBiasModule;
   }
 
+  if (useScalePointModule) {
+    scalePointModule.SetSourceModule(0, *result);
+    scalePointModule.SetScale(scalePoint.x(), scalePoint.y(), scalePoint.z());
+    result = &scalePointModule;
+  }
+
+  if (useTurbulenceModule) {
+    turbulenceModule.SetSourceModule(0, *result);
+    turbulenceModule.SetFrequency(turbulenceFrequency);
+    turbulenceModule.SetPower(turbulencePower);
+    turbulenceModule.SetRoughness(turbulenceRoughness);
+    turbulenceModule.SetSeed(turbulenceSeed);
+    result = &turbulenceModule;
+  }
+
   return result;
 }
 void CombinedNoiseModule::addOwnGroups(Configuration& config, std::string newGroupName) {
@@ -264,8 +304,8 @@ void CombinedNoiseModule::addOwnGroups(Configuration& config, std::string newGro
 
   config.insertToConfigGroups(newGroupName, selectionGroup);
 
-  firstModule.addOwnGroups(config, "First Noise Function");
-  secondModule.addOwnGroups(config, "Second Noise Function");
+  firstModule.addOwnGroups(config, newGroupName + ": First Noise Function");
+  secondModule.addOwnGroups(config, newGroupName + ": Second Noise Function");
 }
 noise::module::Module* CombinedNoiseModule::getModule() {
   noise::module::Module* result;
@@ -320,9 +360,9 @@ void SelectedNoiseModule::addOwnGroups(Configuration& config, std::string newGro
 
   config.insertToConfigGroups(newGroupName, selectionGroup);
 
-  firstModule.addOwnGroups(config, "First Noise Function");
-  secondModule.addOwnGroups(config, "Second Noise Function");
-  selecterModule.addOwnGroups(config, "Control Noise Function");
+  firstModule.addOwnGroups(config, newGroupName + ": First Noise Function");
+  secondModule.addOwnGroups(config, newGroupName + ": Second Noise Function");
+  selecterModule.addOwnGroups(config, newGroupName + ": Control Noise Function");
 }
 noise::module::Module* SelectedNoiseModule::getModule() {
   noise::module::Module* result;

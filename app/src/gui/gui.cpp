@@ -310,8 +310,8 @@ void updateConfigurable(Configurable& configurable) {
   int idCounter = 0;
   for (auto mainGroup : config.getConfigGroups()) {
     if (ImGui::CollapsingHeader(mainGroup.first.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
-      ImGui::PushID(idCounter++);
       for (auto group : mainGroup.second) {
+        ImGui::PushID(idCounter++);
         ImGui::Text(group.entry.name.c_str());
         ImGui::Separator();
         ImGui::TextWrapped(group.entry.description.c_str());
@@ -400,8 +400,8 @@ void updateConfigurable(Configurable& configurable) {
           }
         }
         ImGui::Dummy(ImVec2(0, 20));
+        ImGui::PopID();
       }
-      ImGui::PopID();
     }
   }
 
