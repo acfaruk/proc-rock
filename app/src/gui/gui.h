@@ -1,6 +1,8 @@
 #pragma once
 
 #include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 #include <procrocklib/pipeline.h>
 
 #include <glm/glm.hpp>
@@ -8,8 +10,7 @@
 
 #include "../render/framebuffer.h"
 #include "../render/shader.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
+#include "noise_node_editor.h"
 
 namespace procrock {
 namespace gui {
@@ -91,6 +92,7 @@ extern SideBar sideBar;
 extern Viewer viewer;
 extern StatusBar statusBar;
 extern Windows windows;
+extern NoiseNodeEditor noiseNodeEditor;
 
 }  // namespace gui
 

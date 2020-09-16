@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include "icons_font_awesome5.h"
+#include "node-editor/imnodes.h"
 
 namespace procrock {
 namespace gui {
@@ -15,6 +16,7 @@ SideBar sideBar;
 Viewer viewer;
 StatusBar statusBar;
 Windows windows;
+NoiseNodeEditor noiseNodeEditor;
 
 void init(GLFWwindow* window, const std::string& path) {
   IMGUI_CHECKVERSION();
@@ -36,6 +38,7 @@ void init(GLFWwindow* window, const std::string& path) {
   static const ImWchar icon_ranges[] = {ICON_MIN_FA, ICON_MAX_FA, 0};
   std::string icon_font = path + "/fonts/fa-solid-900.ttf";
   io.Fonts->AddFontFromFileTTF(icon_font.c_str(), 17.0f, &config, icon_ranges);
+  imnodes::Initialize();
 }
 
 void update(glm::uvec2 windowSize, Framebuffer& viewerFrame, Pipeline& pipeline,
@@ -49,6 +52,8 @@ void update(glm::uvec2 windowSize, Framebuffer& viewerFrame, Pipeline& pipeline,
   updateViewer(windowSize, viewerFrame);
   updateStatusBar(windowSize);
   updateWindows(shader);
+
+  noiseNodeEditor.show();
 
   ImGui::EndFrame();
   ImGui::Render();
@@ -409,7 +414,7 @@ void updateConfigurable(Configurable& configurable) {
 }
 
 void helpMarker(std::string& description) {
-  ImGui::TextDisabled("(?)");
+  ImGui::Text("(?)");
   if (ImGui::IsItemHovered()) {
     ImGui::BeginTooltip();
     ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
