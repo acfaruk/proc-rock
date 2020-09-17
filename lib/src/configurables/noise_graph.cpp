@@ -1,5 +1,6 @@
 #include "configurables/noise_graph.h"
 
+#include <iostream>
 #include <stack>
 
 namespace procrock {
@@ -79,6 +80,12 @@ noise::module::Module* const ConstNoiseNode::getModule() {
   return module.get();
 }
 
+AddNoiseNode::AddNoiseNode() {
+  module = std::make_unique<noise::module::Add>();
+  config.entry = {"Add", "Adds the values of the two input modules."};
+}
+noise::module::Module* const AddNoiseNode::getModule() { return module.get(); }
+
 PerlinNoiseNode::PerlinNoiseNode() {
   module = std::make_unique<noise::module::Perlin>();
 
@@ -109,4 +116,5 @@ noise::module::Module* const PerlinNoiseNode::getModule() {
   module->SetSeed(seed);
   return module.get();
 }
+
 }  // namespace procrock

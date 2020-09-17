@@ -426,7 +426,7 @@ void updateConfigurable(PipelineStage& stage) {
 
           ImGui::SameLine();
           helpMarker(var.entry.description);
-          changed = noiseNodeEditor.hasChanged();
+          changed |= noiseNodeEditor.hasChanged();
           ImGui::PopID();
         }
 

@@ -53,6 +53,15 @@ class ConstNoiseNode : public NoiseNode {
   std::unique_ptr<noise::module::Const> module;
 };
 
+class AddNoiseNode : public NoiseNode {
+ public:
+  AddNoiseNode();
+  virtual noise::module::Module* const getModule() override;
+
+  private:
+  std::unique_ptr<noise::module::Add> module;
+};
+
 class PerlinNoiseNode : public NoiseNode {
  public:
   PerlinNoiseNode();

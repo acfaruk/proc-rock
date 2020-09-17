@@ -37,12 +37,6 @@ void NoiseNodeEditor::update() {
   ImGui::TextUnformatted("X -- delete selected node or link");
 
   ImGui::NextColumn();
-
-  if (ImGui::Button("Evaluate") && graph.get_root_node_id() != -1) {
-    auto m = evaluateGraph(*this->current);
-    std::cout << m->GetValue(0.2, 0.3, 0.4) << std::endl;
-  }
-  ImGui::NextColumn();
   ImGui::Columns(1);
 
   imnodes::BeginNodeEditor();
@@ -67,6 +61,15 @@ void NoiseNodeEditor::update() {
 
         if (ImGui::MenuItem("Const")) {
           int id = this->current->addNode(std::make_unique<ConstNoiseNode>());
+          imnodes::SetNodeScreenSpacePos(id, clickPos);
+          changed = true;
+        }
+        ImGui::EndMenu();
+      }
+
+      if (ImGui::BeginMenu("Combiners")) {
+        if (ImGui::MenuItem("Add")) {
+          int id = this->current->addNode(std::make_unique<AddNoiseNode>());
           imnodes::SetNodeScreenSpacePos(id, clickPos);
           changed = true;
         }
@@ -99,17 +102,58 @@ void NoiseNodeEditor::update() {
     gui::helpMarker(config.entry.description);
     imnodes::EndNodeTitleBar();
 
-    for (int i = 0; i < graph.num_edges_from_node(node->id); i++) {
-      imnodes::BeginInputAttribute(*graph.neighbors(node->id).begin() + i);
+    int counter = 1;
+    for (auto neighbourId : graph.neighbors(node->id)) {
+      imnodes::BeginInputAttribute(neighbourId);
+      ImGui::TextUnformatted(std::string("Input " + std::to_string(counter++)).c_str());
       imnodes::EndInputAttribute();
     }
+
     if (node->id != graph.get_root_node_id()) {
       imnodes::BeginOutputAttribute(node->id);
       bool draggable = true;
-
       ImGui::PushItemWidth(100);
+
+      for (auto var : config.bools) {
+        ImGui::Checkbox(var.entry.name.c_str(), var.data);
+        changed |= ImGui::IsItemDeactivatedAfterEdit();
+        ImGui::SameLine();
+        helpMarker(var.entry.description);
+      }
+
+      for (auto var : config.singleChoices) {
+        const char* preview_value = var.choices[*var.choice].name.c_str();
+        if (ImGui::BeginCombo(var.entry.name.c_str(), preview_value)) {
+          for (int i = 0; i < var.choices.size(); i++) {
+            bool item_selected = i == *var.choice;
+
+            ImGui::PushID((void*)(intptr_t)i);
+            if (ImGui::Selectable(var.choices[i].name.c_str(), item_selected)) {
+              *var.choice = i;
+              changed = true;
+            }
+            if (ImGui::IsItemActive() || ImGui::IsItemHovered()) {
+              ImGui::SetTooltip(var.choices[i].description.c_str());
+            }
+            if (item_selected) ImGui::SetItemDefaultFocus();
+            ImGui::PopID();
+          }
+          ImGui::EndCombo();
+        }
+        ImGui::SameLine();
+        helpMarker(var.entry.description);
+      }
+
       for (auto var : config.floats) {
         ImGui::SliderFloat(var.entry.name.c_str(), var.data, var.min, var.max);
+        draggable = draggable && !ImGui::IsItemActive();
+        changed |= ImGui::IsItemDeactivatedAfterEdit();
+        ImGui::SameLine();
+        helpMarker(var.entry.description);
+      }
+
+      for (auto var : config.ints) {
+        ImGui::SliderInt(var.entry.name.c_str(), var.data, var.min, var.max);
         draggable = draggable && !ImGui::IsItemActive();
         changed |= ImGui::IsItemDeactivatedAfterEdit();
         ImGui::SameLine();
