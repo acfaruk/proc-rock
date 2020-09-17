@@ -3,16 +3,15 @@
 #include <procrocklib/configurables/graph.h>
 #include <procrocklib/configurables/noise_graph.h>
 
+#include "node-editor/imnodes.h"
+
 namespace procrock {
 namespace gui {
-
-class NoiseNodeEditor {
- public:
-  NoiseNodeEditor(NoiseGraph& graph);
-  bool visible = true;
-  void show();
- private:
-  NoiseGraph& noiseGraph;
+struct NoiseNodeEditor {
+  imnodes::EditorContext* context = nullptr;
+  NoiseGraph* current = nullptr;
+  bool* visible;
 };
+void updateNoiseNodeEditor(NoiseNodeEditor& editor);
 }  // namespace gui
 }  // namespace procrock

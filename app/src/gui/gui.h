@@ -6,10 +6,12 @@
 #include <procrocklib/pipeline.h>
 
 #include <glm/glm.hpp>
+#include <iostream>
 #include <map>
 
 #include "../render/framebuffer.h"
 #include "../render/shader.h"
+#include "node-editor/imnodes.h"
 #include "noise_node_editor.h"
 
 namespace procrock {
@@ -26,7 +28,7 @@ void updateStatusBar(glm::uvec2 windowSize);
 void updateWindows(const Shader& shader);
 
 void updatePipelineStage(Pipeline& pipeline, PipelineStage& stage);
-void updateConfigurable(Configurable& configurable);
+void updateConfigurable(PipelineStage& stage);
 
 void helpMarker(std::string& description);
 
@@ -92,7 +94,8 @@ extern SideBar sideBar;
 extern Viewer viewer;
 extern StatusBar statusBar;
 extern Windows windows;
-extern std::unique_ptr<NoiseNodeEditor> noiseNodeEditor;
+
+extern NoiseNodeEditor noiseNodeEditor;
 
 }  // namespace gui
 

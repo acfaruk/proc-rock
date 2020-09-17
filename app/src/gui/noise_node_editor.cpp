@@ -6,19 +6,17 @@
 
 #include "../render/gl_includes.h"
 #include "gui.h"
-#include "node-editor/imnodes.h"
 
 namespace procrock {
 namespace gui {
-NoiseNodeEditor::NoiseNodeEditor(NoiseGraph& graph) : noiseGraph(graph) {
-    
-}
 
-void NoiseNodeEditor::show() {
-  auto& graph = noiseGraph.graph;
-  auto& nodes = noiseGraph.nodes;
+void updateNoiseNodeEditor(NoiseNodeEditor& editor) {
+  if (!*editor.visible) return;
 
-  ImGui::Begin("Noise Node Editor", &visible);
+  auto& graph = editor.current->graph;
+  auto& nodes = editor.current->nodes;
+
+  ImGui::Begin("Noise Node Editor");
   ImGui::TextUnformatted("Edit the noise generated with various modules.");
   ImGui::Columns(2);
   ImGui::TextUnformatted("A -- add node");
@@ -26,16 +24,16 @@ void NoiseNodeEditor::show() {
   ImGui::TextUnformatted("X -- delete selected node or link");
 
   ImGui::NextColumn();
-  
+
   if (ImGui::Button("Evaluate") && graph.get_root_node_id() != -1) {
-    auto m = evaluateGraph(noiseGraph);
+    auto m = evaluateGraph(*editor.current);
     std::cout << m->GetValue(0.2, 0.3, 0.4) << std::endl;
   }
   ImGui::NextColumn();
   ImGui::Columns(1);
 
+  imnodes::EditorContextSet(editor.context);
   imnodes::BeginNodeEditor();
-
   // new nodes
   {
     const bool openPopup = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
@@ -207,5 +205,6 @@ void NoiseNodeEditor::show() {
 
   ImGui::End();
 }
+
 }  // namespace gui
 }  // namespace procrock

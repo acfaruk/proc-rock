@@ -16,7 +16,8 @@ SideBar sideBar;
 Viewer viewer;
 StatusBar statusBar;
 Windows windows;
-std::unique_ptr<NoiseNodeEditor> noiseNodeEditor;
+
+NoiseNodeEditor noiseNodeEditor;
 
 void init(GLFWwindow* window, const std::string& path) {
   IMGUI_CHECKVERSION();
@@ -39,6 +40,7 @@ void init(GLFWwindow* window, const std::string& path) {
   std::string icon_font = path + "/fonts/fa-solid-900.ttf";
   io.Fonts->AddFontFromFileTTF(icon_font.c_str(), 17.0f, &config, icon_ranges);
   imnodes::Initialize();
+  noiseNodeEditor.context = imnodes::EditorContextCreate();
 }
 
 void update(glm::uvec2 windowSize, Framebuffer& viewerFrame, Pipeline& pipeline,
@@ -53,8 +55,8 @@ void update(glm::uvec2 windowSize, Framebuffer& viewerFrame, Pipeline& pipeline,
   updateStatusBar(windowSize);
   updateWindows(shader);
 
-  if (noiseNodeEditor.get() != nullptr) {
-    noiseNodeEditor->show();
+  if (noiseNodeEditor.current != nullptr) {
+    updateNoiseNodeEditor(noiseNodeEditor);
   }
 
   ImGui::EndFrame();
@@ -311,8 +313,8 @@ void updatePipelineStage(Pipeline& pipeline, PipelineStage& stage) {
   ImGui::EndChild();
 }
 
-void updateConfigurable(Configurable& configurable) {
-  auto config = configurable.getConfiguration();
+void updateConfigurable(PipelineStage& stage) {
+  auto config = stage.getConfiguration();
   bool changed = false;
   int idCounter = 0;
   for (auto mainGroup : config.getConfigGroups()) {
@@ -407,16 +409,29 @@ void updateConfigurable(Configurable& configurable) {
           }
         }
 
+        if (group.noiseGraphs.size() > 0) {
+          noiseNodeEditor.visible = &sideBar.stageData[stage.getId()].visible;
+        }
+
+        int id = 0;
         for (auto var : group.noiseGraphs) {
-          ImGui::Text(var.entry.name.c_str());
+          ImGui::PushID(id++);
+
+          if (noiseNodeEditor.current == nullptr) {
+            imnodes::EditorContextFree(noiseNodeEditor.context);
+            noiseNodeEditor.context = imnodes::EditorContextCreate();
+            noiseNodeEditor.current = var.data;
+          }
+          if (ImGui::Button(var.entry.name.c_str())) {
+            imnodes::EditorContextFree(noiseNodeEditor.context);
+            noiseNodeEditor.context = imnodes::EditorContextCreate();
+            noiseNodeEditor.current = var.data;
+          }
+
           ImGui::SameLine();
           helpMarker(var.entry.description);
-
-          if (ImGui::Button("Edit Graph", ImVec2(-1, 30))) {
-            noiseNodeEditor = std::make_unique<NoiseNodeEditor>(*var.data);
-            noiseNodeEditor->visible = true;
-          }
           changed = true;
+          ImGui::PopID();
         }
 
         ImGui::Dummy(ImVec2(0, 20));
@@ -424,8 +439,7 @@ void updateConfigurable(Configurable& configurable) {
       }
     }
   }
-
-  configurable.setChanged(changed);
+  stage.setChanged(changed);
 }
 
 void helpMarker(std::string& description) {
