@@ -10,13 +10,28 @@
 
 namespace procrock {
 namespace gui {
+NoiseNodeEditor::NoiseNodeEditor(NoiseGraph& graph) : noiseGraph(graph) {
+    
+}
+
 void NoiseNodeEditor::show() {
-  ImGui::Begin("Noise Node Editor");
+  auto& graph = noiseGraph.graph;
+  auto& nodes = noiseGraph.nodes;
+
+  ImGui::Begin("Noise Node Editor", &visible);
   ImGui::TextUnformatted("Edit the noise generated with various modules.");
   ImGui::Columns(2);
   ImGui::TextUnformatted("A -- add node");
   ImGui::NextColumn();
   ImGui::TextUnformatted("X -- delete selected node or link");
+
+  ImGui::NextColumn();
+  
+  if (ImGui::Button("Evaluate") && graph.get_root_node_id() != -1) {
+    auto m = evaluateGraph(noiseGraph);
+    std::cout << m->GetValue(0.2, 0.3, 0.4) << std::endl;
+  }
+  ImGui::NextColumn();
   ImGui::Columns(1);
 
   imnodes::BeginNodeEditor();
@@ -50,11 +65,11 @@ void NoiseNodeEditor::show() {
         ImGui::EndMenu();
       }
 
-      if (ImGui::MenuItem("Output") && rootNodeId == -1) {
+      if (ImGui::MenuItem("Output") && graph.get_root_node_id() == -1) {
         auto newNode = std::make_unique<OutputNoiseNode>();
         newNode->id = graph.insert_node(newNode.get());
         imnodes::SetNodeScreenSpacePos(newNode->id, clickPos);
-        rootNodeId = newNode->id;
+        graph.set_root_node_id(newNode->id);
         for (int i = 0; i < newNode->getModule()->GetSourceModuleCount(); i++) {
           auto inputNode = std::make_unique<ConstNoiseNode>();
           inputNode->placeholder = true;
@@ -86,7 +101,7 @@ void NoiseNodeEditor::show() {
       imnodes::BeginInputAttribute(*graph.neighbors(node->id).begin() + i);
       imnodes::EndInputAttribute();
     }
-    if (node->id != rootNodeId) {
+    if (node->id != graph.get_root_node_id()) {
       imnodes::BeginOutputAttribute(node->id);
       bool draggable = true;
 
@@ -164,7 +179,7 @@ void NoiseNodeEditor::show() {
       selectedNodes.resize(static_cast<size_t>(numSelected));
       imnodes::GetSelectedNodes(selectedNodes.data());
       for (const int nodeId : selectedNodes) {
-        if (nodeId == rootNodeId) rootNodeId = -1;
+        if (nodeId == graph.get_root_node_id()) graph.set_root_node_id(-1);
 
         auto iter = std::find_if(nodes.begin(), nodes.end(),
                                  [nodeId](const std::unique_ptr<NoiseNode>& node) -> bool {

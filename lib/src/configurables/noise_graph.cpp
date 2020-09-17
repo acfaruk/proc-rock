@@ -5,9 +5,22 @@
 namespace procrock {
 Configuration::ConfigurationGroup NoiseNode::getConfig() { return config; }
 
-noise::module::Module* evaluateGraph(const NoiseGraph& graph, const int rootNode) {
+void NoiseGraph::addOwnGroups(Configuration& config, std::string newGroupName) {
+  Configuration::ConfigurationGroup group;
+  group.entry = {"Noise", "Modify the noise."};
+  group.noiseGraphs.push_back(Configuration::SimpleEntry<NoiseGraph>{
+      {"Noise Graph", "Modify the graph that creates the final noise."}, this});
+
+  config.insertToConfigGroups(newGroupName + ": Noise", group);
+}
+
+noise::module::Module* evaluateGraph(const NoiseGraph& noiseGraph) {
+  auto& graph = noiseGraph.graph;
+  if (graph.get_root_node_id() == -1) return nullptr;
+
   std::stack<int> postOrder;
-  dfs_traverse(graph, rootNode, [&postOrder](const int nodeId) -> void { postOrder.push(nodeId); });
+  dfs_traverse(graph, graph.get_root_node_id(),
+               [&postOrder](const int nodeId) -> void { postOrder.push(nodeId); });
   std::stack<noise::module::Module*> modulesStack;
 
   while (!postOrder.empty()) {
@@ -16,6 +29,7 @@ noise::module::Module* evaluateGraph(const NoiseGraph& graph, const int rootNode
     NoiseNode* node = graph.node(id);
     auto module = node->getModule();
 
+    if (node->placeholder && graph.num_edges_from_node(id) != 0) continue;
     for (int i = 0; i < module->GetSourceModuleCount(); i++) {
       auto sourceModule = modulesStack.top();
       modulesStack.pop();

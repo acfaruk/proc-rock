@@ -92,7 +92,7 @@ extern SideBar sideBar;
 extern Viewer viewer;
 extern StatusBar statusBar;
 extern Windows windows;
-extern NoiseNodeEditor noiseNodeEditor;
+extern std::unique_ptr<NoiseNodeEditor> noiseNodeEditor;
 
 }  // namespace gui
 

@@ -21,9 +21,14 @@ class NoiseNode : public GroupConfigurable {
   Configuration::ConfigurationGroup config;
 };
 
-typedef Graph<NoiseNode*> NoiseGraph;
+struct NoiseGraph : public ConfigurableExtender {
+  Graph<NoiseNode*> graph;
+  std::vector<std::unique_ptr<NoiseNode>> nodes;
 
-noise::module::Module* evaluateGraph(const NoiseGraph& graph, const int rootNode);
+  virtual void addOwnGroups(Configuration& config, std::string newGroupName) override;
+};
+
+noise::module::Module* evaluateGraph(const NoiseGraph& noiseGraph);
 
 class OutputNoiseNode : public NoiseNode {
  public:

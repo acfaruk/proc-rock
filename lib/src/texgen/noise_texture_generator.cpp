@@ -1,12 +1,12 @@
-#include "texgen/selected_noise_texture_generator.h"
+#include "texgen/noise_texture_generator.h"
 
 namespace procrock {
-
-std::shared_ptr<Mesh> SelectedNoiseTextureGenerator::generate(Mesh* before) {
+std::shared_ptr<Mesh> NoiseTextureGenerator::generate(Mesh* before) {
   auto result = std::make_shared<Mesh>(*before);
 
-  auto noiseModule = module.getModule();
+  auto noiseModule = evaluateGraph(noiseGraph);
   auto colorFunction = [&](Eigen::Vector3d worldPos) {
+    if (noiseModule == nullptr) return coloring.colorFromValue(0);
     float value = (noiseModule->GetValue(worldPos.x(), worldPos.y(), worldPos.z()) + 1) / 2;
     return coloring.colorFromValue(value);
   };
@@ -15,10 +15,12 @@ std::shared_ptr<Mesh> SelectedNoiseTextureGenerator::generate(Mesh* before) {
   return result;
 }
 
-PipelineStageInfo& SelectedNoiseTextureGenerator::getInfo() { return info; }
-Configuration SelectedNoiseTextureGenerator::getConfiguration() {
+PipelineStageInfo& NoiseTextureGenerator::getInfo() { return info; }
+
+Configuration NoiseTextureGenerator::getConfiguration() {
   Configuration result = getBaseConfiguration();
-  module.addOwnGroups(result, "Combined Noise");
+  std::string baseGroupName = "Noise Function";
+  noiseGraph.addOwnGroups(result, "Noise");
   coloring.addOwnGroups(result, "Coloring Settings");
   return result;
 }

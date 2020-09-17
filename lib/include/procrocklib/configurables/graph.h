@@ -18,7 +18,8 @@
 //    ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //    SOFTWARE.
 
-//    From: https://github.com/Nelarius/imnodes/blob/master/example/graph.h
+//    From: https://github.com/Nelarius/imnodes
+//    With modifications from me
 
 #pragma once
 
@@ -173,7 +174,13 @@ bool IdMap<ElementType>::contains(const int id) const {
 template <typename NodeType>
 class Graph {
  public:
-  Graph() : current_id_(0), nodes_(), edges_from_node_(), node_neighbors_(), edges_() {}
+  Graph()
+      : current_id_(0),
+        root_node_id_(-1),
+        nodes_(),
+        edges_from_node_(),
+        node_neighbors_(),
+        edges_() {}
 
   struct Edge {
     int id;
@@ -206,8 +213,13 @@ class Graph {
   int insert_edge(int from, int to);
   void erase_edge(int edge_id);
 
+  void set_root_node_id(int id);
+  int get_root_node_id() const;
+
  private:
   int current_id_;
+  int root_node_id_;
+
   // These contains map to the node id
   IdMap<NodeType> nodes_;
   IdMap<int> edges_from_node_;
@@ -334,6 +346,16 @@ void Graph<NodeType>::erase_edge(const int edge_id) {
   }
 
   edges_.erase(edge_id);
+}
+
+template <typename NodeType>
+void Graph<NodeType>::set_root_node_id(int id) {
+  this->root_node_id_ = id;
+}
+
+template <typename NodeType>
+int Graph<NodeType>::get_root_node_id() const {
+  return root_node_id_;
 }
 
 template <typename NodeType, typename Visitor>

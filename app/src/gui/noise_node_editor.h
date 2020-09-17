@@ -8,12 +8,11 @@ namespace gui {
 
 class NoiseNodeEditor {
  public:
+  NoiseNodeEditor(NoiseGraph& graph);
+  bool visible = true;
   void show();
-
  private:
-  NoiseGraph graph;
-  int rootNodeId = -1;
-  std::vector<std::unique_ptr<NoiseNode>> nodes;
+  NoiseGraph& noiseGraph;
 };
 }  // namespace gui
 }  // namespace procrock

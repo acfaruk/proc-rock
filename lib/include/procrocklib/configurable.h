@@ -7,6 +7,8 @@
 #include <vector>
 
 namespace procrock {
+struct NoiseGraph;
+
 struct Configuration {
   struct Entry {
     std::string name;
@@ -45,6 +47,7 @@ struct Configuration {
     std::vector<BoundedEntry<Eigen::Vector3f>> float3s;
 
     std::vector<SimpleEntry<bool>> bools;
+    std::vector<SimpleEntry<NoiseGraph>> noiseGraphs;
 
     std::vector<SingleChoiceEntry> singleChoices;
     std::vector<GradientColoringEntry> gradientColorings;

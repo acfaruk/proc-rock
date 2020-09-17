@@ -16,7 +16,7 @@ SideBar sideBar;
 Viewer viewer;
 StatusBar statusBar;
 Windows windows;
-NoiseNodeEditor noiseNodeEditor;
+std::unique_ptr<NoiseNodeEditor> noiseNodeEditor;
 
 void init(GLFWwindow* window, const std::string& path) {
   IMGUI_CHECKVERSION();
@@ -53,7 +53,9 @@ void update(glm::uvec2 windowSize, Framebuffer& viewerFrame, Pipeline& pipeline,
   updateStatusBar(windowSize);
   updateWindows(shader);
 
-  noiseNodeEditor.show();
+  if (noiseNodeEditor.get() != nullptr) {
+    noiseNodeEditor->show();
+  }
 
   ImGui::EndFrame();
   ImGui::Render();
@@ -404,6 +406,19 @@ void updateConfigurable(Configurable& configurable) {
             changed = true;
           }
         }
+
+        for (auto var : group.noiseGraphs) {
+          ImGui::Text(var.entry.name.c_str());
+          ImGui::SameLine();
+          helpMarker(var.entry.description);
+
+          if (ImGui::Button("Edit Graph", ImVec2(-1, 30))) {
+            noiseNodeEditor = std::make_unique<NoiseNodeEditor>(*var.data);
+            noiseNodeEditor->visible = true;
+          }
+          changed = true;
+        }
+
         ImGui::Dummy(ImVec2(0, 20));
         ImGui::PopID();
       }

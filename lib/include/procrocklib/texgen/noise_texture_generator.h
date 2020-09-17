@@ -2,11 +2,12 @@
 
 #include <procrocklib/configurables/coloring.h>
 #include <procrocklib/configurables/noise.h>
+#include <procrocklib/configurables/noise_graph.h>
 #include <procrocklib/texture_generator.h>
 
 namespace procrock {
 
-class SingleNoiseTextureGenerator : public TextureGenerator {
+class NoiseTextureGenerator : public TextureGenerator {
  public:
   virtual Configuration getConfiguration() override;
   virtual PipelineStageInfo& getInfo() override;
@@ -15,10 +16,10 @@ class SingleNoiseTextureGenerator : public TextureGenerator {
   std::shared_ptr<Mesh> generate(Mesh* before) override;
 
  private:
-  PipelineStageInfo info{PipelineStageNames_TexGen[PipelineStage_TexGen_SingleNoise],
-                         "Generates Solid Noise Textures based on a single noise function."};
+  PipelineStageInfo info{PipelineStageNames_TexGen[PipelineStage_TexGen_Noise],
+                         "Generates Solid Noise Textures based on a noise graph."};
 
-  SingleNoiseModule module;
+  NoiseGraph noiseGraph;
   GradientColoring coloring;
 };
 }  // namespace procrock

@@ -3,7 +3,7 @@
 #include <procrocklib/gen/icosahedron_generator.h>
 #include <procrocklib/mod/subdivision_modifier.h>
 #include <procrocklib/par/xatlas_parameterizer.h>
-#include <procrocklib/texgen/single_noise_texture_generator.h>
+#include <procrocklib/texgen/noise_texture_generator.h>
 
 #include <iostream>
 
@@ -104,7 +104,7 @@ bool App::init() {
   pipeline->setGenerator(std::make_unique<IcosahedronGenerator>());
   pipeline->addModifier(std::make_unique<SubdivisionModifier>());
   pipeline->setParameterizer(std::make_unique<XAtlasParameterizer>());
-  pipeline->setTextureGenerator(std::make_unique<SingleNoiseTextureGenerator>());
+  pipeline->setTextureGenerator(std::make_unique<NoiseTextureGenerator>());
 
   pointLight = std::make_unique<PointLight>(glm::vec3(7, 0, 0));
 
