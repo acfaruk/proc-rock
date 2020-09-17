@@ -10,11 +10,24 @@
 namespace procrock {
 namespace gui {
 
-void updateNoiseNodeEditor(NoiseNodeEditor& editor) {
-  if (!*editor.visible) return;
+void NoiseNodeEditor::initialize(NoiseGraph* noiseGraph) {
+  imnodes::EditorContextFree(this->context);
+  this->context = imnodes::EditorContextCreate();
+  this->current = noiseGraph;
+  imnodes::EditorContextSet(this->context);
 
-  auto& graph = editor.current->graph;
-  auto& nodes = editor.current->nodes;
+  for (auto& node : this->current->nodes) {
+    if (node->placeholder) continue;
+    imnodes::SetNodeGridSpacePos(node->id, ImVec2(node->position.x(), node->position.y()));
+  }
+}
+
+void NoiseNodeEditor::update() {
+  changed = false;
+  if (!*this->visible) return;
+
+  auto& graph = this->current->graph;
+  auto& nodes = this->current->nodes;
 
   ImGui::Begin("Noise Node Editor");
   ImGui::TextUnformatted("Edit the noise generated with various modules.");
@@ -26,7 +39,7 @@ void updateNoiseNodeEditor(NoiseNodeEditor& editor) {
   ImGui::NextColumn();
 
   if (ImGui::Button("Evaluate") && graph.get_root_node_id() != -1) {
-    auto m = evaluateGraph(*editor.current);
+    auto m = evaluateGraph(*this->current);
     std::cout << m->GetValue(0.2, 0.3, 0.4) << std::endl;
   }
   ImGui::NextColumn();
@@ -47,20 +60,23 @@ void updateNoiseNodeEditor(NoiseNodeEditor& editor) {
       const ImVec2 clickPos = ImGui::GetMousePosOnOpeningCurrentPopup();
       if (ImGui::BeginMenu("Generators")) {
         if (ImGui::MenuItem("Perlin")) {
-          int id = editor.current->addNode(std::make_unique<PerlinNoiseNode>());
+          int id = this->current->addNode(std::make_unique<PerlinNoiseNode>());
           imnodes::SetNodeScreenSpacePos(id, clickPos);
+          changed = true;
         }
 
         if (ImGui::MenuItem("Const")) {
-          int id = editor.current->addNode(std::make_unique<ConstNoiseNode>());
+          int id = this->current->addNode(std::make_unique<ConstNoiseNode>());
           imnodes::SetNodeScreenSpacePos(id, clickPos);
+          changed = true;
         }
         ImGui::EndMenu();
       }
 
       if (ImGui::MenuItem("Output") && graph.get_root_node_id() == -1) {
-        int id = editor.current->addNode(std::make_unique<OutputNoiseNode>(), true);
+        int id = this->current->addNode(std::make_unique<OutputNoiseNode>(), true);
         imnodes::SetNodeScreenSpacePos(id, clickPos);
+        changed = true;
       }
       ImGui::EndPopup();
     }
@@ -95,6 +111,7 @@ void updateNoiseNodeEditor(NoiseNodeEditor& editor) {
       for (auto var : config.floats) {
         ImGui::SliderFloat(var.entry.name.c_str(), var.data, var.min, var.max);
         draggable = draggable && !ImGui::IsItemActive();
+        changed |= ImGui::IsItemDeactivatedAfterEdit();
         ImGui::SameLine();
         helpMarker(var.entry.description);
       }
@@ -135,6 +152,7 @@ void updateNoiseNodeEditor(NoiseNodeEditor& editor) {
         }
       }
       graph.insert_edge(from, to);
+      changed = true;
     }
   }
 
@@ -143,6 +161,7 @@ void updateNoiseNodeEditor(NoiseNodeEditor& editor) {
     int linkId;
     if (imnodes::IsLinkDestroyed(&linkId)) {
       graph.erase_edge(linkId);
+      changed = true;
     }
   }
 
@@ -154,6 +173,7 @@ void updateNoiseNodeEditor(NoiseNodeEditor& editor) {
       imnodes::GetSelectedLinks(selectedLinks.data());
       for (const int edgeId : selectedLinks) {
         graph.erase_edge(edgeId);
+        changed = true;
       }
     }
   }
@@ -187,6 +207,7 @@ void updateNoiseNodeEditor(NoiseNodeEditor& editor) {
         }
         graph.erase_node(nodeId);
         nodes.erase(iter);
+        changed = true;
       }
     }
   }
@@ -194,16 +215,5 @@ void updateNoiseNodeEditor(NoiseNodeEditor& editor) {
   ImGui::End();
 }
 
-void NoiseNodeEditor::initialize(NoiseGraph* noiseGraph) {
-  imnodes::EditorContextFree(this->context);
-  this->context = imnodes::EditorContextCreate();
-  this->current = noiseGraph;
-  imnodes::EditorContextSet(this->context);
-
-  for (auto& node : this->current->nodes) {
-    if (node->placeholder) continue;
-    imnodes::SetNodeGridSpacePos(node->id, ImVec2(node->position.x(), node->position.y()));
-  }
-}
 }  // namespace gui
 }  // namespace procrock

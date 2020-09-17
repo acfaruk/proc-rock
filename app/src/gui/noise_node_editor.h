@@ -13,8 +13,13 @@ struct NoiseNodeEditor {
   bool* visible;
 
   void initialize(NoiseGraph* noiseGraph);
+  void update();
+
+  inline bool hasChanged() { return changed; };
+
+ private:
+  bool changed = false;
 };
-void updateNoiseNodeEditor(NoiseNodeEditor& editor);
 
 }  // namespace gui
 }  // namespace procrock

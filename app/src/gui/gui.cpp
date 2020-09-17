@@ -56,7 +56,7 @@ void update(glm::uvec2 windowSize, Framebuffer& viewerFrame, Pipeline& pipeline,
   updateWindows(shader);
 
   if (noiseNodeEditor.current != nullptr) {
-    updateNoiseNodeEditor(noiseNodeEditor);
+    noiseNodeEditor.update();
   }
 
   ImGui::EndFrame();
@@ -426,7 +426,7 @@ void updateConfigurable(PipelineStage& stage) {
 
           ImGui::SameLine();
           helpMarker(var.entry.description);
-          changed = true;
+          changed = noiseNodeEditor.hasChanged();
           ImGui::PopID();
         }
 
