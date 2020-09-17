@@ -11,7 +11,10 @@ struct NoiseNodeEditor {
   imnodes::EditorContext* context = nullptr;
   NoiseGraph* current = nullptr;
   bool* visible;
+
+  void initialize(NoiseGraph* noiseGraph);
 };
 void updateNoiseNodeEditor(NoiseNodeEditor& editor);
+
 }  // namespace gui
 }  // namespace procrock

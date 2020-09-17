@@ -418,14 +418,10 @@ void updateConfigurable(PipelineStage& stage) {
           ImGui::PushID(id++);
 
           if (noiseNodeEditor.current == nullptr) {
-            imnodes::EditorContextFree(noiseNodeEditor.context);
-            noiseNodeEditor.context = imnodes::EditorContextCreate();
-            noiseNodeEditor.current = var.data;
+            noiseNodeEditor.initialize(var.data);
           }
           if (ImGui::Button(var.entry.name.c_str())) {
-            imnodes::EditorContextFree(noiseNodeEditor.context);
-            noiseNodeEditor.context = imnodes::EditorContextCreate();
-            noiseNodeEditor.current = var.data;
+            noiseNodeEditor.initialize(var.data);
           }
 
           ImGui::SameLine();

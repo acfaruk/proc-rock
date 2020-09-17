@@ -32,7 +32,6 @@ void updateNoiseNodeEditor(NoiseNodeEditor& editor) {
   ImGui::NextColumn();
   ImGui::Columns(1);
 
-  imnodes::EditorContextSet(editor.context);
   imnodes::BeginNodeEditor();
   // new nodes
   {
@@ -48,34 +47,20 @@ void updateNoiseNodeEditor(NoiseNodeEditor& editor) {
       const ImVec2 clickPos = ImGui::GetMousePosOnOpeningCurrentPopup();
       if (ImGui::BeginMenu("Generators")) {
         if (ImGui::MenuItem("Perlin")) {
-          auto newNode = std::make_unique<PerlinNoiseNode>();
-          newNode->id = graph.insert_node(newNode.get());
-          imnodes::SetNodeScreenSpacePos(newNode->id, clickPos);
-          nodes.push_back(std::move(newNode));
+          int id = editor.current->addNode(std::make_unique<PerlinNoiseNode>());
+          imnodes::SetNodeScreenSpacePos(id, clickPos);
         }
 
         if (ImGui::MenuItem("Const")) {
-          auto newNode = std::make_unique<ConstNoiseNode>();
-          newNode->id = graph.insert_node(newNode.get());
-          imnodes::SetNodeScreenSpacePos(newNode->id, clickPos);
-          nodes.push_back(std::move(newNode));
+          int id = editor.current->addNode(std::make_unique<ConstNoiseNode>());
+          imnodes::SetNodeScreenSpacePos(id, clickPos);
         }
         ImGui::EndMenu();
       }
 
       if (ImGui::MenuItem("Output") && graph.get_root_node_id() == -1) {
-        auto newNode = std::make_unique<OutputNoiseNode>();
-        newNode->id = graph.insert_node(newNode.get());
-        imnodes::SetNodeScreenSpacePos(newNode->id, clickPos);
-        graph.set_root_node_id(newNode->id);
-        for (int i = 0; i < newNode->getModule()->GetSourceModuleCount(); i++) {
-          auto inputNode = std::make_unique<ConstNoiseNode>();
-          inputNode->placeholder = true;
-          inputNode->id = graph.insert_node(inputNode.get());
-          graph.insert_edge(newNode->id, inputNode->id);
-          nodes.push_back(std::move(inputNode));
-        }
-        nodes.push_back(std::move(newNode));
+        int id = editor.current->addNode(std::make_unique<OutputNoiseNode>(), true);
+        imnodes::SetNodeScreenSpacePos(id, clickPos);
       }
       ImGui::EndPopup();
     }
@@ -86,6 +71,9 @@ void updateNoiseNodeEditor(NoiseNodeEditor& editor) {
 
   for (auto& node : nodes) {
     if (node->placeholder) continue;
+
+    auto pos = imnodes::GetNodeGridSpacePos(node->id);
+    node->position = Eigen::Vector2f(pos.x, pos.y);
 
     auto config = node->getConfig();
     imnodes::BeginNode(node->id);
@@ -206,5 +194,16 @@ void updateNoiseNodeEditor(NoiseNodeEditor& editor) {
   ImGui::End();
 }
 
+void NoiseNodeEditor::initialize(NoiseGraph* noiseGraph) {
+  imnodes::EditorContextFree(this->context);
+  this->context = imnodes::EditorContextCreate();
+  this->current = noiseGraph;
+  imnodes::EditorContextSet(this->context);
+
+  for (auto& node : this->current->nodes) {
+    if (node->placeholder) continue;
+    imnodes::SetNodeGridSpacePos(node->id, ImVec2(node->position.x(), node->position.y()));
+  }
+}
 }  // namespace gui
 }  // namespace procrock

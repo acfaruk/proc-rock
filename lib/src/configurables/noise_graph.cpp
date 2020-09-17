@@ -14,6 +14,25 @@ void NoiseGraph::addOwnGroups(Configuration& config, std::string newGroupName) {
   config.insertToConfigGroups(newGroupName + ": Noise", group);
 }
 
+int NoiseGraph::addNode(std::unique_ptr<NoiseNode> node, bool rootNode, Eigen::Vector2f position) {
+  int result = graph.insert_node(node.get());
+  node->id = result;
+  node->position = position;
+  if (rootNode && graph.get_root_node_id() == -1) {
+    graph.set_root_node_id(node->id);
+  }
+
+  for (int i = 0; i < node->getModule()->GetSourceModuleCount(); i++) {
+    auto inputNode = std::make_unique<ConstNoiseNode>();
+    inputNode->placeholder = true;
+    inputNode->id = graph.insert_node(inputNode.get());
+    graph.insert_edge(node->id, inputNode->id);
+    nodes.push_back(std::move(inputNode));
+  }
+  nodes.push_back(std::move(node));
+  return result;
+}
+
 noise::module::Module* evaluateGraph(const NoiseGraph& noiseGraph) {
   auto& graph = noiseGraph.graph;
   if (graph.get_root_node_id() == -1) return nullptr;

@@ -13,6 +13,7 @@ class NoiseNode : public GroupConfigurable {
  public:
   int id = -1;
   bool placeholder = false;
+  Eigen::Vector2f position{0, 0};
 
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() = 0;
@@ -26,6 +27,8 @@ struct NoiseGraph : public ConfigurableExtender {
   std::vector<std::unique_ptr<NoiseNode>> nodes;
 
   virtual void addOwnGroups(Configuration& config, std::string newGroupName) override;
+
+  int addNode(std::unique_ptr<NoiseNode> node, bool rootNode = false, Eigen::Vector2f position = {0.0f, 0.0f});
 };
 
 noise::module::Module* evaluateGraph(const NoiseGraph& noiseGraph);

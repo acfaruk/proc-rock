@@ -19,6 +19,7 @@
 //    SOFTWARE.
 
 //    From: https://github.com/Nelarius/imnodes
+//    With Changes by me.
 
 // the structure of this file:
 //
@@ -2086,6 +2087,12 @@ void SetNodeGridSpacePos(int node_id, const ImVec2& grid_pos) {
   EditorContext& editor = editor_context_get();
   NodeData& node = object_pool_find_or_create_object(editor.nodes, node_id);
   node.origin = grid_pos;
+}
+
+ImVec2 GetNodeGridSpacePos(int node_id) {
+  EditorContext& editor = editor_context_get();
+  NodeData& node = object_pool_find_or_create_object(editor.nodes, node_id);
+  return node.origin;
 }
 
 void SetNodeDraggable(int node_id, const bool draggable) {

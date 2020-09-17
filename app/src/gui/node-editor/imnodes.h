@@ -19,6 +19,7 @@
 //    SOFTWARE.
 
 //    From: https://github.com/Nelarius/imnodes
+//    With Changes by me.
 
 #pragma once
 
@@ -234,6 +235,10 @@ void Link(int id, int start_attribute_id, int end_attribute_id);
 
 void SetNodeScreenSpacePos(int node_id, const ImVec2& screen_space_pos);
 void SetNodeGridSpacePos(int node_id, const ImVec2& grid_pos);
+
+// Get the node's position (grid space)
+ImVec2 GetNodeGridSpacePos(int node_id);
+
 // Enable or disable the ability to click and drag a specific node.
 void SetNodeDraggable(int node_id, const bool draggable);
 
