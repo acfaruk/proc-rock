@@ -1,7 +1,7 @@
 #!/bin/bash
 git clone https://github.com/microsoft/vcpkg.git
 cd vcpkg
-git checkout tags/2020.06
+git checkout tags/2020.07
 
 ./bootstrap-vcpkg.sh
 ./vcpkg update
