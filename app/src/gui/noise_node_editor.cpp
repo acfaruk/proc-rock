@@ -59,8 +59,96 @@ void NoiseNodeEditor::update() {
           changed = true;
         }
 
+        if (ImGui::MenuItem("Billow")) {
+          int id = this->current->addNode(std::make_unique<BillowNoiseNode>());
+          imnodes::SetNodeScreenSpacePos(id, clickPos);
+          changed = true;
+        }
+
+        if (ImGui::MenuItem("RidgedMulti")) {
+          int id = this->current->addNode(std::make_unique<RidgedMultiNoiseNode>());
+          imnodes::SetNodeScreenSpacePos(id, clickPos);
+          changed = true;
+        }
+
+        if (ImGui::MenuItem("Voronoi Cells")) {
+          int id = this->current->addNode(std::make_unique<VoronoiNoiseNode>());
+          imnodes::SetNodeScreenSpacePos(id, clickPos);
+          changed = true;
+        }
+
+        if (ImGui::MenuItem("Cylinders")) {
+          int id = this->current->addNode(std::make_unique<CylindersNoiseNode>());
+          imnodes::SetNodeScreenSpacePos(id, clickPos);
+          changed = true;
+        }
+
+        if (ImGui::MenuItem("Spheres")) {
+          int id = this->current->addNode(std::make_unique<SpheresNoiseNode>());
+          imnodes::SetNodeScreenSpacePos(id, clickPos);
+          changed = true;
+        }
+
         if (ImGui::MenuItem("Const")) {
           int id = this->current->addNode(std::make_unique<ConstNoiseNode>());
+          imnodes::SetNodeScreenSpacePos(id, clickPos);
+          changed = true;
+        }
+        ImGui::EndMenu();
+      }
+
+      if (ImGui::BeginMenu("Modifiers")) {
+        if (ImGui::MenuItem("Abs")) {
+          int id = this->current->addNode(std::make_unique<AbsNoiseNode>());
+          imnodes::SetNodeScreenSpacePos(id, clickPos);
+          changed = true;
+        }
+        if (ImGui::MenuItem("Clamp")) {
+          int id = this->current->addNode(std::make_unique<ClampNoiseNode>());
+          imnodes::SetNodeScreenSpacePos(id, clickPos);
+          changed = true;
+        }
+        if (ImGui::MenuItem("Exponent")) {
+          int id = this->current->addNode(std::make_unique<ExponentNoiseNode>());
+          imnodes::SetNodeScreenSpacePos(id, clickPos);
+          changed = true;
+        }
+        if (ImGui::MenuItem("Invert")) {
+          int id = this->current->addNode(std::make_unique<InvertNoiseNode>());
+          imnodes::SetNodeScreenSpacePos(id, clickPos);
+          changed = true;
+        }
+        if (ImGui::MenuItem("Scale & Bias")) {
+          int id = this->current->addNode(std::make_unique<ScaleBiasNoiseNode>());
+          imnodes::SetNodeScreenSpacePos(id, clickPos);
+          changed = true;
+        }
+        ImGui::EndMenu();
+      }
+
+      if (ImGui::BeginMenu("Transformers")) {
+        if (ImGui::MenuItem("Displace")) {
+          int id = this->current->addNode(std::make_unique<DisplaceNoiseNode>());
+          imnodes::SetNodeScreenSpacePos(id, clickPos);
+          changed = true;
+        }
+        if (ImGui::MenuItem("Rotate Point")) {
+          int id = this->current->addNode(std::make_unique<RotatePointNoiseNode>());
+          imnodes::SetNodeScreenSpacePos(id, clickPos);
+          changed = true;
+        }
+        if (ImGui::MenuItem("Scale Point")) {
+          int id = this->current->addNode(std::make_unique<ScalePointNoiseNode>());
+          imnodes::SetNodeScreenSpacePos(id, clickPos);
+          changed = true;
+        }
+        if (ImGui::MenuItem("Translate Point")) {
+          int id = this->current->addNode(std::make_unique<TranslatePointNoiseNode>());
+          imnodes::SetNodeScreenSpacePos(id, clickPos);
+          changed = true;
+        }
+        if (ImGui::MenuItem("Turbulence")) {
+          int id = this->current->addNode(std::make_unique<TurbulenceNoiseNode>());
           imnodes::SetNodeScreenSpacePos(id, clickPos);
           changed = true;
         }
@@ -70,6 +158,41 @@ void NoiseNodeEditor::update() {
       if (ImGui::BeginMenu("Combiners")) {
         if (ImGui::MenuItem("Add")) {
           int id = this->current->addNode(std::make_unique<AddNoiseNode>());
+          imnodes::SetNodeScreenSpacePos(id, clickPos);
+          changed = true;
+        }
+        if (ImGui::MenuItem("Max")) {
+          int id = this->current->addNode(std::make_unique<MaxNoiseNode>());
+          imnodes::SetNodeScreenSpacePos(id, clickPos);
+          changed = true;
+        }
+        if (ImGui::MenuItem("Min")) {
+          int id = this->current->addNode(std::make_unique<MinNoiseNode>());
+          imnodes::SetNodeScreenSpacePos(id, clickPos);
+          changed = true;
+        }
+        if (ImGui::MenuItem("Multiply")) {
+          int id = this->current->addNode(std::make_unique<MultiplyNoiseNode>());
+          imnodes::SetNodeScreenSpacePos(id, clickPos);
+          changed = true;
+        }
+        if (ImGui::MenuItem("Power")) {
+          int id = this->current->addNode(std::make_unique<PowerNoiseNode>());
+          imnodes::SetNodeScreenSpacePos(id, clickPos);
+          changed = true;
+        }
+        ImGui::EndMenu();
+      }
+
+      if (ImGui::BeginMenu("Selectors")) {
+        if (ImGui::MenuItem("Blend")) {
+          int id = this->current->addNode(std::make_unique<BlendNoiseNode>());
+          imnodes::SetNodeScreenSpacePos(id, clickPos);
+          changed = true;
+        }
+
+        if (ImGui::MenuItem("Select")) {
+          int id = this->current->addNode(std::make_unique<SelectNoiseNode>());
           imnodes::SetNodeScreenSpacePos(id, clickPos);
           changed = true;
         }
@@ -113,7 +236,6 @@ void NoiseNodeEditor::update() {
       imnodes::BeginOutputAttribute(node->id);
       bool draggable = true;
       ImGui::PushItemWidth(100);
-
       for (auto var : config.bools) {
         ImGui::Checkbox(var.entry.name.c_str(), var.data);
         changed |= ImGui::IsItemDeactivatedAfterEdit();
@@ -230,25 +352,22 @@ void NoiseNodeEditor::update() {
       imnodes::GetSelectedNodes(selectedNodes.data());
       for (const int nodeId : selectedNodes) {
         if (nodeId == graph.get_root_node_id()) graph.set_root_node_id(-1);
-
-        auto iter = std::find_if(nodes.begin(), nodes.end(),
-                                 [nodeId](const std::unique_ptr<NoiseNode>& node) -> bool {
-                                   return node->id == nodeId;
-                                 });
-        auto& node = *iter;
-        for (auto x : graph.neighbors(node->id)) {
+        std::vector<int> toErase;
+        for (int x : graph.neighbors(nodeId)) {
           if (graph.node(x)->placeholder) {
             auto xIter = std::find_if(
                 nodes.begin(), nodes.end(),
-                [x](const std::unique_ptr<NoiseNode>& node) -> bool { return node->id == x; });
+                [=](const std::unique_ptr<NoiseNode>& node) -> bool { return node->id == x; });
+            toErase.push_back(x);
             nodes.erase(xIter);
-            graph.erase_node(x);
-            iter = std::find_if(nodes.begin(), nodes.end(),
-                                [nodeId](const std::unique_ptr<NoiseNode>& node) -> bool {
-                                  return node->id == nodeId;
-                                });
           }
         }
+        for (int x : toErase) {
+          graph.erase_node(x);
+        }
+        auto iter = std::find_if(
+            nodes.begin(), nodes.end(),
+            [=](const std::unique_ptr<NoiseNode>& node) -> bool { return node->id == nodeId; });
         graph.erase_node(nodeId);
         nodes.erase(iter);
         changed = true;
