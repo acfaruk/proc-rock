@@ -23,6 +23,7 @@ void update(glm::uvec2 windowSize, Framebuffer& viewerFrame, Pipeline& pipeline,
 
 void updateMainMenu();
 void updateSideBar(glm::uvec2 windowSize, Pipeline& pipeline);
+void udpateCurrentStageEditor(glm::uvec2 windowSize);
 void updateViewer(glm::uvec2 windowSize, Framebuffer& viewerFrame);
 void updateStatusBar(glm::uvec2 windowSize);
 void updateWindows(const Shader& shader);
@@ -46,7 +47,11 @@ struct MainMenu {
 
 struct SideBar {
   int width = 350;
-  std::map<std::string, StageSettings> stageData;
+};
+
+struct CurrentStageEditor {
+  PipelineStage* current = nullptr;
+  int width = 350;
 };
 
 struct Viewer {
@@ -94,6 +99,7 @@ extern SideBar sideBar;
 extern Viewer viewer;
 extern StatusBar statusBar;
 extern Windows windows;
+extern CurrentStageEditor currentStageEditor;
 
 extern NoiseNodeEditor noiseNodeEditor;
 

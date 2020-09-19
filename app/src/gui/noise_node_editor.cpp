@@ -24,12 +24,19 @@ void NoiseNodeEditor::initialize(NoiseGraph* noiseGraph) {
 
 void NoiseNodeEditor::update() {
   changed = false;
-  if (!*this->visible) return;
+  if (this->current == nullptr) return;
 
   auto& graph = this->current->graph;
   auto& nodes = this->current->nodes;
 
-  ImGui::Begin("Noise Node Editor");
+  ImGui::SetNextWindowPos(position);
+  ImGui::SetNextWindowSize(ImVec2(width, height));
+  ImGui::SetNextWindowSizeConstraints(ImVec2(width, 100), ImVec2(width, maxHeight));
+  ImGui::PushStyleColor(ImGuiCol_ResizeGrip, 0);
+  ImGui::PushStyleColor(ImGuiCol_ResizeGripHovered, 0);
+  ImGui::Begin("Noise Node Editor", 0,
+               ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus);
+  height = ImGui::GetWindowHeight();
   ImGui::TextUnformatted("Edit the noise generated with various modules.");
   ImGui::Columns(2);
   ImGui::TextUnformatted("A -- add node");
@@ -376,6 +383,8 @@ void NoiseNodeEditor::update() {
   }
 
   ImGui::End();
+  ImGui::PopStyleColor();
+  ImGui::PopStyleColor();
 }
 
 }  // namespace gui

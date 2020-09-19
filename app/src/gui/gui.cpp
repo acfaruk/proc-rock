@@ -16,6 +16,7 @@ SideBar sideBar;
 Viewer viewer;
 StatusBar statusBar;
 Windows windows;
+CurrentStageEditor currentStageEditor;
 
 NoiseNodeEditor noiseNodeEditor;
 
@@ -51,11 +52,16 @@ void update(glm::uvec2 windowSize, Framebuffer& viewerFrame, Pipeline& pipeline,
 
   updateMainMenu();
   updateSideBar(windowSize, pipeline);
+  udpateCurrentStageEditor(windowSize);
   updateViewer(windowSize, viewerFrame);
   updateStatusBar(windowSize);
   updateWindows(shader);
 
   if (noiseNodeEditor.current != nullptr) {
+    noiseNodeEditor.position =
+        ImVec2((float)sideBar.width, windowSize.y - noiseNodeEditor.getHeight() - statusBar.height);
+    noiseNodeEditor.maxHeight = windowSize.y - statusBar.height - mainMenu.height - 50;
+    noiseNodeEditor.width = (float)viewer.size.x;
     noiseNodeEditor.update();
   }
 
@@ -169,11 +175,29 @@ void updateSideBar(glm::uvec2 windowSize, Pipeline& pipeline) {
   ImGui::End();
 }
 
+void udpateCurrentStageEditor(glm::uvec2 windowSize) {
+  ImGui::SetNextWindowPos(
+      ImVec2((float)sideBar.width + (float)viewer.size.x, (float)mainMenu.height));
+  ImGui::SetNextWindowSize(ImVec2((float)currentStageEditor.width,
+                                  (float)windowSize.y - mainMenu.height - statusBar.height));
+  ImGui::Begin("Edit Stage", 0,
+               ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
+                   ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove |
+                   ImGuiWindowFlags_AlwaysVerticalScrollbar);
+
+  if (currentStageEditor.current != nullptr) {
+    updateConfigurable(*currentStageEditor.current);
+  }
+
+  ImGui::End();
+}
+
 void updateViewer(glm::uvec2 windowSize, Framebuffer& viewerFrame) {
   ImGui::SetNextWindowBgAlpha(0);
   ImGui::SetNextWindowPos(ImVec2((float)sideBar.width, (float)mainMenu.height));
-  ImGui::SetNextWindowSize(ImVec2((float)windowSize.x - sideBar.width,
-                                  (float)windowSize.y - mainMenu.height - statusBar.height));
+  ImGui::SetNextWindowSize(ImVec2(
+      (float)windowSize.x - sideBar.width - currentStageEditor.width,
+      (float)windowSize.y - mainMenu.height - statusBar.height - noiseNodeEditor.getHeight()));
   ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
   ImGui::Begin("Viewer", 0,
                ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
@@ -267,7 +291,6 @@ void updatePipelineStage(Pipeline& pipeline, PipelineStage& stage) {
 
   auto info = stage.getInfo();
   std::string id = stage.getId();
-  sideBar.stageData.insert(std::pair<std::string, StageSettings>(id, {false}));
   ImGui::BeginChild(id.c_str(), ImVec2(0, 70), true);
 
   // Info and description
@@ -283,13 +306,16 @@ void updatePipelineStage(Pipeline& pipeline, PipelineStage& stage) {
     if (ImGui::Button(ICON_FA_TIMES_CIRCLE)) {
       ImGui::EndChild();
       pipeline.removePipelineStage(&stage);
-      sideBar.stageData[id].visible = false;
+      if (currentStageEditor.current = &stage) {
+        currentStageEditor.current = nullptr;
+      }
       return;
     }
   }
 
   if (ImGui::Button(ICON_FA_COG " Settings")) {
-    sideBar.stageData[id].visible = !sideBar.stageData[id].visible;
+    currentStageEditor.current = &stage;
+    noiseNodeEditor.current = nullptr;
   }
 
   if (stage.isMoveable()) {
@@ -303,13 +329,6 @@ void updatePipelineStage(Pipeline& pipeline, PipelineStage& stage) {
     }
   }
 
-  // Configurable stuff of the stage
-  if (sideBar.stageData[id].visible) {
-    ImGui::SetNextWindowSizeConstraints(ImVec2(sideBar.width, 100), ImVec2(FLT_MAX, viewer.size.y));
-    ImGui::Begin(id.c_str(), &sideBar.stageData[id].visible);
-    updateConfigurable(stage);
-    ImGui::End();
-  }
   ImGui::EndChild();
 }
 
@@ -407,10 +426,6 @@ void updateConfigurable(PipelineStage& stage) {
             gradient.colors->emplace(to_be_added, Eigen::Vector3f{0, 0, 0});
             changed = true;
           }
-        }
-
-        if (group.noiseGraphs.size() > 0) {
-          noiseNodeEditor.visible = &sideBar.stageData[stage.getId()].visible;
         }
 
         int id = 0;
