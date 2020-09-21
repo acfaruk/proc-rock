@@ -20,6 +20,8 @@ class NoiseNode : public GroupConfigurable {
 };
 
 struct NoiseGraph : public ConfigurableExtender {
+  NoiseGraph();
+
   Graph<NoiseNode*> graph;
   std::vector<std::unique_ptr<NoiseNode>> nodes;
 
@@ -172,6 +174,19 @@ class ScaleBiasNoiseNode : public NoiseNode {
   float bias = 0.0f;
   float scale = 1.0f;
   std::unique_ptr<noise::module::ScaleBias> module;
+};
+
+class TerraceNoiseNode : public NoiseNode {
+ public:
+  TerraceNoiseNode();
+  virtual Configuration::ConfigurationGroup getConfig() override;
+  virtual noise::module::Module* const getModule() override;
+
+ private:
+  ConfigurationList<float> controlPoints = {std::set<float>{0, 1}, 2, 100};
+  bool invertTerraces = false;
+
+  std::unique_ptr<noise::module::Terrace> module;
 };
 
 // Transformers

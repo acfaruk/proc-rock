@@ -2,12 +2,34 @@
 
 #include <Eigen/Core>
 #include <map>
+#include <set>
 #include <string>
 #include <utility>
 #include <vector>
 
 namespace procrock {
 struct NoiseGraph;
+
+template <typename T>
+struct ConfigurationList {
+  ConfigurationList(std::set<T> initial, int min = 0, int max = 100)
+      : list(initial), minEntries(min), maxEntries(max){};
+
+  int minEntries;
+  int maxEntries;
+
+  void insert(T value) {
+    if (list.size() < maxEntries) list.insert(value);
+  }
+  void erase(T value) {
+    if (list.size() > minEntries) list.erase(value);
+  }
+
+  const std::set<T>& const values() { return list; }
+
+ private:
+  std::set<T> list;
+};
 
 struct Configuration {
   struct Entry {
@@ -21,16 +43,11 @@ struct Configuration {
     int* choice;
   };
 
-  struct GradientColoringEntry {
-    Entry entry;
-    std::map<int, Eigen::Vector3f>* colors;
-  };
-
   template <typename T>
   struct BoundedEntry {
     Entry entry;
     T* data;
-    T min, max;
+    T minValue, maxValue;
   };
 
   template <typename T>
@@ -38,6 +55,16 @@ struct Configuration {
     Entry entry;
     T* data;
   };
+
+  template <typename T>
+  struct ListEntry {
+    Entry entry;
+    ConfigurationList<T>* data;
+    T minValue;
+    T maxValue;
+  };
+
+  typedef SimpleEntry<std::map<int, Eigen::Vector3f>> GradientColoringEntry;
 
   struct ConfigurationGroup {
     Entry entry;
@@ -48,6 +75,7 @@ struct Configuration {
 
     std::vector<SimpleEntry<bool>> bools;
     std::vector<SimpleEntry<NoiseGraph>> noiseGraphs;
+    std::vector<ListEntry<float>> floatLists;
 
     std::vector<SingleChoiceEntry> singleChoices;
     std::vector<GradientColoringEntry> gradientColorings;

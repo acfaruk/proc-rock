@@ -6,6 +6,7 @@
 
 #include "../render/gl_includes.h"
 #include "gui.h"
+#include "icons_font_awesome5.h"
 
 namespace procrock {
 namespace gui {
@@ -127,6 +128,11 @@ void NoiseNodeEditor::update() {
         }
         if (ImGui::MenuItem("Scale & Bias")) {
           int id = this->current->addNode(std::make_unique<ScaleBiasNoiseNode>());
+          imnodes::SetNodeScreenSpacePos(id, clickPos);
+          changed = true;
+        }
+        if (ImGui::MenuItem("Terrace")) {
+          int id = this->current->addNode(std::make_unique<TerraceNoiseNode>());
           imnodes::SetNodeScreenSpacePos(id, clickPos);
           changed = true;
         }
@@ -274,7 +280,7 @@ void NoiseNodeEditor::update() {
       }
 
       for (auto var : config.floats) {
-        ImGui::SliderFloat(var.entry.name.c_str(), var.data, var.min, var.max);
+        ImGui::SliderFloat(var.entry.name.c_str(), var.data, var.minValue, var.maxValue);
         draggable = draggable && !ImGui::IsItemActive();
         changed |= ImGui::IsItemDeactivatedAfterEdit();
         ImGui::SameLine();
@@ -282,11 +288,44 @@ void NoiseNodeEditor::update() {
       }
 
       for (auto var : config.ints) {
-        ImGui::SliderInt(var.entry.name.c_str(), var.data, var.min, var.max);
+        ImGui::SliderInt(var.entry.name.c_str(), var.data, var.minValue, var.maxValue);
         draggable = draggable && !ImGui::IsItemActive();
         changed |= ImGui::IsItemDeactivatedAfterEdit();
         ImGui::SameLine();
         helpMarker(var.entry.description);
+      }
+
+      for (auto var : config.floatLists) {
+        ImGui::Text(var.entry.name.c_str());
+        ImGui::SameLine();
+        helpMarker(var.entry.description);
+        float to_be_removed = NAN;
+        int id = 0;
+        for (auto x : var.data->values()) {
+          ImGui::PushID(id++);
+          ImGui::Text(std::to_string(x).c_str());
+          ImGui::SameLine(50);
+
+          ImGui::SameLine(200);
+          if (ImGui::Button(ICON_FA_TIMES_CIRCLE)) {
+            to_be_removed = x;
+            changed = true;
+          }
+          ImGui::PopID();
+        }
+
+        if (!isnan(to_be_removed)) {
+          var.data->erase(to_be_removed);
+        }
+
+        static float to_be_added = 0;
+        ImGui::SliderFloat("", &to_be_added, var.minValue, var.maxValue);
+        draggable = draggable && !ImGui::IsItemActive();
+        ImGui::SameLine();
+        if (ImGui::Button(ICON_FA_PLUS_CIRCLE)) {
+          var.data->insert(to_be_added);
+          changed = true;
+        }
       }
 
       imnodes::SetNodeDraggable(node->id, draggable);

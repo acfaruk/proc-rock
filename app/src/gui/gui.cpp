@@ -386,20 +386,21 @@ void updateConfigurable(PipelineStage& stage) {
           helpMarker(var.entry.description);
         }
         for (auto var : group.floats) {
-          ImGui::SliderFloat(var.entry.name.c_str(), var.data, var.min, var.max);
+          ImGui::SliderFloat(var.entry.name.c_str(), var.data, var.minValue, var.maxValue);
           changed |= ImGui::IsItemDeactivatedAfterEdit();
           ImGui::SameLine();
           helpMarker(var.entry.description);
         }
         for (auto var : group.ints) {
-          ImGui::SliderInt(var.entry.name.c_str(), var.data, var.min, var.max);
+          ImGui::SliderInt(var.entry.name.c_str(), var.data, var.minValue, var.maxValue);
           changed |= ImGui::IsItemDeactivatedAfterEdit();
           ImGui::SameLine();
           helpMarker(var.entry.description);
         }
 
         for (auto var : group.float3s) {
-          ImGui::SliderFloat3(var.entry.name.c_str(), var.data->data(), var.min.x(), var.max.x());
+          ImGui::SliderFloat3(var.entry.name.c_str(), var.data->data(), var.minValue.x(),
+                              var.maxValue.x());
           changed |= ImGui::IsItemDeactivatedAfterEdit();
           ImGui::SameLine();
           helpMarker(var.entry.description);
@@ -411,7 +412,7 @@ void updateConfigurable(PipelineStage& stage) {
           helpMarker(gradient.entry.description);
           int to_be_removed = -1;
           int id = 0;
-          for (auto& x : *gradient.colors) {
+          for (auto& x : *gradient.data) {
             ImGui::PushID(id++);
             ImGui::Text(std::to_string(x.first).c_str());
             ImGui::SameLine(50);
@@ -428,14 +429,14 @@ void updateConfigurable(PipelineStage& stage) {
           }
 
           if (to_be_removed != -1) {
-            gradient.colors->erase(to_be_removed);
+            gradient.data->erase(to_be_removed);
           }
 
           static int to_be_added = 0;
           ImGui::SliderInt("", &to_be_added, 1, 100);
           ImGui::SameLine();
           if (ImGui::Button(ICON_FA_PLUS_CIRCLE)) {
-            gradient.colors->emplace(to_be_added, Eigen::Vector3f{0, 0, 0});
+            gradient.data->emplace(to_be_added, Eigen::Vector3f{0, 0, 0});
             changed = true;
           }
         }

@@ -13,9 +13,7 @@ std::shared_ptr<Mesh> DisplaceAlongNormalsModifier::modify(Mesh& mesh) {
   result->faces = mesh.faces;
 
   rng.seed(seed);
-  auto singleModule = singleNoiseModule.getModule();
-  auto combinedModule = combinedNoiseModule.getModule();
-  auto selectedModule = selectedNoiseModule.getModule();
+  auto module = evaluateGraph(noiseGraph);
 
   auto verticesToModify = pickSet(vertexCount, vertexCount - ignoredVerticesCount);
 
@@ -27,13 +25,11 @@ std::shared_ptr<Mesh> DisplaceAlongNormalsModifier::modify(Mesh& mesh) {
         amount = rng() / (float)rng.max();
         break;
       case 1:
-        amount = (singleModule->GetValue(pos(0), pos(1), pos(2)) + 1) / 2.0;
-        break;
-      case 2:
-        amount = (combinedModule->GetValue(pos(0), pos(1), pos(2)) + 1) / 2.0;
-        break;
-      case 3:
-        amount = (selectedModule->GetValue(pos(0), pos(1), pos(2)) + 1) / 2.0;
+        if (module != nullptr) {
+          amount = (module->GetValue(pos(0), pos(1), pos(2)) + 1) / 2.0;
+        } else {
+          amount = 0;
+        }
         break;
       default:
         assert(0 && "Handle all cases!");
@@ -55,18 +51,16 @@ Configuration DisplaceAlongNormalsModifier::getConfiguration() {
   group.entry = {"General Settings", "Set various parameters of the displacement."};
   group.singleChoices.push_back(Configuration::SingleChoiceEntry{
       {"Type", "Choose how the displacement should be calculated."},
-      {{"RNG", "Simple random number generator."},
-       {"Single Noise", "Based on a single noise function."},
-       {"Combined Noise", "Based on two noise functions."},
-       {"Selected Noise",
-        "Based on two noise functions where the value is choosen by a third one."}},
+      {{"RNG", "Simple random number generator."}, {"Noise", "Based on a noise graph."}},
       &selection});
 
   group.floats.emplace_back(
       Configuration::BoundedEntry<float>{{"Factor", "Amount of displacement"}, &factor, -1, 1});
 
-  group.ints.emplace_back(
-      Configuration::BoundedEntry<int>{{"Seed", "Seed for the rng"}, &seed, 0, 100000});
+  if (selection == 0) {
+    group.ints.emplace_back(
+        Configuration::BoundedEntry<int>{{"Seed", "Seed for the rng"}, &seed, 0, 100000});
+  }
 
   group.ints.emplace_back(Configuration::BoundedEntry<int>{
       {"Ignored Verts", "How many vertices should NOT be modified?"},
@@ -79,13 +73,7 @@ Configuration DisplaceAlongNormalsModifier::getConfiguration() {
 
   switch (selection) {
     case 1:
-      singleNoiseModule.addOwnGroups(result, "Noise");
-      break;
-    case 2:
-      combinedNoiseModule.addOwnGroups(result, "Combined Noise");
-      break;
-    case 3:
-      selectedNoiseModule.addOwnGroups(result, "Selected Noise");
+      noiseGraph.addOwnGroups(result, "Noise");
       break;
     default:
       assert(0 && "Handle all cases!");

@@ -5,6 +5,12 @@
 
 namespace procrock {
 
+NoiseGraph::NoiseGraph() {
+  int first = addNode(std::make_unique<PerlinNoiseNode>(), false, {25, 25});
+  int second = addNode(std::make_unique<OutputNoiseNode>(), true, {400, 25});
+  graph.insert_edge(second + 1, first);
+}
+
 void NoiseGraph::addOwnGroups(Configuration& config, std::string newGroupName) {
   Configuration::ConfigurationGroup group;
   group.entry = {"Noise", "Modify the noise."};
@@ -230,6 +236,28 @@ Configuration::ConfigurationGroup ScaleBiasNoiseNode::getConfig() {
 noise::module::Module* const ScaleBiasNoiseNode::getModule() {
   module->SetBias(bias);
   module->SetScale(scale);
+  return module.get();
+}
+
+// Terrace
+TerraceNoiseNode::TerraceNoiseNode() { module = std::make_unique<noise::module::Terrace>(); }
+
+Configuration::ConfigurationGroup TerraceNoiseNode::getConfig() {
+  Configuration::ConfigurationGroup config;
+  config.entry = {"Terrace", "Map output to a terrace forming curve."};
+  config.floatLists.push_back(Configuration::ListEntry<float>{
+      {"Control Points", "The points that define the terrace curve."}, &controlPoints, 0.0f, 1.0f});
+  config.bools.push_back(Configuration::SimpleEntry<bool>{
+      {"Invert", "Wheter to invert the terraces generated."}, &invertTerraces});
+  return config;
+}
+
+noise::module::Module* const TerraceNoiseNode::getModule() {
+  module->ClearAllControlPoints();
+  module->InvertTerraces(invertTerraces);
+  for (auto value : controlPoints.values()) {
+    module->AddControlPoint(value);
+  }
   return module.get();
 }
 
