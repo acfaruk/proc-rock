@@ -111,6 +111,7 @@ void updateSideBar(glm::uvec2 windowSize, Pipeline& pipeline) {
       for (int i = 0; i < IM_ARRAYSIZE(PipelineStageNames_Gen); i++) {
         if (ImGui::Selectable(PipelineStageNames_Gen[i])) {
           pipeline.setGenerator(createGeneratorFromId(i));
+          currentStageEditor.current = &pipeline.getGenerator();
         }
       }
       ImGui::EndPopup();
@@ -128,6 +129,7 @@ void updateSideBar(glm::uvec2 windowSize, Pipeline& pipeline) {
       for (int i = 0; i < IM_ARRAYSIZE(PipelineStageNames_Mod); i++) {
         if (ImGui::Selectable(PipelineStageNames_Mod[i])) {
           pipeline.addModifier(createModifierFromId(i));
+          currentStageEditor.current = &pipeline.getModifier(pipeline.getModifierCount() - 1);
         }
       }
       ImGui::EndPopup();
@@ -147,6 +149,7 @@ void updateSideBar(glm::uvec2 windowSize, Pipeline& pipeline) {
       for (int i = 0; i < IM_ARRAYSIZE(PipelineStageNames_Par); i++) {
         if (ImGui::Selectable(PipelineStageNames_Par[i])) {
           pipeline.setParameterizer(createParameterizerFromId(i));
+          currentStageEditor.current = &pipeline.getParameterizer();
         }
       }
       ImGui::EndPopup();
@@ -164,6 +167,7 @@ void updateSideBar(glm::uvec2 windowSize, Pipeline& pipeline) {
       for (int i = 0; i < IM_ARRAYSIZE(PipelineStageNames_TexGen); i++) {
         if (ImGui::Selectable(PipelineStageNames_TexGen[i])) {
           pipeline.setTextureGenerator(createTextureGeneratorFromId(i));
+          currentStageEditor.current = &pipeline.getTextureGenerator();
         }
       }
       ImGui::EndPopup();
@@ -176,6 +180,13 @@ void updateSideBar(glm::uvec2 windowSize, Pipeline& pipeline) {
 }
 
 void udpateCurrentStageEditor(glm::uvec2 windowSize) {
+  if (currentStageEditor.current == nullptr) {
+    currentStageEditor.width = 0;
+    return;
+  }
+
+  currentStageEditor.width = 350;
+
   ImGui::SetNextWindowPos(
       ImVec2((float)sideBar.width + (float)viewer.size.x, (float)mainMenu.height));
   ImGui::SetNextWindowSize(ImVec2((float)currentStageEditor.width,
@@ -185,10 +196,7 @@ void udpateCurrentStageEditor(glm::uvec2 windowSize) {
                    ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove |
                    ImGuiWindowFlags_AlwaysVerticalScrollbar);
 
-  if (currentStageEditor.current != nullptr) {
-    updateConfigurable(*currentStageEditor.current);
-  }
-
+  updateConfigurable(*currentStageEditor.current);
   ImGui::End();
 }
 
@@ -289,9 +297,11 @@ void updateWindows(const Shader& shader) {
 void updatePipelineStage(Pipeline& pipeline, PipelineStage& stage) {
   stage.setChanged(false);
 
+  bool current = currentStageEditor.current == &stage;
   auto info = stage.getInfo();
   std::string id = stage.getId();
-  ImGui::BeginChild(id.c_str(), ImVec2(0, 70), true);
+  if (current) ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1, 1, 1, 1));
+  ImGui::BeginChild(id.c_str(), ImVec2(0, 45), true);
 
   // Info and description
   ImGui::Text(info.name.c_str());
@@ -306,30 +316,32 @@ void updatePipelineStage(Pipeline& pipeline, PipelineStage& stage) {
     if (ImGui::Button(ICON_FA_TIMES_CIRCLE)) {
       ImGui::EndChild();
       pipeline.removePipelineStage(&stage);
-      if (currentStageEditor.current = &stage) {
+      if (current) {
+        ImGui::PopStyleColor();
         currentStageEditor.current = nullptr;
       }
       return;
     }
   }
 
-  if (ImGui::Button(ICON_FA_COG " Settings")) {
-    currentStageEditor.current = &stage;
-    noiseNodeEditor.current = nullptr;
-  }
-
   if (stage.isMoveable()) {
-    ImGui::SameLine((float)sideBar.width - 60);
+    ImGui::SameLine((float)sideBar.width - 90);
     if (ImGui::Button(ICON_FA_ARROW_ALT_CIRCLE_DOWN)) {
       pipeline.movePipelineStageDown(&stage);
     }
-    ImGui::SameLine((float)sideBar.width - 90);
+    ImGui::SameLine((float)sideBar.width - 120);
     if (ImGui::Button(ICON_FA_ARROW_ALT_CIRCLE_UP)) {
       pipeline.movePipelineStageUp(&stage);
     }
   }
 
   ImGui::EndChild();
+
+  if (ImGui::IsItemClicked()) {
+    currentStageEditor.current = current ? nullptr : &stage;
+    noiseNodeEditor.current = nullptr;
+  }
+  if (current) ImGui::PopStyleColor();
 }
 
 void updateConfigurable(PipelineStage& stage) {
