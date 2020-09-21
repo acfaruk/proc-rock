@@ -261,6 +261,25 @@ noise::module::Module* const TerraceNoiseNode::getModule() {
   return module.get();
 }
 
+// Curve
+CurveNoiseNode::CurveNoiseNode() { module = std::make_unique<noise::module::Curve>(); }
+
+Configuration::ConfigurationGroup CurveNoiseNode::getConfig() {
+  Configuration::ConfigurationGroup config;
+  config.entry = {"Curve", "Map output to a curve."};
+  config.curves.push_back(Configuration::SimpleEntry<ConfigurationCurve>{
+      {"Curve", "The points that define the curve."}, &configCurve});
+  return config;
+}
+
+noise::module::Module* const CurveNoiseNode::getModule() {
+  module->ClearAllControlPoints();
+  for (auto value : configCurve.values()) {
+    module->AddControlPoint(value.first, value.second);
+  }
+  return module.get();
+}
+
 // Displace
 DisplaceNoiseNode::DisplaceNoiseNode() { module = std::make_unique<noise::module::Displace>(); }
 

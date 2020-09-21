@@ -189,6 +189,18 @@ class TerraceNoiseNode : public NoiseNode {
   std::unique_ptr<noise::module::Terrace> module;
 };
 
+class CurveNoiseNode : public NoiseNode {
+ public:
+  CurveNoiseNode();
+  virtual Configuration::ConfigurationGroup getConfig() override;
+  virtual noise::module::Module* const getModule() override;
+
+ private:
+  ConfigurationCurve configCurve = std::map<float, float>{{0, 0}, {0.1, 0.2}, {0.6, 0.15}, {1, 1}};
+
+  std::unique_ptr<noise::module::Curve> module;
+};
+
 // Transformers
 class DisplaceNoiseNode : public NoiseNode {
  public:

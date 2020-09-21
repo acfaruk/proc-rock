@@ -136,6 +136,11 @@ void NoiseNodeEditor::update() {
           imnodes::SetNodeScreenSpacePos(id, clickPos);
           changed = true;
         }
+        if (ImGui::MenuItem("Curve")) {
+          int id = this->current->addNode(std::make_unique<CurveNoiseNode>());
+          imnodes::SetNodeScreenSpacePos(id, clickPos);
+          changed = true;
+        }
         ImGui::EndMenu();
       }
 
@@ -324,6 +329,42 @@ void NoiseNodeEditor::update() {
         ImGui::SameLine();
         if (ImGui::Button(ICON_FA_PLUS_CIRCLE)) {
           var.data->insert(to_be_added);
+          changed = true;
+        }
+      }
+
+      for (auto var : config.curves) {
+        ImGui::Text(var.entry.name.c_str());
+        ImGui::SameLine();
+        helpMarker(var.entry.description);
+        float to_be_removed_pos = NAN;
+        float to_be_removed_val = NAN;
+
+        int id = 0;
+        for (auto val : var.data->values()) {
+          ImGui::PushID(id++);
+          ImGui::Text((std::to_string(val.first) + "/" + std::to_string(val.second)).c_str());
+          ImGui::SameLine(50);
+
+          ImGui::SameLine(200);
+          if (ImGui::Button(ICON_FA_TIMES_CIRCLE)) {
+            to_be_removed_pos = val.first;
+            to_be_removed_val = val.second;
+            changed = true;
+          }
+          ImGui::PopID();
+        }
+
+        if (!(isnan(to_be_removed_val) && isnan(to_be_removed_pos))) {
+          var.data->remove(to_be_removed_pos);
+        }
+
+        static Eigen::Vector2f to_be_added = {0.0f, 0.0f};
+        ImGui::SliderFloat2("", to_be_added.data(), 0, 1);
+        draggable = draggable && !ImGui::IsItemActive();
+        ImGui::SameLine();
+        if (ImGui::Button(ICON_FA_PLUS_CIRCLE)) {
+          var.data->add(to_be_added.x(), to_be_added.y());
           changed = true;
         }
       }

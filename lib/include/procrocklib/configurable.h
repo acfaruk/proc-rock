@@ -25,10 +25,31 @@ struct ConfigurationList {
     if (list.size() > minEntries) list.erase(value);
   }
 
-  const std::set<T>& const values() { return list; }
+  const std::set<T>& values() { return list; }
 
  private:
   std::set<T> list;
+};
+
+struct ConfigurationCurve {
+  ConfigurationCurve(std::map<float, float> initial) : curvePoints(initial){};
+
+  void add(float pos, float value) {
+    if (pos <= 1.0f && pos >= 0.0f && value <= 1.0f && value >= 0.0f) {
+      curvePoints[pos] = value;
+    }
+  }
+
+  void remove(float& pos) {
+    if (curvePoints.size() > 4) {
+      curvePoints.erase(pos);
+    }
+  }
+
+  const std::map<float, float>& values() { return curvePoints; }
+
+ private:
+  std::map<float, float> curvePoints;
 };
 
 struct Configuration {
@@ -65,6 +86,7 @@ struct Configuration {
   };
 
   typedef SimpleEntry<std::map<int, Eigen::Vector3f>> GradientColoringEntry;
+  typedef SimpleEntry<std::map<float, float>> CurvePositionsEntry;
 
   struct ConfigurationGroup {
     Entry entry;
@@ -75,10 +97,12 @@ struct Configuration {
 
     std::vector<SimpleEntry<bool>> bools;
     std::vector<SimpleEntry<NoiseGraph>> noiseGraphs;
+
     std::vector<ListEntry<float>> floatLists;
 
     std::vector<SingleChoiceEntry> singleChoices;
     std::vector<GradientColoringEntry> gradientColorings;
+    std::vector<SimpleEntry<ConfigurationCurve>> curves;
   };
 
  private:
@@ -113,4 +137,5 @@ class Configurable {
  private:
   bool changed = false;
 };
+
 }  // namespace procrock
