@@ -14,6 +14,10 @@ class DisplaceAlongNormalsModifier : public Modifier {
   int ignoredVerticesCount = 0;
   float factor = 0.001;
 
+  bool preferDirection = false;
+  float preferStrength = 1.0f;
+  Eigen::Vector3f preferredDirection{0, -1, 0};
+
   virtual std::shared_ptr<Mesh> modify(Mesh& mesh) override;
   Configuration getConfiguration() override;
   virtual PipelineStageInfo& getInfo() override;
