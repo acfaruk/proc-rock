@@ -1,5 +1,6 @@
 #pragma once
 #include <procrocklib/configurable.h>
+#include <procrocklib/configurables/texturing.h>
 #include <procrocklib/mesh.h>
 #include <procrocklib/pipeline_stage.h>
 
@@ -23,15 +24,15 @@ class TextureGenerator : public PipelineStage {
 
   virtual Configuration getBaseConfiguration() override;
 
-  void fillTexture(const TextureGroup& texGroup, std::vector<unsigned char>& dataToFill,
+  void fillTexture(TextureGroup& texGroup,
                    std::function<Eigen::Vector3i(Eigen::Vector3d)> colorFunction);
 
-  void calculateNormals(TextureGroup& texGroup);
-  void calculateRoughness(TextureGroup& texGroup);
-  void calculateMetal(TextureGroup& texGroup);
-  void calculateAmbientOcc(TextureGroup& texGroup);
-
  private:
+  NormalsGenerator normalsGenerator;
+  RoughnessGenerator roughnessGenerator;
+  MetalnessGenerator metalnessGenerator;
+  AmbientOcclusionGenerator ambientOccGenerator;
+
   std::shared_ptr<Mesh> mesh;
   bool firstRun = true;
 };

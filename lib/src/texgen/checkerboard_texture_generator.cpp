@@ -41,7 +41,7 @@ std::shared_ptr<Mesh> CheckerboardTextureGenerator::generate(Mesh* before) {
         return Eigen::Vector3i{value, value, value};
       };
 
-      fillTexture(result->textures, result->textures.albedoData, colorFunction);
+      fillTexture(result->textures, colorFunction);
     } break;
   }
   return result;

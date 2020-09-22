@@ -11,7 +11,7 @@ std::shared_ptr<Mesh> NoiseTextureGenerator::generate(Mesh* before) {
     return coloring.colorFromValue(value);
   };
 
-  fillTexture(result->textures, result->textures.albedoData, colorFunction);
+  fillTexture(result->textures, colorFunction);
   return result;
 }
 
