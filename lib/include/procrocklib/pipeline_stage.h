@@ -55,4 +55,10 @@ const unsigned int PipelineStage_TexGen_Checkerboard = 0;
 const unsigned int PipelineStage_TexGen_Noise = 1;
 
 const char* const PipelineStageNames_TexGen[] = {"Checkerboard", "Noise"};
+
+// Texture Adders
+const unsigned int PipelineStage_TexAdd_Noise = 0;
+
+const char* const PipelineStageNames_TexAdd[] = {"Noise"};
+
 }  // namespace procrock

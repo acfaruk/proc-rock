@@ -86,6 +86,7 @@ struct Configuration {
   };
 
   typedef SimpleEntry<std::map<int, Eigen::Vector3f>> GradientColoringEntry;
+  typedef SimpleEntry<std::map<int, Eigen::Vector4f>> GradientAlphaColoringEntry;
   typedef SimpleEntry<std::map<float, float>> CurvePositionsEntry;
 
   struct ConfigurationGroup {
@@ -102,6 +103,7 @@ struct Configuration {
 
     std::vector<SingleChoiceEntry> singleChoices;
     std::vector<GradientColoringEntry> gradientColorings;
+    std::vector<GradientAlphaColoringEntry> gradientAlphaColorings;
     std::vector<SimpleEntry<ConfigurationCurve>> curves;
   };
 

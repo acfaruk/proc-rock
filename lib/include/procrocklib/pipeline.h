@@ -2,6 +2,7 @@
 #include <procrocklib/generator.h>
 #include <procrocklib/modifier.h>
 #include <procrocklib/parameterizer.h>
+#include <procrocklib/texture_adder.h>
 #include <procrocklib/texture_generator.h>
 
 #include <memory>
@@ -26,6 +27,10 @@ class Pipeline {
   void setTextureGenerator(std::unique_ptr<TextureGenerator> textureGenerator);
   TextureGenerator& getTextureGenerator() const;
 
+  int getTextureAdderCount();
+  void addTextureAdder(std::unique_ptr<TextureAdder> textureAdder);
+  TextureAdder& getTextureAdder(int index);
+
   void removePipelineStage(PipelineStage* stage);
 
   const std::shared_ptr<Mesh> getCurrentMesh();
@@ -35,6 +40,7 @@ class Pipeline {
   std::vector<std::unique_ptr<Modifier>> modifiers;
   std::unique_ptr<Parameterizer> parameterizer;
   std::unique_ptr<TextureGenerator> textureGenerator;
+  std::vector<std::unique_ptr<TextureAdder>> textureAdders;
 
   std::shared_ptr<Mesh> currentMesh;
 };

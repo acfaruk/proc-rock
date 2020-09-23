@@ -17,4 +17,18 @@ void GradientColoring::addOwnGroups(Configuration& config, std::string newGroupN
 Eigen::Vector3i GradientColoring::colorFromValue(float value) {
   return utils::computeColorGradient(colorGradient, 0, 100, value);
 }
+void GradientAlphaColoring::addOwnGroups(Configuration& config, std::string newGroupName) {
+  Configuration::ConfigurationGroup colorGroup;
+  colorGroup.entry = {"Coloring Settings", "Create colors for the texture."};
+  colorGroup.gradientAlphaColorings.push_back(Configuration::GradientAlphaColoringEntry(
+      {{"Gradient",
+        "Color the texture according to a user defined gradient. Color values are defined over the "
+        "range 0-100."},
+       &colorGradient}));
+
+  config.insertToConfigGroups(newGroupName + ": Gradient Coloring", colorGroup);
+}
+Eigen::Vector4i GradientAlphaColoring::colorFromValue(float value) {
+  return utils::computeAlphaColorGradient(colorGradient, 0, 100, value);
+}
 }  // namespace procrock

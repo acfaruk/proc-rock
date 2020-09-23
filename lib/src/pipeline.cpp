@@ -25,7 +25,19 @@ void Pipeline::movePipelineStageUp(PipelineStage* stage) {
       if (modifiers[i]->getId() == modifier->getId() && i != 0) {
         std::iter_swap(modifiers.begin() + i, modifiers.begin() + i - 1);
 
-        modifiers[i]->setChanged(true);
+        // modifiers[i]->setChanged(true);
+        generator->setChanged(true);
+        return;
+      }
+    }
+  }
+  auto textureAdder = dynamic_cast<TextureAdder*>(stage);
+  if (textureAdder != nullptr) {
+    for (int i = 0; i < textureAdders.size(); i++) {
+      if (textureAdders[i]->getId() == textureAdder->getId() && i != 0) {
+        std::iter_swap(textureAdders.begin() + i, textureAdders.begin() + i - 1);
+
+        // textureAdders[i]->setChanged(true);
         generator->setChanged(true);
         return;
       }
@@ -40,8 +52,21 @@ void Pipeline::movePipelineStageDown(PipelineStage* stage) {
       if (modifiers[i]->getId() == modifier->getId() && i != modifiers.size() - 1) {
         std::iter_swap(modifiers.begin() + i, modifiers.begin() + i + 1);
 
-        modifiers[i]->setChanged(true);
-        modifiers[i + 1]->setChanged(true);
+        // modifiers[i]->setChanged(true);
+        // modifiers[i + 1]->setChanged(true);
+        generator->setChanged(true);
+        return;
+      }
+    }
+  }
+
+  auto textureAdder = dynamic_cast<TextureAdder*>(stage);
+  if (textureAdder != nullptr) {
+    for (int i = 0; i < textureAdders.size(); i++) {
+      if (textureAdders[i]->getId() == textureAdder->getId() && i != textureAdders.size() - 1) {
+        std::iter_swap(textureAdders.begin() + i, textureAdders.begin() + i + 1);
+
+        // textureAdders[i]->setChanged(true);
         generator->setChanged(true);
         return;
       }
@@ -51,15 +76,22 @@ void Pipeline::movePipelineStageDown(PipelineStage* stage) {
 
 void Pipeline::removePipelineStage(PipelineStage* stage) {
   for (auto& mod : modifiers) {
-    if (static_cast<PipelineStage*>(mod.get()) == stage) {
+    if (dynamic_cast<PipelineStage*>(mod.get()) == stage) {
       modifiers.erase(std::find(modifiers.begin(), modifiers.end(), mod));
       break;
     }
   }
 
-  for (auto& mod : modifiers) {
-    mod->setChanged(true);
+  for (auto& texadd : textureAdders) {
+    if (dynamic_cast<PipelineStage*>(texadd.get()) == stage) {
+      textureAdders.erase(std::find(textureAdders.begin(), textureAdders.end(), texadd));
+      break;
+    }
   }
+
+  // for (auto& mod : modifiers) {
+  //  mod->setChanged(true);
+  //}
   generator->setChanged(true);
 }
 
@@ -69,13 +101,20 @@ void Pipeline::setParameterizer(std::unique_ptr<Parameterizer> parameterizer) {
   this->parameterizer = std::move(parameterizer);
 }
 
-Parameterizer& Pipeline::getParameterizer() const { return *this->parameterizer.get(); }
+Parameterizer& Pipeline::getParameterizer() const { return *this->parameterizer; }
 
 void Pipeline::setTextureGenerator(std::unique_ptr<TextureGenerator> textureGenerator) {
   this->textureGenerator = std::move(textureGenerator);
 }
 
-TextureGenerator& Pipeline::getTextureGenerator() const { return *this->textureGenerator.get(); }
+TextureGenerator& Pipeline::getTextureGenerator() const { return *this->textureGenerator; }
+
+int Pipeline::getTextureAdderCount() { return textureAdders.size(); }
+void Pipeline::addTextureAdder(std::unique_ptr<TextureAdder> textureAdder) {
+  this->textureAdders.push_back(std::move(textureAdder));
+}
+
+TextureAdder& Pipeline::getTextureAdder(int index) { return *this->textureAdders[index]; }
 
 const std::shared_ptr<Mesh> Pipeline::getCurrentMesh() {
   bool changed = generator->isChanged() || generator->isFirstRun();
@@ -99,6 +138,13 @@ const std::shared_ptr<Mesh> Pipeline::getCurrentMesh() {
   changed = textureGenerator->isChanged();
   mesh = textureGenerator->run(mesh.get());
   textureGenerator->setChanged(false);
+
+  for (auto& texadd : textureAdders) {
+    texadd->setChanged(texadd->isChanged() || texadd->isFirstRun() || changed);
+    changed = texadd->isChanged();
+    mesh = texadd->run(mesh.get());
+    texadd->setChanged(false);
+  }
 
   return mesh;
 }

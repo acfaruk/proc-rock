@@ -2,6 +2,7 @@
 #include <procrocklib/gen/all.h>
 #include <procrocklib/mod/all.h>
 #include <procrocklib/par/all.h>
+#include <procrocklib/texadd/all.h>
 #include <procrocklib/texgen/all.h>
 
 #include <memory>
@@ -51,6 +52,15 @@ std::unique_ptr<TextureGenerator> inline createTextureGeneratorFromId(unsigned i
       return std::make_unique<CheckerboardTextureGenerator>();
     case PipelineStage_TexGen_Noise:
       return std::make_unique<NoiseTextureGenerator>();
+    default:
+      assert(0 && "make sure all stages are handled!");
+  }
+}
+
+std::unique_ptr<TextureAdder> inline createTextureAdderFromId(unsigned int id) {
+  switch (id) {
+    case PipelineStage_TexAdd_Noise:
+      return std::make_unique<NoiseTextureAdder>();
     default:
       assert(0 && "make sure all stages are handled!");
   }

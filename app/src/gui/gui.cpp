@@ -112,6 +112,7 @@ void updateSideBar(glm::uvec2 windowSize, Pipeline& pipeline) {
         if (ImGui::Selectable(PipelineStageNames_Gen[i])) {
           pipeline.setGenerator(createGeneratorFromId(i));
           currentStageEditor.current = &pipeline.getGenerator();
+          noiseNodeEditor.current = nullptr;
         }
       }
       ImGui::EndPopup();
@@ -130,6 +131,7 @@ void updateSideBar(glm::uvec2 windowSize, Pipeline& pipeline) {
         if (ImGui::Selectable(PipelineStageNames_Mod[i])) {
           pipeline.addModifier(createModifierFromId(i));
           currentStageEditor.current = &pipeline.getModifier(pipeline.getModifierCount() - 1);
+          noiseNodeEditor.current = nullptr;
         }
       }
       ImGui::EndPopup();
@@ -150,6 +152,7 @@ void updateSideBar(glm::uvec2 windowSize, Pipeline& pipeline) {
         if (ImGui::Selectable(PipelineStageNames_Par[i])) {
           pipeline.setParameterizer(createParameterizerFromId(i));
           currentStageEditor.current = &pipeline.getParameterizer();
+          noiseNodeEditor.current = nullptr;
         }
       }
       ImGui::EndPopup();
@@ -168,6 +171,7 @@ void updateSideBar(glm::uvec2 windowSize, Pipeline& pipeline) {
         if (ImGui::Selectable(PipelineStageNames_TexGen[i])) {
           pipeline.setTextureGenerator(createTextureGeneratorFromId(i));
           currentStageEditor.current = &pipeline.getTextureGenerator();
+          noiseNodeEditor.current = nullptr;
         }
       }
       ImGui::EndPopup();
@@ -176,6 +180,29 @@ void updateSideBar(glm::uvec2 windowSize, Pipeline& pipeline) {
     auto& texGen = pipeline.getTextureGenerator();
     updatePipelineStage(pipeline, texGen);
   }
+
+  if (ImGui::CollapsingHeader("Texture Adders", ImGuiTreeNodeFlags_DefaultOpen)) {
+    if (ImGui::Button("Add Texture Adder...", ImVec2(-1, 0))) {
+      ImGui::OpenPopup("texadd_select_popup");
+    }
+    if (ImGui::BeginPopup("texadd_select_popup")) {
+      for (int i = 0; i < IM_ARRAYSIZE(PipelineStageNames_TexAdd); i++) {
+        if (ImGui::Selectable(PipelineStageNames_TexAdd[i])) {
+          pipeline.addTextureAdder(createTextureAdderFromId(i));
+          currentStageEditor.current =
+              &pipeline.getTextureAdder(pipeline.getTextureAdderCount() - 1);
+          noiseNodeEditor.current = nullptr;
+        }
+      }
+      ImGui::EndPopup();
+    }
+
+    for (int i = 0; i < pipeline.getTextureAdderCount(); i++) {
+      auto& texadd = pipeline.getTextureAdder(i);
+      updatePipelineStage(pipeline, texadd);
+    }
+  }
+
   ImGui::End();
 }
 
@@ -319,6 +346,7 @@ void updatePipelineStage(Pipeline& pipeline, PipelineStage& stage) {
       if (current) {
         ImGui::PopStyleColor();
         currentStageEditor.current = nullptr;
+        noiseNodeEditor.current = nullptr;
       }
       return;
     }
@@ -437,6 +465,41 @@ void updateConfigurable(PipelineStage& stage) {
           ImGui::SameLine();
           if (ImGui::Button(ICON_FA_PLUS_CIRCLE)) {
             gradient.data->emplace(to_be_added, Eigen::Vector3f{0, 0, 0});
+            changed = true;
+          }
+        }
+
+        for (auto gradient : group.gradientAlphaColorings) {
+          ImGui::Text(gradient.entry.name.c_str());
+          ImGui::SameLine();
+          helpMarker(gradient.entry.description);
+          int to_be_removed = -1;
+          int id = 0;
+          for (auto& x : *gradient.data) {
+            ImGui::PushID(id++);
+            ImGui::Text(std::to_string(x.first).c_str());
+            ImGui::SameLine(50);
+            ImGui::ColorEdit4("", x.second.data(),
+                              ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel);
+            changed |= ImGui::IsItemDeactivatedAfterEdit();
+
+            ImGui::SameLine(200);
+            if (ImGui::Button(ICON_FA_TIMES_CIRCLE)) {
+              to_be_removed = x.first;
+              changed = true;
+            }
+            ImGui::PopID();
+          }
+
+          if (to_be_removed != -1) {
+            gradient.data->erase(to_be_removed);
+          }
+
+          static int to_be_added = 0;
+          ImGui::SliderInt("", &to_be_added, 1, 100);
+          ImGui::SameLine();
+          if (ImGui::Button(ICON_FA_PLUS_CIRCLE)) {
+            gradient.data->emplace(to_be_added, Eigen::Vector4f{0, 0, 0, 0});
             changed = true;
           }
         }
