@@ -1,6 +1,9 @@
 #include "parameterizer.h"
 
 #include <igl/barycentric_coordinates.h>
+#include <igl/per_face_normals.h>
+
+#include <iostream>
 
 namespace procrock {
 std::shared_ptr<Mesh> Parameterizer::run(Mesh* before) {
@@ -42,9 +45,12 @@ void Parameterizer::setTextureGroupSize(Mesh& mesh) {
 }
 
 void Parameterizer::fillTextureMapFaceBased(Mesh& mesh) {
+  mesh.faceTangents.resize(mesh.faces.rows(), 3);
   auto& tex = mesh.textures;
   tex.worldMap.clear();
   tex.worldMap.resize(tex.height * tex.width);
+
+  igl::per_face_normals(mesh.vertices, mesh.faces, mesh.faceNormals);
 
   // Loop through faces
   for (int i = 0; i < mesh.faces.rows(); i++) {
@@ -131,10 +137,21 @@ void Parameterizer::fillTextureMapFaceBased(Mesh& mesh) {
 
         int index = (textureX + tex.width * textureY);
         for (const auto& pos : positions) {
-          tex.worldMap[index].push_back(pos);
+          tex.worldMap[index].positions.push_back(pos);
         }
+        tex.worldMap[index].face = i;
       }
     }
+
+    // Calculate Tangents
+    Eigen::Vector3d deltaPos1 = pos[1] - pos[0];
+    Eigen::Vector3d deltaPos2 = pos[2] - pos[0];
+
+    Eigen::Vector2d deltaUV1 = uvs[1] - uvs[0];
+    Eigen::Vector2d deltaUV2 = uvs[2] - uvs[0];
+    float r = 1.0f / (deltaUV1.x() * deltaUV2.y() - deltaUV1.y() * deltaUV2.x());
+    Eigen::Vector3d tangent = (deltaPos1 * deltaUV2.y() - deltaPos2 * deltaUV1.y()) * r;
+    mesh.faceTangents.row(i) = tangent;
   }
 }
 }  // namespace procrock

@@ -11,7 +11,7 @@ std::shared_ptr<Mesh> NoiseTextureAdder::generate(Mesh* before) {
     return coloring.colorFromValue(value);
   };
 
-  addTexture(result->textures, colorFunction);
+  addTexture(*result, colorFunction);
   return result;
 }
 

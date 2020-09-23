@@ -37,12 +37,12 @@ void TextureGenerator::fillTexture(TextureGroup& texGroup,
   for (const auto& pixel : texGroup.worldMap) {
     int finalValue = 0;
     Eigen::Vector3i acc{0, 0, 0};
-    for (const auto& pos : pixel) {
+    for (const auto& pos : pixel.positions) {
       acc += colorFunction(pos);
     }
 
-    if (pixel.size() != 0) {
-      acc /= pixel.size();
+    if (pixel.positions.size() != 0) {
+      acc /= pixel.positions.size();
       dataToFill[(3 * index)] = acc.x();
       dataToFill[(3 * index) + 1] = acc.y();
       dataToFill[(3 * index) + 2] = acc.z();

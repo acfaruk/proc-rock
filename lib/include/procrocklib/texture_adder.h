@@ -22,8 +22,7 @@ class TextureAdder : public PipelineStage {
 
   virtual Configuration getBaseConfiguration() override;
 
-  void addTexture(TextureGroup& texGroup,
-                  std::function<Eigen::Vector4i(Eigen::Vector3d)> colorFunction);
+  void addTexture(Mesh& mesh, std::function<Eigen::Vector4i(Eigen::Vector3d)> colorFunction);
 
  private:
   NormalsGenerator normalsGenerator;
@@ -35,6 +34,10 @@ class TextureAdder : public PipelineStage {
   float roughnessProportion = 0.1;
   float metalProportion = 1.0;
   float ambientOccProportion = 0.5;
+
+  bool usePreferredNormalDirection = false;
+  Eigen::Vector3f preferredNormalDirection{0, 1, 0};
+  float preferredNormalStrength = 1.0f;
 
   std::shared_ptr<Mesh> mesh;
   bool firstRun = true;
