@@ -49,7 +49,9 @@ void TextureGenerator::fillTexture(TextureGroup& texGroup,
     }
     index++;
   }
-
+  calculatePBRTextures(texGroup);
+}
+void TextureGenerator::calculatePBRTextures(TextureGroup& texGroup) {
   normalsGenerator.modify(texGroup);
   roughnessGenerator.modify(texGroup);
   metalnessGenerator.modify(texGroup);

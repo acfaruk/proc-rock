@@ -50,7 +50,7 @@ void update(glm::uvec2 windowSize, Framebuffer& viewerFrame, Pipeline& pipeline,
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
 
-  updateMainMenu();
+  updateMainMenu(pipeline);
   updateSideBar(windowSize, pipeline);
   udpateCurrentStageEditor(windowSize);
   updateViewer(windowSize, viewerFrame);
@@ -69,13 +69,23 @@ void update(glm::uvec2 windowSize, Framebuffer& viewerFrame, Pipeline& pipeline,
   ImGui::Render();
 }
 
-void updateMainMenu() {
+void updateMainMenu(Pipeline& pipeline) {
   if (ImGui::BeginMainMenuBar()) {
     if (ImGui::BeginMenu("File")) {
-      if (ImGui::MenuItem("Open")) {
-        const char* test = tinyfd_openFileDialog("Open A Pipeline", "", 0, NULL, NULL, 0);
-        if (test != NULL) {
-          std::cout << test << std::endl;
+      if (ImGui::MenuItem("Save Pipeline")) {
+        const char* patterns[] = {"*.json"};
+        const char* file = tinyfd_saveFileDialog("Save the Pipeline", "", 1, patterns, NULL);
+        if (file != NULL) {
+          pipeline.saveToFile(file);
+        }
+      }
+      if (ImGui::MenuItem("Load Pipeline")) {
+        const char* patterns[] = {"*.json"};
+        const char* file = tinyfd_openFileDialog("Load a Pipeline", "", 1, patterns, NULL, 0);
+        if (file != NULL) {
+          pipeline.loadFromFile(file);
+          currentStageEditor.current = nullptr;
+          noiseNodeEditor.current = nullptr;
         }
       }
       ImGui::EndMenu();

@@ -6,9 +6,20 @@
 
 namespace procrock {
 
+enum class PipelineStageType {
+  NoType,
+  Generator,
+  Modifier,
+  Parameterizer,
+  TextureGenerator,
+  TextureAdder
+};
+
 struct PipelineStageInfo {
   std::string name = "Default PipelineStage";
   std::string description = "-";
+  PipelineStageType type = PipelineStageType::NoType;
+  int id = -1;
 };
 
 class PipelineStage : public Configurable {

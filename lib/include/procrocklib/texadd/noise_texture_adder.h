@@ -17,7 +17,8 @@ class NoiseTextureAdder : public TextureAdder {
 
  private:
   PipelineStageInfo info{PipelineStageNames_TexAdd[PipelineStage_TexAdd_Noise],
-                         "Adds Solid Noise Texture based on a noise graph."};
+                         "Adds Solid Noise Texture based on a noise graph.",
+                         PipelineStageType::TextureAdder, PipelineStage_TexAdd_Noise};
 
   NoiseGraph noiseGraph;
   GradientAlphaColoring coloring;

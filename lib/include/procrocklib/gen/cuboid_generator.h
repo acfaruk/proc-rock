@@ -16,6 +16,7 @@ class CuboidGenerator : public Generator {
 
  private:
   PipelineStageInfo info{PipelineStageNames_Gen[PipelineStage_Gen_Cuboid],
-                         "Generates a simple cuboid mesh based on width, length and depth"};
+                         "Generates a simple cuboid mesh based on width, length and depth",
+                         PipelineStageType::Generator, PipelineStage_Gen_Cuboid};
 };
 }  // namespace procrock

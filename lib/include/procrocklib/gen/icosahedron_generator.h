@@ -15,6 +15,7 @@ class IcosahedronGenerator : public Generator {
 
  private:
   PipelineStageInfo info{PipelineStageNames_Gen[PipelineStage_Gen_Icosahedron],
-                         "Generates a simple icosahedron mesh based on edge length."};
+                         "Generates a simple icosahedron mesh based on edge length.",
+                         PipelineStageType::Generator, PipelineStage_Gen_Icosahedron};
 };
 }  // namespace procrock

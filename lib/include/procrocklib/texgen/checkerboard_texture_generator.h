@@ -15,6 +15,7 @@ class CheckerboardTextureGenerator : public TextureGenerator {
 
  private:
   PipelineStageInfo info{PipelineStageNames_TexGen[PipelineStage_TexGen_Checkerboard],
-                         "Generates a simple checkerboard texture to test the parameterization."};
+                         "Generates a simple checkerboard texture to test the parameterization.",
+                         PipelineStageType::TextureGenerator, PipelineStage_TexGen_Checkerboard};
 };
 }  // namespace procrock

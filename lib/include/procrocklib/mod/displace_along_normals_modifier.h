@@ -24,7 +24,8 @@ class DisplaceAlongNormalsModifier : public Modifier {
 
  private:
   PipelineStageInfo info{PipelineStageNames_Mod[PipelineStage_Mod_DisplaceAlongNormals],
-                         "Displace all vertices allong their respective normals"};
+                         "Displace all vertices allong their respective normals",
+                         PipelineStageType::Modifier, PipelineStage_Mod_DisplaceAlongNormals};
 
   std::mt19937 rng;
   NoiseGraph noiseGraph;

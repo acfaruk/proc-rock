@@ -35,6 +35,9 @@ class Pipeline {
 
   const std::shared_ptr<Mesh> getCurrentMesh();
 
+  void saveToFile(std::string filePath);
+  void loadFromFile(std::string filePath);
+
  private:
   std::unique_ptr<Generator> generator;
   std::vector<std::unique_ptr<Modifier>> modifiers;

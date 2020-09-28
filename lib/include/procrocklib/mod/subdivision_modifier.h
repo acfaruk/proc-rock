@@ -14,6 +14,7 @@ class SubdivisionModifier : public Modifier {
  private:
   PipelineStageInfo info{
       PipelineStageNames_Mod[PipelineStage_Mod_Subdivsion],
-      "Subdivides the mesh, to give it more geometry, optionally also making it more smooth"};
+      "Subdivides the mesh, to give it more geometry, optionally also making it more smooth",
+      PipelineStageType::Modifier, PipelineStage_Mod_Subdivsion};
 };
 }  // namespace procrock

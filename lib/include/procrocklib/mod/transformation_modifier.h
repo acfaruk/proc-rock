@@ -15,6 +15,7 @@ class TransformationModifier : public Modifier {
 
  private:
   PipelineStageInfo info{PipelineStageNames_Mod[PipelineStage_Mod_Transform],
-                         "Translate, Rotate or Scale the rock."};
+                         "Translate, Rotate or Scale the rock.", PipelineStageType::Modifier,
+                         PipelineStage_Mod_Transform};
 };
 }  // namespace procrock

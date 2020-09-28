@@ -1,9 +1,13 @@
 #include "pipeline.h"
 
 #include <algorithm>
+#include <fstream>
 
+#include "configurable.h"
 #include "mod/displace_along_normals_modifier.h"
 #include "mod/subdivision_modifier.h"
+#include "pipeline_stage_factory.h"
+#include "serialization.h"
 
 namespace procrock {
 
@@ -148,4 +152,75 @@ const std::shared_ptr<Mesh> Pipeline::getCurrentMesh() {
 
   return mesh;
 }
+
+void Pipeline::saveToFile(std::string filePath) {
+  nlohmann::json finalJson;
+
+  nlohmann::json genJson =
+      nlohmann::json{{"_id", generator->getInfo().id}, {"config", generator->getConfiguration()}};
+  finalJson.update({{"generator", genJson}});
+
+  finalJson.update({{"modifiers", {}}});
+  for (auto& mod : modifiers) {
+    nlohmann::json modJson =
+        nlohmann::json{{"_id", mod->getInfo().id}, {"config", mod->getConfiguration()}};
+    finalJson.at("modifiers").push_back(modJson);
+  }
+
+  nlohmann::json parJson = nlohmann::json{{"_id", parameterizer->getInfo().id},
+                                          {"config", parameterizer->getConfiguration()}};
+  finalJson.update({{"parameterizer", parJson}});
+
+  nlohmann::json texGenJson = nlohmann::json{{"_id", textureGenerator->getInfo().id},
+                                             {"config", textureGenerator->getConfiguration()}};
+  finalJson.update({{"textureGenerator", texGenJson}});
+
+  finalJson.update({{"textureAdders", {}}});
+  for (auto& texAdder : textureAdders) {
+    nlohmann::json texAddJson =
+        nlohmann::json{{"_id", texAdder->getInfo().id}, {"config", texAdder->getConfiguration()}};
+    finalJson.at("textureAdders").push_back(texAddJson);
+  }
+
+  std::ofstream file;
+  file.open(filePath);
+  file << finalJson.dump(1);
+  file.close();
+}
+
+void Pipeline::loadFromFile(std::string filePath) {
+  std::ifstream file;
+  file.open(filePath);
+  auto json = nlohmann::json::parse(file);
+  file.close();
+
+  auto& genJson = json.at("generator");
+  setGenerator(createGeneratorFromId(genJson.at("_id").get<int>()));
+  fillConfigFromJson(genJson.at("config"), generator->getConfiguration());
+
+  modifiers.clear();
+  auto& modsJson = json.at("modifiers");
+  for (auto& modJson : modsJson) {
+    addModifier(createModifierFromId(modJson.at("_id").get<int>()));
+    fillConfigFromJson(modJson.at("config"),
+                       getModifier(getModifierCount() - 1).getConfiguration());
+  }
+
+  auto& parJson = json.at("parameterizer");
+  setParameterizer(createParameterizerFromId(parJson.at("_id").get<int>()));
+  fillConfigFromJson(parJson.at("config"), getParameterizer().getConfiguration());
+
+  auto& texGenJson = json.at("textureGenerator");
+  setTextureGenerator(createTextureGeneratorFromId(texGenJson.at("_id").get<int>()));
+  fillConfigFromJson(texGenJson.at("config"), getTextureGenerator().getConfiguration());
+
+  textureAdders.clear();
+  auto& texAddsJson = json.at("textureAdders");
+  for (auto& texAddJson : texAddsJson) {
+    addTextureAdder(createTextureAdderFromId(texAddJson.at("_id").get<int>()));
+    fillConfigFromJson(texAddJson.at("config"),
+                       getTextureAdder(getTextureAdderCount() - 1).getConfiguration());
+  }
+}
+
 }  // namespace procrock

@@ -27,6 +27,8 @@ class TextureGenerator : public PipelineStage {
   void fillTexture(TextureGroup& texGroup,
                    std::function<Eigen::Vector3i(Eigen::Vector3d)> colorFunction);
 
+  void calculatePBRTextures(TextureGroup& texGroup);
+
  private:
   NormalsGenerator normalsGenerator;
   RoughnessGenerator roughnessGenerator;

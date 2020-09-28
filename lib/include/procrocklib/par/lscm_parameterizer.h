@@ -17,6 +17,7 @@ class LSCM_Parameterizer : public Parameterizer {
  private:
   int indexMax = 0;
   PipelineStageInfo info{PipelineStageNames_Par[PipelineStage_Par_LSCM],
-                         "Least Squares Conformal Maps"};
+                         "Least Squares Conformal Maps", PipelineStageType::Parameterizer,
+                         PipelineStage_Par_LSCM};
 };
 }  // namespace procrock

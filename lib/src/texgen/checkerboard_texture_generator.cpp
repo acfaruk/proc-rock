@@ -29,6 +29,8 @@ std::shared_ptr<Mesh> CheckerboardTextureGenerator::generate(Mesh* before) {
         }
       }
 
+      calculatePBRTextures(result->textures);
+
     } break;
     case 1:  // Global Mesh based
     {

@@ -2,6 +2,7 @@
 
 #include <Eigen/Core>
 #include <map>
+#include <nlohmann/json.hpp>
 #include <set>
 #include <string>
 #include <utility>
@@ -12,7 +13,7 @@ struct NoiseGraph;
 
 template <typename T>
 struct ConfigurationList {
-  ConfigurationList(std::set<T> initial, int min = 0, int max = 100)
+  ConfigurationList(std::set<T> initial = {}, int min = 0, int max = 100)
       : list(initial), minEntries(min), maxEntries(max){};
 
   int minEntries;
@@ -26,13 +27,15 @@ struct ConfigurationList {
   }
 
   const std::set<T>& values() { return list; }
+  friend void to_json(nlohmann::json& j, const ConfigurationList<T>& list);
+  friend void from_json(const nlohmann::json& j, ConfigurationList<T>& list);
 
  private:
   std::set<T> list;
 };
 
 struct ConfigurationCurve {
-  ConfigurationCurve(std::map<float, float> initial) : curvePoints(initial){};
+  ConfigurationCurve(std::map<float, float> initial = {}) : curvePoints(initial){};
 
   void add(float pos, float value) {
     if (pos <= 1.0f && pos >= 0.0f && value <= 1.0f && value >= 0.0f) {
@@ -47,6 +50,8 @@ struct ConfigurationCurve {
   }
 
   const std::map<float, float>& values() { return curvePoints; }
+  friend void to_json(nlohmann::json& j, const ConfigurationCurve& curve);
+  friend void from_json(const nlohmann::json& j, ConfigurationCurve& curve);
 
  private:
   std::map<float, float> curvePoints;
@@ -128,6 +133,9 @@ struct Configuration {
     }
   }
   inline std::vector<ConfigurationGroupsElement>& getConfigGroups() { return configGroups; }
+  inline const std::vector<ConfigurationGroupsElement>& getConfigGroupsConst() const {
+    return configGroups;
+  }
 };
 class Configurable {
  public:

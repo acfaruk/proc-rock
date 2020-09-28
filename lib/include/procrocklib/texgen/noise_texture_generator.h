@@ -17,7 +17,8 @@ class NoiseTextureGenerator : public TextureGenerator {
 
  private:
   PipelineStageInfo info{PipelineStageNames_TexGen[PipelineStage_TexGen_Noise],
-                         "Generates Solid Noise Textures based on a noise graph."};
+                         "Generates Solid Noise Textures based on a noise graph.",
+                         PipelineStageType::TextureGenerator, PipelineStage_TexGen_Noise};
 
   NoiseGraph noiseGraph;
   GradientColoring coloring;

@@ -21,7 +21,7 @@ void init(GLFWwindow* window, const std::string& path);
 void update(glm::uvec2 windowSize, Framebuffer& viewerFrame, Pipeline& pipeline,
             const Shader& shader);
 
-void updateMainMenu();
+void updateMainMenu(Pipeline& pipeline);
 void updateSideBar(glm::uvec2 windowSize, Pipeline& pipeline);
 void udpateCurrentStageEditor(glm::uvec2 windowSize);
 void updateViewer(glm::uvec2 windowSize, Framebuffer& viewerFrame);

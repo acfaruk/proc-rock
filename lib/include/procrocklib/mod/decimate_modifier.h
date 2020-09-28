@@ -16,7 +16,8 @@ class DecimateModifier : public Modifier {
 
  private:
   PipelineStageInfo info{PipelineStageNames_Mod[PipelineStage_Mod_Decimate],
-                         "Decimate the mesh to lower the face count."};
+                         "Decimate the mesh to lower the face count.", PipelineStageType::Modifier,
+                         PipelineStage_Mod_Decimate};
 
   int faceCount = 0;
 };
