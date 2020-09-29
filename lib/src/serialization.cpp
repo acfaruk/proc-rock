@@ -162,6 +162,14 @@ void to_json(nlohmann::json& j, const Configuration::ConfigurationGroup& group) 
     j.update(nlohmann::json{{"curves", curvesJson}});
   }
 
+  nlohmann::json floatListJson;
+  for (auto& floatListEntry : group.floatLists) {
+    floatListJson.update(nlohmann::json{{floatListEntry.entry.name, *floatListEntry.data}});
+  }
+  if (group.floatLists.size() > 0) {
+    j.update(nlohmann::json{{"floatLists", floatListJson}});
+  }
+
   nlohmann::json noiseGraphJson;
   for (auto& noiseGraphEntry : group.noiseGraphs) {
     noiseGraphJson.update(nlohmann::json{{noiseGraphEntry.entry.name, *noiseGraphEntry.data}});
@@ -230,6 +238,14 @@ void fillConfigGroupFromJson(const nlohmann::json& j, Configuration::Configurati
     const nlohmann::json& curvesJson = j.at("curves");
     for (auto& curveEntry : group.curves) {
       *curveEntry.data = curvesJson.find(curveEntry.entry.name).value().get<ConfigurationCurve>();
+    }
+  }
+
+  if (j.find("floatLists") != j.end()) {
+    const nlohmann::json& floatListsJson = j.at("floatLists");
+    for (auto& floatListEntry : group.floatLists) {
+      *floatListEntry.data =
+          floatListsJson.find(floatListEntry.entry.name).value().get<ConfigurationList<float>>();
     }
   }
 
