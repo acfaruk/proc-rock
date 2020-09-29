@@ -1,5 +1,4 @@
 #pragma once
-#include <procrocklib/configurables/noise.h>
 #include <procrocklib/configurables/noise_graph.h>
 #include <procrocklib/modifier.h>
 

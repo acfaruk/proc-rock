@@ -9,6 +9,39 @@
 
 namespace procrock {
 
+const int NoiseNodeTypeId_Output = 0;
+
+const int NoiseNodeTypeId_Add = 1;
+const int NoiseNodeTypeId_Max = 2;
+const int NoiseNodeTypeId_Min = 3;
+const int NoiseNodeTypeId_Multiply = 4;
+const int NoiseNodeTypeId_Power = 5;
+
+const int NoiseNodeTypeId_Blend = 100;
+const int NoiseNodeTypeId_Select = 101;
+
+const int NoiseNodeTypeId_Abs = 200;
+const int NoiseNodeTypeId_Clamp = 201;
+const int NoiseNodeTypeId_Exponent = 202;
+const int NoiseNodeTypeId_Invert = 203;
+const int NoiseNodeTypeId_ScaleBias = 204;
+const int NoiseNodeTypeId_Terrace = 205;
+const int NoiseNodeTypeId_Curve = 206;
+
+const int NoiseNodeTypeId_Displace = 300;
+const int NoiseNodeTypeId_RotatePoint = 301;
+const int NoiseNodeTypeId_ScalePoint = 302;
+const int NoiseNodeTypeId_TranslatePoint = 303;
+const int NoiseNodeTypeId_Turbulence = 304;
+
+const int NoiseNodeTypeId_Const = 400;
+const int NoiseNodeTypeId_Perlin = 401;
+const int NoiseNodeTypeId_Billow = 402;
+const int NoiseNodeTypeId_Ridged = 403;
+const int NoiseNodeTypeId_Voronoi = 404;
+const int NoiseNodeTypeId_Spheres = 405;
+const int NoiseNodeTypeId_Cylinders = 406;
+
 class NoiseNode : public GroupConfigurable {
  public:
   int id = -1;
@@ -17,10 +50,17 @@ class NoiseNode : public GroupConfigurable {
 
   virtual Configuration::ConfigurationGroup getConfig() = 0;
   virtual noise::module::Module* const getModule() = 0;
+
+  inline int getNodeTypeId() { return nodeTypeId; }
+
+ protected:
+  int nodeTypeId = -1;
 };
 
+std::unique_ptr<NoiseNode> createNoiseNodeFromTypeId(int noiseNodeTypeId);
+
 struct NoiseGraph : public ConfigurableExtender {
-  NoiseGraph();
+  NoiseGraph(bool empty = false);
 
   Graph<NoiseNode*> graph;
   std::vector<std::unique_ptr<NoiseNode>> nodes;
@@ -29,6 +69,8 @@ struct NoiseGraph : public ConfigurableExtender {
 
   int addNode(std::unique_ptr<NoiseNode> node, bool rootNode = false,
               Eigen::Vector2f position = {0.0f, 0.0f});
+
+  void clear();
 };
 
 noise::module::Module* evaluateGraph(const NoiseGraph& noiseGraph);

@@ -5,7 +5,8 @@
 
 namespace procrock {
 
-NoiseGraph::NoiseGraph() {
+NoiseGraph::NoiseGraph(bool empty) {
+  if (empty) return;
   int first = addNode(std::make_unique<PerlinNoiseNode>(), false, {25, 25});
   int second = addNode(std::make_unique<OutputNoiseNode>(), true, {400, 25});
   graph.insert_edge(second + 1, first);
@@ -27,16 +28,83 @@ int NoiseGraph::addNode(std::unique_ptr<NoiseNode> node, bool rootNode, Eigen::V
   if (rootNode && graph.get_root_node_id() == -1) {
     graph.set_root_node_id(node->id);
   }
+  nodes.push_back(std::move(node));
+  auto nodePtr = nodes[nodes.size() - 1].get();
 
-  for (int i = 0; i < node->getModule()->GetSourceModuleCount(); i++) {
+  for (int i = 0; i < nodePtr->getModule()->GetSourceModuleCount(); i++) {
     auto inputNode = std::make_unique<ConstNoiseNode>();
     inputNode->placeholder = true;
     inputNode->id = graph.insert_node(inputNode.get());
-    graph.insert_edge(node->id, inputNode->id);
+    graph.insert_edge(nodePtr->id, inputNode->id);
     nodes.push_back(std::move(inputNode));
   }
-  nodes.push_back(std::move(node));
   return result;
+}
+
+void NoiseGraph::clear() {
+  graph = Graph<NoiseNode*>();
+  nodes.clear();
+}
+
+std::unique_ptr<NoiseNode> createNoiseNodeFromTypeId(int noiseNodeTypeId) {
+  switch (noiseNodeTypeId) {
+    case NoiseNodeTypeId_Output:
+      return std::make_unique<OutputNoiseNode>();
+    case NoiseNodeTypeId_Add:
+      return std::make_unique<AddNoiseNode>();
+    case NoiseNodeTypeId_Max:
+      return std::make_unique<MaxNoiseNode>();
+    case NoiseNodeTypeId_Min:
+      return std::make_unique<MinNoiseNode>();
+    case NoiseNodeTypeId_Multiply:
+      return std::make_unique<MultiplyNoiseNode>();
+    case NoiseNodeTypeId_Power:
+      return std::make_unique<PowerNoiseNode>();
+    case NoiseNodeTypeId_Blend:
+      return std::make_unique<BlendNoiseNode>();
+    case NoiseNodeTypeId_Select:
+      return std::make_unique<SelectNoiseNode>();
+    case NoiseNodeTypeId_Abs:
+      return std::make_unique<AbsNoiseNode>();
+    case NoiseNodeTypeId_Clamp:
+      return std::make_unique<ClampNoiseNode>();
+    case NoiseNodeTypeId_Exponent:
+      return std::make_unique<ExponentNoiseNode>();
+    case NoiseNodeTypeId_Invert:
+      return std::make_unique<InvertNoiseNode>();
+    case NoiseNodeTypeId_ScaleBias:
+      return std::make_unique<ScaleBiasNoiseNode>();
+    case NoiseNodeTypeId_Terrace:
+      return std::make_unique<TerraceNoiseNode>();
+    case NoiseNodeTypeId_Curve:
+      return std::make_unique<CurveNoiseNode>();
+    case NoiseNodeTypeId_Displace:
+      return std::make_unique<DisplaceNoiseNode>();
+    case NoiseNodeTypeId_RotatePoint:
+      return std::make_unique<RotatePointNoiseNode>();
+    case NoiseNodeTypeId_ScalePoint:
+      return std::make_unique<ScalePointNoiseNode>();
+    case NoiseNodeTypeId_TranslatePoint:
+      return std::make_unique<TranslatePointNoiseNode>();
+    case NoiseNodeTypeId_Turbulence:
+      return std::make_unique<TurbulenceNoiseNode>();
+    case NoiseNodeTypeId_Const:
+      return std::make_unique<ConstNoiseNode>();
+    case NoiseNodeTypeId_Perlin:
+      return std::make_unique<PerlinNoiseNode>();
+    case NoiseNodeTypeId_Billow:
+      return std::make_unique<BillowNoiseNode>();
+    case NoiseNodeTypeId_Ridged:
+      return std::make_unique<RidgedMultiNoiseNode>();
+    case NoiseNodeTypeId_Voronoi:
+      return std::make_unique<VoronoiNoiseNode>();
+    case NoiseNodeTypeId_Spheres:
+      return std::make_unique<SpheresNoiseNode>();
+    case NoiseNodeTypeId_Cylinders:
+      return std::make_unique<CylindersNoiseNode>();
+    default:
+      assert(0 && "handle all cases!");
+  }
 }
 
 noise::module::Module* evaluateGraph(const NoiseGraph& noiseGraph) {
@@ -67,7 +135,10 @@ noise::module::Module* evaluateGraph(const NoiseGraph& noiseGraph) {
 }
 
 // Output
-OutputNoiseNode::OutputNoiseNode() { module = std::make_unique<noise::module::TranslatePoint>(); }
+OutputNoiseNode::OutputNoiseNode() {
+  nodeTypeId = NoiseNodeTypeId_Output;
+  module = std::make_unique<noise::module::TranslatePoint>();
+}
 
 Configuration::ConfigurationGroup OutputNoiseNode::getConfig() {
   Configuration::ConfigurationGroup config;
@@ -78,7 +149,10 @@ Configuration::ConfigurationGroup OutputNoiseNode::getConfig() {
 noise::module::Module* const OutputNoiseNode::getModule() { return module.get(); }
 
 // Add
-AddNoiseNode::AddNoiseNode() { module = std::make_unique<noise::module::Add>(); }
+AddNoiseNode::AddNoiseNode() {
+  nodeTypeId = NoiseNodeTypeId_Add;
+  module = std::make_unique<noise::module::Add>();
+}
 
 Configuration::ConfigurationGroup AddNoiseNode::getConfig() {
   Configuration::ConfigurationGroup config;
@@ -89,7 +163,10 @@ Configuration::ConfigurationGroup AddNoiseNode::getConfig() {
 noise::module::Module* const AddNoiseNode::getModule() { return module.get(); }
 
 // Max
-MaxNoiseNode::MaxNoiseNode() { module = std::make_unique<noise::module::Max>(); }
+MaxNoiseNode::MaxNoiseNode() {
+  nodeTypeId = NoiseNodeTypeId_Max;
+  module = std::make_unique<noise::module::Max>();
+}
 
 Configuration::ConfigurationGroup MaxNoiseNode::getConfig() {
   Configuration::ConfigurationGroup config;
@@ -100,7 +177,10 @@ Configuration::ConfigurationGroup MaxNoiseNode::getConfig() {
 noise::module::Module* const MaxNoiseNode::getModule() { return module.get(); }
 
 // Min
-MinNoiseNode::MinNoiseNode() { module = std::make_unique<noise::module::Min>(); }
+MinNoiseNode::MinNoiseNode() {
+  nodeTypeId = NoiseNodeTypeId_Min;
+  module = std::make_unique<noise::module::Min>();
+}
 
 Configuration::ConfigurationGroup MinNoiseNode::getConfig() {
   Configuration::ConfigurationGroup config;
@@ -111,7 +191,10 @@ Configuration::ConfigurationGroup MinNoiseNode::getConfig() {
 noise::module::Module* const MinNoiseNode::getModule() { return module.get(); }
 
 // Multiply
-MultiplyNoiseNode::MultiplyNoiseNode() { module = std::make_unique<noise::module::Multiply>(); }
+MultiplyNoiseNode::MultiplyNoiseNode() {
+  nodeTypeId = NoiseNodeTypeId_Multiply;
+  module = std::make_unique<noise::module::Multiply>();
+}
 
 Configuration::ConfigurationGroup MultiplyNoiseNode::getConfig() {
   Configuration::ConfigurationGroup config;
@@ -122,7 +205,10 @@ Configuration::ConfigurationGroup MultiplyNoiseNode::getConfig() {
 noise::module::Module* const MultiplyNoiseNode::getModule() { return module.get(); }
 
 // Power
-PowerNoiseNode::PowerNoiseNode() { module = std::make_unique<noise::module::Power>(); }
+PowerNoiseNode::PowerNoiseNode() {
+  nodeTypeId = NoiseNodeTypeId_Power;
+  module = std::make_unique<noise::module::Power>();
+}
 
 Configuration::ConfigurationGroup PowerNoiseNode::getConfig() {
   Configuration::ConfigurationGroup config;
@@ -133,7 +219,10 @@ Configuration::ConfigurationGroup PowerNoiseNode::getConfig() {
 noise::module::Module* const PowerNoiseNode::getModule() { return module.get(); }
 
 // Blend
-BlendNoiseNode::BlendNoiseNode() { module = std::make_unique<noise::module::Blend>(); }
+BlendNoiseNode::BlendNoiseNode() {
+  nodeTypeId = NoiseNodeTypeId_Blend;
+  module = std::make_unique<noise::module::Blend>();
+}
 
 Configuration::ConfigurationGroup BlendNoiseNode::getConfig() {
   Configuration::ConfigurationGroup config;
@@ -144,7 +233,10 @@ Configuration::ConfigurationGroup BlendNoiseNode::getConfig() {
 noise::module::Module* const BlendNoiseNode::getModule() { return module.get(); }
 
 // Select
-SelectNoiseNode::SelectNoiseNode() { module = std::make_unique<noise::module::Select>(); }
+SelectNoiseNode::SelectNoiseNode() {
+  nodeTypeId = NoiseNodeTypeId_Select;
+  module = std::make_unique<noise::module::Select>();
+}
 
 Configuration::ConfigurationGroup SelectNoiseNode::getConfig() {
   Configuration::ConfigurationGroup config;
@@ -165,7 +257,10 @@ noise::module::Module* const SelectNoiseNode::getModule() {
 }
 
 // Abs
-AbsNoiseNode::AbsNoiseNode() { module = std::make_unique<noise::module::Abs>(); }
+AbsNoiseNode::AbsNoiseNode() {
+  nodeTypeId = NoiseNodeTypeId_Abs;
+  module = std::make_unique<noise::module::Abs>();
+}
 
 Configuration::ConfigurationGroup AbsNoiseNode::getConfig() {
   Configuration::ConfigurationGroup config;
@@ -176,7 +271,10 @@ Configuration::ConfigurationGroup AbsNoiseNode::getConfig() {
 noise::module::Module* const AbsNoiseNode::getModule() { return module.get(); }
 
 // Clamp
-ClampNoiseNode::ClampNoiseNode() { module = std::make_unique<noise::module::Clamp>(); }
+ClampNoiseNode::ClampNoiseNode() {
+  nodeTypeId = NoiseNodeTypeId_Clamp;
+  module = std::make_unique<noise::module::Clamp>();
+}
 
 Configuration::ConfigurationGroup ClampNoiseNode::getConfig() {
   Configuration::ConfigurationGroup config;
@@ -194,7 +292,10 @@ noise::module::Module* const ClampNoiseNode::getModule() {
 }
 
 // Exponent
-ExponentNoiseNode::ExponentNoiseNode() { module = std::make_unique<noise::module::Exponent>(); }
+ExponentNoiseNode::ExponentNoiseNode() {
+  nodeTypeId = NoiseNodeTypeId_Exponent;
+  module = std::make_unique<noise::module::Exponent>();
+}
 
 Configuration::ConfigurationGroup ExponentNoiseNode::getConfig() {
   Configuration::ConfigurationGroup config;
@@ -210,7 +311,10 @@ noise::module::Module* const ExponentNoiseNode::getModule() {
 }
 
 // Invert
-InvertNoiseNode::InvertNoiseNode() { module = std::make_unique<noise::module::Invert>(); }
+InvertNoiseNode::InvertNoiseNode() {
+  nodeTypeId = NoiseNodeTypeId_Invert;
+  module = std::make_unique<noise::module::Invert>();
+}
 
 Configuration::ConfigurationGroup InvertNoiseNode::getConfig() {
   Configuration::ConfigurationGroup config;
@@ -221,7 +325,10 @@ Configuration::ConfigurationGroup InvertNoiseNode::getConfig() {
 noise::module::Module* const InvertNoiseNode::getModule() { return module.get(); }
 
 // Scale Bias
-ScaleBiasNoiseNode::ScaleBiasNoiseNode() { module = std::make_unique<noise::module::ScaleBias>(); }
+ScaleBiasNoiseNode::ScaleBiasNoiseNode() {
+  nodeTypeId = NoiseNodeTypeId_ScaleBias;
+  module = std::make_unique<noise::module::ScaleBias>();
+}
 
 Configuration::ConfigurationGroup ScaleBiasNoiseNode::getConfig() {
   Configuration::ConfigurationGroup config;
@@ -240,7 +347,10 @@ noise::module::Module* const ScaleBiasNoiseNode::getModule() {
 }
 
 // Terrace
-TerraceNoiseNode::TerraceNoiseNode() { module = std::make_unique<noise::module::Terrace>(); }
+TerraceNoiseNode::TerraceNoiseNode() {
+  nodeTypeId = NoiseNodeTypeId_Terrace;
+  module = std::make_unique<noise::module::Terrace>();
+}
 
 Configuration::ConfigurationGroup TerraceNoiseNode::getConfig() {
   Configuration::ConfigurationGroup config;
@@ -262,7 +372,10 @@ noise::module::Module* const TerraceNoiseNode::getModule() {
 }
 
 // Curve
-CurveNoiseNode::CurveNoiseNode() { module = std::make_unique<noise::module::Curve>(); }
+CurveNoiseNode::CurveNoiseNode() {
+  nodeTypeId = NoiseNodeTypeId_Curve;
+  module = std::make_unique<noise::module::Curve>();
+}
 
 Configuration::ConfigurationGroup CurveNoiseNode::getConfig() {
   Configuration::ConfigurationGroup config;
@@ -281,7 +394,10 @@ noise::module::Module* const CurveNoiseNode::getModule() {
 }
 
 // Displace
-DisplaceNoiseNode::DisplaceNoiseNode() { module = std::make_unique<noise::module::Displace>(); }
+DisplaceNoiseNode::DisplaceNoiseNode() {
+  nodeTypeId = NoiseNodeTypeId_Displace;
+  module = std::make_unique<noise::module::Displace>();
+}
 
 Configuration::ConfigurationGroup DisplaceNoiseNode::getConfig() {
   Configuration::ConfigurationGroup config;
@@ -293,6 +409,7 @@ noise::module::Module* const DisplaceNoiseNode::getModule() { return module.get(
 
 // Rotate Point
 RotatePointNoiseNode::RotatePointNoiseNode() {
+  nodeTypeId = NoiseNodeTypeId_RotatePoint;
   module = std::make_unique<noise::module::RotatePoint>();
 }
 
@@ -315,6 +432,7 @@ noise::module::Module* const RotatePointNoiseNode::getModule() {
 
 // Scale Point
 ScalePointNoiseNode::ScalePointNoiseNode() {
+  nodeTypeId = NoiseNodeTypeId_ScalePoint;
   module = std::make_unique<noise::module::ScalePoint>();
 }
 
@@ -337,6 +455,7 @@ noise::module::Module* const ScalePointNoiseNode::getModule() {
 
 // Translate Point
 TranslatePointNoiseNode::TranslatePointNoiseNode() {
+  nodeTypeId = NoiseNodeTypeId_TranslatePoint;
   module = std::make_unique<noise::module::TranslatePoint>();
 }
 
@@ -359,6 +478,7 @@ noise::module::Module* const TranslatePointNoiseNode::getModule() {
 
 // Turbulence
 TurbulenceNoiseNode::TurbulenceNoiseNode() {
+  nodeTypeId = NoiseNodeTypeId_Turbulence;
   module = std::make_unique<noise::module::Turbulence>();
 }
 
@@ -385,7 +505,10 @@ noise::module::Module* const TurbulenceNoiseNode::getModule() {
 }
 
 // Const
-ConstNoiseNode::ConstNoiseNode() { module = std::make_unique<noise::module::Const>(); }
+ConstNoiseNode::ConstNoiseNode() {
+  nodeTypeId = NoiseNodeTypeId_Const;
+  module = std::make_unique<noise::module::Const>();
+}
 
 Configuration::ConfigurationGroup ConstNoiseNode::getConfig() {
   Configuration::ConfigurationGroup config;
@@ -402,7 +525,10 @@ noise::module::Module* const ConstNoiseNode::getModule() {
 }
 
 // Perlin
-PerlinNoiseNode::PerlinNoiseNode() { module = std::make_unique<noise::module::Perlin>(); }
+PerlinNoiseNode::PerlinNoiseNode() {
+  nodeTypeId = NoiseNodeTypeId_Perlin;
+  module = std::make_unique<noise::module::Perlin>();
+}
 
 Configuration::ConfigurationGroup PerlinNoiseNode::getConfig() {
   Configuration::ConfigurationGroup config;
@@ -427,7 +553,6 @@ Configuration::ConfigurationGroup PerlinNoiseNode::getConfig() {
   return config;
 }
 
-// Billow
 noise::module::Module* const PerlinNoiseNode::getModule() {
   module->SetFrequency(frequency);
   module->SetLacunarity(lacunarity);
@@ -437,7 +562,11 @@ noise::module::Module* const PerlinNoiseNode::getModule() {
   return module.get();
 }
 
-BillowNoiseNode::BillowNoiseNode() { module = std::make_unique<noise::module::Billow>(); }
+// Billow
+BillowNoiseNode::BillowNoiseNode() {
+  nodeTypeId = NoiseNodeTypeId_Billow;
+  module = std::make_unique<noise::module::Billow>();
+}
 
 Configuration::ConfigurationGroup BillowNoiseNode::getConfig() {
   Configuration::ConfigurationGroup config;
@@ -474,6 +603,7 @@ noise::module::Module* const BillowNoiseNode::getModule() {
 
 // Ridged
 RidgedMultiNoiseNode::RidgedMultiNoiseNode() {
+  nodeTypeId = NoiseNodeTypeId_Ridged;
   module = std::make_unique<noise::module::RidgedMulti>();
 }
 
@@ -508,7 +638,10 @@ noise::module::Module* const RidgedMultiNoiseNode::getModule() {
 }
 
 // Voronoi
-VoronoiNoiseNode::VoronoiNoiseNode() { module = std::make_unique<noise::module::Voronoi>(); }
+VoronoiNoiseNode::VoronoiNoiseNode() {
+  nodeTypeId = NoiseNodeTypeId_Voronoi;
+  module = std::make_unique<noise::module::Voronoi>();
+}
 
 Configuration::ConfigurationGroup VoronoiNoiseNode::getConfig() {
   Configuration::ConfigurationGroup config;
@@ -534,7 +667,10 @@ noise::module::Module* const VoronoiNoiseNode::getModule() {
 }
 
 // Spheres
-SpheresNoiseNode::SpheresNoiseNode() { module = std::make_unique<noise::module::Spheres>(); }
+SpheresNoiseNode::SpheresNoiseNode() {
+  nodeTypeId = NoiseNodeTypeId_Spheres;
+  module = std::make_unique<noise::module::Spheres>();
+}
 
 Configuration::ConfigurationGroup SpheresNoiseNode::getConfig() {
   Configuration::ConfigurationGroup config;
@@ -551,7 +687,10 @@ noise::module::Module* const SpheresNoiseNode::getModule() {
 }
 
 // Cylinders
-CylindersNoiseNode::CylindersNoiseNode() { module = std::make_unique<noise::module::Cylinders>(); }
+CylindersNoiseNode::CylindersNoiseNode() {
+  nodeTypeId = NoiseNodeTypeId_Cylinders;
+  module = std::make_unique<noise::module::Cylinders>();
+}
 
 Configuration::ConfigurationGroup CylindersNoiseNode::getConfig() {
   Configuration::ConfigurationGroup config;

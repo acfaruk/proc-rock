@@ -216,6 +216,8 @@ class Graph {
   void set_root_node_id(int id);
   int get_root_node_id() const;
 
+  void set_current_id(int id);
+
  private:
   int current_id_;
   int root_node_id_;
@@ -356,6 +358,12 @@ void Graph<NodeType>::set_root_node_id(int id) {
 template <typename NodeType>
 int Graph<NodeType>::get_root_node_id() const {
   return root_node_id_;
+}
+
+template <typename NodeType>
+inline void Graph<NodeType>::set_current_id(int id) {
+  assert(id > current_id_);
+  current_id_ = id;
 }
 
 template <typename NodeType, typename Visitor>
