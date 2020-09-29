@@ -33,6 +33,12 @@ void TextureGenerator::fillTexture(TextureGroup& texGroup,
   int index = 0;
   auto& dataToFill = texGroup.albedoData;
   dataToFill.resize(3 * texGroup.width * texGroup.height);
+
+  int valueMeanR = 0;
+  int valueMeanG = 0;
+  int valueMeanB = 0;
+
+  int valued = 0;
   std::fill(dataToFill.begin(), dataToFill.end(), 255);
   for (const auto& pixel : texGroup.worldMap) {
     int finalValue = 0;
@@ -44,11 +50,32 @@ void TextureGenerator::fillTexture(TextureGroup& texGroup,
     if (pixel.positions.size() != 0) {
       acc /= pixel.positions.size();
       dataToFill[(3 * index)] = acc.x();
+      valueMeanR += acc.x();
       dataToFill[(3 * index) + 1] = acc.y();
+      valueMeanG += acc.y();
       dataToFill[(3 * index) + 2] = acc.z();
+      valueMeanB += acc.z();
+      valued++;
     }
     index++;
   }
+
+  valueMeanR /= valued;
+  valueMeanG /= valued;
+  valueMeanB /= valued;
+
+  index = 0;
+  for (const auto& pixel : texGroup.worldMap) {
+    if (pixel.positions.size() == 0) {
+      int x = index % texGroup.width;
+      int y = index / texGroup.height;
+      dataToFill[(3 * index)] = valueMeanR;
+      dataToFill[(3 * index) + 1] = valueMeanG;
+      dataToFill[(3 * index) + 2] = valueMeanB;
+    }
+    index++;
+  }
+
   calculatePBRTextures(texGroup);
 }
 void TextureGenerator::calculatePBRTextures(TextureGroup& texGroup) {
