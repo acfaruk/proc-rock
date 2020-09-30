@@ -5,9 +5,10 @@
 namespace procrock {
 class IcosahedronGenerator : public Generator {
  public:
+  IcosahedronGenerator();
+
   float edgeLength = 1;
 
-  virtual Configuration getConfiguration() override;
   virtual PipelineStageInfo& getInfo() override;
 
  protected:

@@ -387,14 +387,21 @@ void updateConfigurable(PipelineStage& stage) {
   bool changed = false;
   int idCounter = 0;
   for (auto mainGroup : config.getConfigGroups()) {
-    if (ImGui::CollapsingHeader(mainGroup.first.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+    bool show = false;
+    for (auto group : mainGroup.second) {
+      show |= group.entry.active();
+    }
+
+    if (show && ImGui::CollapsingHeader(mainGroup.first.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
       for (auto group : mainGroup.second) {
+        if (!group.entry.active()) continue;
         ImGui::PushID(idCounter++);
         ImGui::Text(group.entry.name.c_str());
         ImGui::Separator();
         ImGui::TextWrapped(group.entry.description.c_str());
 
         for (auto var : group.bools) {
+          if (!var.entry.active()) continue;
           ImGui::Checkbox(var.entry.name.c_str(), var.data);
           changed |= ImGui::IsItemDeactivatedAfterEdit();
           ImGui::SameLine();
@@ -402,6 +409,7 @@ void updateConfigurable(PipelineStage& stage) {
         }
 
         for (auto var : group.singleChoices) {
+          if (!var.entry.active()) continue;
           const char* preview_value = var.choices[*var.choice].name.c_str();
           if (ImGui::BeginCombo(var.entry.name.c_str(), preview_value)) {
             for (int i = 0; i < var.choices.size(); i++) {
@@ -424,12 +432,14 @@ void updateConfigurable(PipelineStage& stage) {
           helpMarker(var.entry.description);
         }
         for (auto var : group.floats) {
+          if (!var.entry.active()) continue;
           ImGui::SliderFloat(var.entry.name.c_str(), var.data, var.minValue, var.maxValue);
           changed |= ImGui::IsItemDeactivatedAfterEdit();
           ImGui::SameLine();
           helpMarker(var.entry.description);
         }
         for (auto var : group.ints) {
+          if (!var.entry.active()) continue;
           ImGui::SliderInt(var.entry.name.c_str(), var.data, var.minValue, var.maxValue);
           changed |= ImGui::IsItemDeactivatedAfterEdit();
           ImGui::SameLine();
@@ -437,6 +447,7 @@ void updateConfigurable(PipelineStage& stage) {
         }
 
         for (auto var : group.float3s) {
+          if (!var.entry.active()) continue;
           ImGui::SliderFloat3(var.entry.name.c_str(), var.data->data(), var.minValue.x(),
                               var.maxValue.x());
           changed |= ImGui::IsItemDeactivatedAfterEdit();
@@ -445,6 +456,7 @@ void updateConfigurable(PipelineStage& stage) {
         }
 
         for (auto gradient : group.gradientColorings) {
+          if (!gradient.entry.active()) continue;
           ImGui::Text(gradient.entry.name.c_str());
           ImGui::SameLine();
           helpMarker(gradient.entry.description);
@@ -480,6 +492,7 @@ void updateConfigurable(PipelineStage& stage) {
         }
 
         for (auto gradient : group.gradientAlphaColorings) {
+          if (!gradient.entry.active()) continue;
           ImGui::Text(gradient.entry.name.c_str());
           ImGui::SameLine();
           helpMarker(gradient.entry.description);
@@ -516,6 +529,7 @@ void updateConfigurable(PipelineStage& stage) {
 
         int id = 0;
         for (auto var : group.noiseGraphs) {
+          if (!var.entry.active()) continue;
           ImGui::PushID(id++);
 
           if (noiseNodeEditor.current == nullptr) {

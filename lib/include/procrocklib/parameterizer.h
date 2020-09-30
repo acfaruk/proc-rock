@@ -7,6 +7,8 @@
 namespace procrock {
 class Parameterizer : public PipelineStage {
  public:
+  Parameterizer();
+
   int textureSizeChoice = 1;
 
   virtual std::shared_ptr<Mesh> run(Mesh* before = nullptr) override;
@@ -15,7 +17,6 @@ class Parameterizer : public PipelineStage {
   virtual bool isRemovable() const override;
 
   inline bool isFirstRun() const { return firstRun; }
-  virtual Configuration getBaseConfiguration() override;
 
  protected:
   virtual std::shared_ptr<Mesh> parameterize(Mesh* mesh) = 0;

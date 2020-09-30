@@ -4,7 +4,9 @@
 namespace procrock {
 class ConfigurableExtender {
  public:
-  virtual void addOwnGroups(Configuration& config, std::string newGroupName) = 0;
+  virtual void addOwnGroups(
+      Configuration& config, std::string newGroupName,
+      std::function<bool()> activeFunc = []() { return true; }) = 0;
 };
 
 class GroupConfigurable {

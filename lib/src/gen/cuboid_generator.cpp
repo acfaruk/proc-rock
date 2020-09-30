@@ -3,6 +3,19 @@
 #include "igl/per_vertex_normals.h"
 
 namespace procrock {
+CuboidGenerator::CuboidGenerator() {
+  Configuration::ConfigurationGroup group;
+  group.entry = {"General Settings", "Set various parameters of the cuboid."};
+  group.floats.emplace_back(
+      Configuration::BoundedEntry<float>{{"Length", "Length of the Cuboid"}, &length, 0.1f, 1.0f});
+  group.floats.emplace_back(
+      Configuration::BoundedEntry<float>{{"Height", "Height of the Cuboid"}, &height, 0.1f, 1.0f});
+  group.floats.emplace_back(
+      Configuration::BoundedEntry<float>{{"Depth ", "Depth of the Cuboid"}, &depth, 0.1f, 1.0f});
+
+  config.insertToConfigGroups("General", group);
+}
+
 std::shared_ptr<Mesh> CuboidGenerator::generate() {
   Eigen::Matrix<double, 8, 3> vertices;
 
@@ -47,20 +60,6 @@ std::shared_ptr<Mesh> CuboidGenerator::generate() {
   return result;
 }
 
-Configuration CuboidGenerator::getConfiguration() {
-  Configuration::ConfigurationGroup group;
-  group.entry = {"General Settings", "Set various parameters of the cuboid."};
-  group.floats.emplace_back(
-      Configuration::BoundedEntry<float>{"Length", "Length of the Cuboid", &length, 0.1f, 1.0f});
-  group.floats.emplace_back(
-      Configuration::BoundedEntry<float>{"Height", "Height of the Cuboid", &height, 0.1f, 1.0f});
-  group.floats.emplace_back(
-      Configuration::BoundedEntry<float>{"Depth ", "Depth of the Cuboid", &depth, 0.1f, 1.0f});
-
-  Configuration result;
-  result.insertToConfigGroups("General", group);
-  return result;
-}
 PipelineStageInfo& CuboidGenerator::getInfo() { return info; }
 
 }  // namespace procrock

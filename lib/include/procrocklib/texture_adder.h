@@ -10,6 +10,8 @@ namespace procrock {
 
 class TextureAdder : public PipelineStage {
  public:
+  TextureAdder();
+
   std::shared_ptr<Mesh> run(Mesh* before = nullptr) override;
 
   virtual bool isMoveable() const override;
@@ -19,8 +21,6 @@ class TextureAdder : public PipelineStage {
 
  protected:
   virtual std::shared_ptr<Mesh> generate(Mesh* before) = 0;
-
-  virtual Configuration getBaseConfiguration() override;
 
   void addTexture(Mesh& mesh, std::function<Eigen::Vector4i(Eigen::Vector3d)> colorFunction);
 

@@ -65,7 +65,9 @@ struct NoiseGraph : public ConfigurableExtender {
   Graph<NoiseNode*> graph;
   std::vector<std::unique_ptr<NoiseNode>> nodes;
 
-  virtual void addOwnGroups(Configuration& config, std::string newGroupName) override;
+  virtual void addOwnGroups(
+      Configuration& config, std::string newGroupName,
+      std::function<bool()> activeFunc = []() { return true; }) override;
 
   int addNode(std::unique_ptr<NoiseNode> node, bool rootNode = false,
               Eigen::Vector2f position = {0.0f, 0.0f});

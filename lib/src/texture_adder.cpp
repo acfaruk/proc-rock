@@ -6,21 +6,7 @@
 #include <iostream>
 
 namespace procrock {
-std::shared_ptr<Mesh> TextureAdder::run(Mesh* before) {
-  if (isChanged() || firstRun) {
-    mesh = generate(before);
-  }
-
-  if (firstRun) firstRun = !firstRun;
-  return mesh;
-}
-
-bool TextureAdder::isMoveable() const { return true; }
-bool TextureAdder::isRemovable() const { return true; }
-
-Configuration TextureAdder::getBaseConfiguration() {
-  Configuration result;
-
+TextureAdder::TextureAdder() {
   Configuration::ConfigurationGroup proportionGroup;
   proportionGroup.entry = {"Channel Proportions", "Decide how much a channel affects the texture."};
   proportionGroup.floats.emplace_back(Configuration::BoundedEntry<float>{
@@ -35,7 +21,7 @@ Configuration TextureAdder::getBaseConfiguration() {
       0,
       1});
 
-  result.insertToConfigGroups("Proportions", proportionGroup);
+  config.insertToConfigGroups("Proportions", proportionGroup);
 
   Configuration::ConfigurationGroup preferGroup;
 
@@ -45,24 +31,36 @@ Configuration TextureAdder::getBaseConfiguration() {
       {"Use preferred normal directions.", "Enable / Disable the feature."},
       &usePreferredNormalDirection});
 
-  if (usePreferredNormalDirection) {
-    preferGroup.float3s.emplace_back(Configuration::BoundedEntry<Eigen::Vector3f>{
-        {"Preferred Normal Direction", "The direction to prefer."},
-        &preferredNormalDirection,
-        {-1, -1, -1},
-        {1, 1, 1}});
-    preferGroup.floats.emplace_back(Configuration::BoundedEntry<float>{
-        {"Strength", "How strong the preference is."}, &preferredNormalStrength, 0, 1});
-  }
-  result.insertToConfigGroups("Preferred Normal Direction", preferGroup);
+  std::function<bool()> preferDirRelevant = [&]() { return usePreferredNormalDirection; };
+  preferGroup.float3s.emplace_back(Configuration::BoundedEntry<Eigen::Vector3f>{
+      {"Preferred Normal Direction", "The direction to prefer.", preferDirRelevant},
+      &preferredNormalDirection,
+      {-1, -1, -1},
+      {1, 1, 1}});
+  preferGroup.floats.emplace_back(Configuration::BoundedEntry<float>{
+      {"Strength", "How strong the preference is.", preferDirRelevant},
+      &preferredNormalStrength,
+      0,
+      1});
+  config.insertToConfigGroups("Preferred Normal Direction", preferGroup);
 
-  normalsGenerator.addOwnGroups(result, "Normals");
-  roughnessGenerator.addOwnGroups(result, "Roughness");
-  metalnessGenerator.addOwnGroups(result, "Metalness");
-  ambientOccGenerator.addOwnGroups(result, "Ambient Occlusion");
-
-  return result;
+  normalsGenerator.addOwnGroups(config, "Normals");
+  roughnessGenerator.addOwnGroups(config, "Roughness");
+  metalnessGenerator.addOwnGroups(config, "Metalness");
+  ambientOccGenerator.addOwnGroups(config, "Ambient Occlusion");
 }
+
+std::shared_ptr<Mesh> TextureAdder::run(Mesh* before) {
+  if (isChanged() || firstRun) {
+    mesh = generate(before);
+  }
+
+  if (firstRun) firstRun = !firstRun;
+  return mesh;
+}
+
+bool TextureAdder::isMoveable() const { return true; }
+bool TextureAdder::isRemovable() const { return true; }
 
 void TextureAdder::addTexture(Mesh& mesh,
                               std::function<Eigen::Vector4i(Eigen::Vector3d)> colorFunction) {

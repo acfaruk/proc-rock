@@ -4,6 +4,8 @@
 namespace procrock {
 class XAtlasParameterizer : public Parameterizer {
  public:
+  XAtlasParameterizer();
+
   struct ChartOptions {
     float normalDeviationWeight = 2.0f;
     float roundnessWeight = 0.01f;
@@ -22,7 +24,6 @@ class XAtlasParameterizer : public Parameterizer {
     int padding = 0;
   } packOptions;
 
-  virtual Configuration getConfiguration() override;
   virtual PipelineStageInfo& getInfo() override;
 
  protected:

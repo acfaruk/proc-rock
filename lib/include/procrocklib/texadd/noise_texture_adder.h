@@ -8,7 +8,8 @@ namespace procrock {
 
 class NoiseTextureAdder : public TextureAdder {
  public:
-  virtual Configuration getConfiguration() override;
+  NoiseTextureAdder();
+
   virtual PipelineStageInfo& getInfo() override;
 
  protected:

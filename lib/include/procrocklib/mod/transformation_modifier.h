@@ -5,12 +5,13 @@
 namespace procrock {
 class TransformationModifier : public Modifier {
  public:
+  TransformationModifier();
+
   Eigen::Vector3f translation{0, 0, 0};
   Eigen::Vector3f scale{1, 1, 1};
   Eigen::Vector3f rotation{0, 0, 0};
 
   virtual std::shared_ptr<Mesh> modify(Mesh& mesh) override;
-  Configuration getConfiguration() override;
   virtual PipelineStageInfo& getInfo() override;
 
  private:

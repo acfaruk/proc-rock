@@ -6,6 +6,21 @@
 #include <Eigen/Geometry>
 
 namespace procrock {
+TransformationModifier::TransformationModifier() {
+  Configuration::ConfigurationGroup group;
+
+  group.entry = {"General Settings", "Set scale, translation and rotation."};
+
+  group.float3s.emplace_back(Configuration::BoundedEntry<Eigen::Vector3f>{
+      {"Translation", "Translate the rock."}, &translation, {-2, -2, -2}, {2, 2, 2}});
+  group.float3s.emplace_back(Configuration::BoundedEntry<Eigen::Vector3f>{
+      {"Scale", "Scale the rock."}, &scale, {0, 0, 0}, {3, 3, 3}});
+  group.float3s.emplace_back(Configuration::BoundedEntry<Eigen::Vector3f>{
+      {"Rotate", "Rotate the rock."}, &rotation, {0, 0, 0}, {2 * M_PI, 2 * M_PI, 2 * M_PI}});
+
+  config.insertToConfigGroups("General", group);
+}
+
 std::shared_ptr<Mesh> TransformationModifier::modify(Mesh& mesh) {
   auto result = std::make_shared<Mesh>(mesh);
 
@@ -24,22 +39,6 @@ std::shared_ptr<Mesh> TransformationModifier::modify(Mesh& mesh) {
   }
 
   igl::per_vertex_normals(result->vertices, result->faces, result->normals);
-  return result;
-}
-Configuration TransformationModifier::getConfiguration() {
-  Configuration::ConfigurationGroup group;
-
-  group.entry = {"General Settings", "Set scale, translation and rotation."};
-
-  group.float3s.emplace_back(Configuration::BoundedEntry<Eigen::Vector3f>{
-      {"Translation", "Translate the rock."}, &translation, {-2, -2, -2}, {2, 2, 2}});
-  group.float3s.emplace_back(Configuration::BoundedEntry<Eigen::Vector3f>{
-      {"Scale", "Scale the rock."}, &scale, {0, 0, 0}, {3, 3, 3}});
-  group.float3s.emplace_back(Configuration::BoundedEntry<Eigen::Vector3f>{
-      {"Rotate", "Rotate the rock."}, &rotation, {0, 0, 0}, {2 * M_PI, 2 * M_PI, 2 * M_PI}});
-
-  Configuration result;
-  result.insertToConfigGroups("General", group);
   return result;
 }
 PipelineStageInfo& TransformationModifier::getInfo() { return info; }

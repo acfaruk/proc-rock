@@ -6,10 +6,11 @@ namespace procrock {
 
 // Normals
 
-void GradientNormalsGenerator::addOwnGroups(Configuration& config, std::string newGroupName) {
+void GradientNormalsGenerator::addOwnGroups(Configuration& config, std::string newGroupName,
+                                            std::function<bool()> activeFunc) {
   Configuration::ConfigurationGroup gradientGroup;
   gradientGroup.entry = {"Gradient Based Normals",
-                         "Create normals based on the gradient of the image."};
+                         "Create normals based on the gradient of the image.", activeFunc};
   gradientGroup.floats.emplace_back(Configuration::BoundedEntry<float>{
       {"Normal Strength", "How \"deep / high\" the normals should be."},
       &normalStrength,
@@ -57,24 +58,27 @@ NormalsGenerator::NormalsGenerator() {
   methods.emplace_back(std::make_unique<GradientNormalsGenerator>());
 }
 
-void NormalsGenerator::addOwnGroups(Configuration& config, std::string newGroupName) {
+void NormalsGenerator::addOwnGroups(Configuration& config, std::string newGroupName,
+                                    std::function<bool()> activeFunc) {
   Configuration::ConfigurationGroup normalGroup;
-  normalGroup.entry = {"General", "General Settings for normal generation."};
+  normalGroup.entry = {"General", "General Settings for normal generation.", activeFunc};
   normalGroup.singleChoices.emplace_back(Configuration::SingleChoiceEntry{
       {"Method", "Choose how to generate the normals."},
       {{"Gradient Based", "Create normals based on the gradient of the albedo."}},
       &choice});
 
   config.insertToConfigGroups(newGroupName, normalGroup);
-  methods[choice]->addOwnGroups(config, newGroupName);
+  methods[choice]->addOwnGroups(config, newGroupName, activeFunc);
 }
 void NormalsGenerator::modify(TextureGroup& textureGroup) { methods[choice]->modify(textureGroup); }
 
 // Roughness
-void GreyscaleRoughnessGenerator::addOwnGroups(Configuration& config, std::string newGroupName) {
+void GreyscaleRoughnessGenerator::addOwnGroups(Configuration& config, std::string newGroupName,
+                                               std::function<bool()> activeFunc) {
   Configuration::ConfigurationGroup greyscaleGroup;
   greyscaleGroup.entry = {"Greyscale Based Roughness",
-                          "Create roughness based on the greyscale values of the image."};
+                          "Create roughness based on the greyscale values of the image.",
+                          activeFunc};
 
   greyscaleGroup.floats.emplace_back(Configuration::BoundedEntry<float>{
       {"Scaling", "Scale the greyscale value."}, &scaling, 0.001f, 10.0f});
@@ -114,26 +118,29 @@ RoughnessGenerator::RoughnessGenerator() {
   methods.emplace_back(std::make_unique<GreyscaleRoughnessGenerator>());
 }
 
-void RoughnessGenerator::addOwnGroups(Configuration& config, std::string newGroupName) {
+void RoughnessGenerator::addOwnGroups(Configuration& config, std::string newGroupName,
+                                      std::function<bool()> activeFunc) {
   Configuration::ConfigurationGroup roughnessGroup;
-  roughnessGroup.entry = {"General", "General Settings for roughness generation."};
+  roughnessGroup.entry = {"General", "General Settings for roughness generation.", activeFunc};
   roughnessGroup.singleChoices.emplace_back(Configuration::SingleChoiceEntry{
       {"Method", "Choose how to generate the roughness."},
       {{"Greyscale", "Create the roughness based on the grayscale values of the albedo."}},
       &choice});
 
   config.insertToConfigGroups(newGroupName, roughnessGroup);
-  methods[choice]->addOwnGroups(config, newGroupName);
+  methods[choice]->addOwnGroups(config, newGroupName, activeFunc);
 }
 void RoughnessGenerator::modify(TextureGroup& textureGroup) {
   methods[choice]->modify(textureGroup);
 }
 
 // Metallness
-void GreyscaleMetalnessGenerator::addOwnGroups(Configuration& config, std::string newGroupName) {
+void GreyscaleMetalnessGenerator::addOwnGroups(Configuration& config, std::string newGroupName,
+                                               std::function<bool()> activeFunc) {
   Configuration::ConfigurationGroup greyscaleGroup;
   greyscaleGroup.entry = {"Greyscale Based Metallness",
-                          "Create metalness based on the greyscale values of the image."};
+                          "Create metalness based on the greyscale values of the image.",
+                          activeFunc};
 
   greyscaleGroup.floats.emplace_back(Configuration::BoundedEntry<float>{
       {"Scaling", "Scale the greyscale value."}, &scaling, 0.001f, 10.0f});
@@ -173,16 +180,17 @@ MetalnessGenerator::MetalnessGenerator() {
   methods.emplace_back(std::make_unique<GreyscaleMetalnessGenerator>());
 }
 
-void MetalnessGenerator::addOwnGroups(Configuration& config, std::string newGroupName) {
+void MetalnessGenerator::addOwnGroups(Configuration& config, std::string newGroupName,
+                                      std::function<bool()> activeFunc) {
   Configuration::ConfigurationGroup metalnessGroup;
-  metalnessGroup.entry = {"General", "General Settings for metallness generation."};
+  metalnessGroup.entry = {"General", "General Settings for metallness generation.", activeFunc};
   metalnessGroup.singleChoices.emplace_back(Configuration::SingleChoiceEntry{
       {"Method", "Choose how to generate the metalness."},
       {{"Greyscale", "Create the metalness based on the grayscale values of the albedo."}},
       &choice});
 
   config.insertToConfigGroups(newGroupName, metalnessGroup);
-  methods[choice]->addOwnGroups(config, newGroupName);
+  methods[choice]->addOwnGroups(config, newGroupName, activeFunc);
 }
 void MetalnessGenerator::modify(TextureGroup& textureGroup) {
   methods[choice]->modify(textureGroup);
@@ -190,10 +198,12 @@ void MetalnessGenerator::modify(TextureGroup& textureGroup) {
 
 // Ambient Occ.
 void GreyscaleAmbientOcclusionGenerator::addOwnGroups(Configuration& config,
-                                                      std::string newGroupName) {
+                                                      std::string newGroupName,
+                                                      std::function<bool()> activeFunc) {
   Configuration::ConfigurationGroup greyscaleGroup;
   greyscaleGroup.entry = {"Greyscale Based Ambient Occlusion",
-                          "Create ambient occlusion based on the greyscale values of the image."};
+                          "Create ambient occlusion based on the greyscale values of the image.",
+                          activeFunc};
 
   greyscaleGroup.floats.emplace_back(Configuration::BoundedEntry<float>{
       {"Scaling", "Scale the greyscale value."}, &scaling, 0.001f, 10.0f});
@@ -230,16 +240,17 @@ AmbientOcclusionGenerator::AmbientOcclusionGenerator() {
   methods.emplace_back(std::make_unique<GreyscaleAmbientOcclusionGenerator>());
 }
 
-void AmbientOcclusionGenerator::addOwnGroups(Configuration& config, std::string newGroupName) {
+void AmbientOcclusionGenerator::addOwnGroups(Configuration& config, std::string newGroupName,
+                                             std::function<bool()> activeFunc) {
   Configuration::ConfigurationGroup ambOccGroup;
-  ambOccGroup.entry = {"General", "General Settings for ambient occlusion generation."};
+  ambOccGroup.entry = {"General", "General Settings for ambient occlusion generation.", activeFunc};
   ambOccGroup.singleChoices.emplace_back(Configuration::SingleChoiceEntry{
       {"Method", "Choose how to generate the ambient occlusion."},
       {{"Greyscale", "Create the metalness based on the grayscale values of the albedo."}},
       &choice});
 
   config.insertToConfigGroups(newGroupName, ambOccGroup);
-  methods[choice]->addOwnGroups(config, newGroupName);
+  methods[choice]->addOwnGroups(config, newGroupName, activeFunc);
 }
 void AmbientOcclusionGenerator::modify(TextureGroup& textureGroup) {
   methods[choice]->modify(textureGroup);

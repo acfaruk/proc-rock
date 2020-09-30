@@ -10,6 +10,8 @@ namespace procrock {
 
 class TextureGenerator : public PipelineStage {
  public:
+  TextureGenerator();
+
   float normalStrength = 1.0;
 
   std::shared_ptr<Mesh> run(Mesh* before = nullptr) override;
@@ -21,8 +23,6 @@ class TextureGenerator : public PipelineStage {
 
  protected:
   virtual std::shared_ptr<Mesh> generate(Mesh* before) = 0;
-
-  virtual Configuration getBaseConfiguration() override;
 
   void fillTexture(TextureGroup& texGroup,
                    std::function<Eigen::Vector3i(Eigen::Vector3d)> colorFunction);

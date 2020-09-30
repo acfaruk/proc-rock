@@ -6,6 +6,13 @@
 #include <iostream>
 
 namespace procrock {
+TextureGenerator::TextureGenerator() {
+  normalsGenerator.addOwnGroups(config, "Normals");
+  roughnessGenerator.addOwnGroups(config, "Roughness");
+  metalnessGenerator.addOwnGroups(config, "Metalness");
+  ambientOccGenerator.addOwnGroups(config, "Ambient Occlusion");
+}
+
 std::shared_ptr<Mesh> TextureGenerator::run(Mesh* before) {
   if (isChanged() || firstRun) {
     mesh = generate(before);
@@ -18,15 +25,6 @@ std::shared_ptr<Mesh> TextureGenerator::run(Mesh* before) {
 // Texture Generators can be neither moved nor removed from the pipeline
 bool TextureGenerator::isMoveable() const { return false; }
 bool TextureGenerator::isRemovable() const { return false; }
-
-Configuration TextureGenerator::getBaseConfiguration() {
-  Configuration result;
-  normalsGenerator.addOwnGroups(result, "Normals");
-  roughnessGenerator.addOwnGroups(result, "Roughness");
-  metalnessGenerator.addOwnGroups(result, "Metalness");
-  ambientOccGenerator.addOwnGroups(result, "Ambient Occlusion");
-  return result;
-}
 
 void TextureGenerator::fillTexture(TextureGroup& texGroup,
                                    std::function<Eigen::Vector3i(Eigen::Vector3d)> colorFunction) {

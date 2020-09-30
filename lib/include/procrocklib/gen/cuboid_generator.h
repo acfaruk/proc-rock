@@ -4,11 +4,12 @@
 namespace procrock {
 class CuboidGenerator : public Generator {
  public:
+  CuboidGenerator();
+
   float length = 1.0f;
   float height = 0.5f;
   float depth = 0.2f;
 
-  virtual Configuration getConfiguration() override;
   virtual PipelineStageInfo& getInfo() override;
 
  protected:

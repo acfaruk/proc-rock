@@ -179,81 +179,103 @@ void to_json(nlohmann::json& j, const Configuration::ConfigurationGroup& group) 
   }
 }
 void fillConfigGroupFromJson(const nlohmann::json& j, Configuration::ConfigurationGroup& group) {
-  auto test = j.find("ints");
   if (j.find("ints") != j.end()) {
     const nlohmann::json& intsJson = j.at("ints");
     for (auto& intEntry : group.ints) {
-      *intEntry.data = intsJson.find(intEntry.entry.name).value().get<int>();
+      auto val = intsJson.find(intEntry.entry.name);
+      if (val == intsJson.end()) continue;
+
+      *intEntry.data = val.value().get<int>();
     }
   }
 
   if (j.find("floats") != j.end()) {
     const nlohmann::json& floatsJson = j.at("floats");
     for (auto& floatEntry : group.floats) {
-      *floatEntry.data = floatsJson.find(floatEntry.entry.name).value().get<float>();
+      auto val = floatsJson.find(floatEntry.entry.name);
+      if (val == floatsJson.end()) continue;
+
+      *floatEntry.data = val.value().get<float>();
     }
   }
 
   if (j.find("float3s") != j.end()) {
     const nlohmann::json& float3sJson = j.at("float3s");
     for (auto& float3Entry : group.float3s) {
-      *float3Entry.data = float3sJson.find(float3Entry.entry.name).value().get<Eigen::Vector3f>();
+      auto val = float3sJson.find(float3Entry.entry.name);
+      if (val == float3sJson.end()) continue;
+
+      *float3Entry.data = val.value().get<Eigen::Vector3f>();
     }
   }
 
   if (j.find("bools") != j.end()) {
     const nlohmann::json& boolsJson = j.at("bools");
     for (auto& boolEntry : group.bools) {
-      *boolEntry.data = boolsJson.find(boolEntry.entry.name).value().get<bool>();
+      auto val = boolsJson.find(boolEntry.entry.name);
+      if (val == boolsJson.end()) continue;
+
+      *boolEntry.data = val.value().get<bool>();
     }
   }
 
   if (j.find("singleChoices") != j.end()) {
     const nlohmann::json& singleChoicesJson = j.at("singleChoices");
     for (auto& singleChoiceEntry : group.singleChoices) {
-      *singleChoiceEntry.choice =
-          singleChoicesJson.find(singleChoiceEntry.entry.name).value().get<int>();
+      auto val = singleChoicesJson.find(singleChoiceEntry.entry.name);
+      if (val == singleChoicesJson.end()) continue;
+
+      *singleChoiceEntry.choice = val.value().get<int>();
     }
   }
 
   if (j.find("gradientColorings") != j.end()) {
     const nlohmann::json& gradientColoringsJson = j.at("gradientColorings");
     for (auto& gradientColEntry : group.gradientColorings) {
-      *gradientColEntry.data = gradientColoringsJson.find(gradientColEntry.entry.name)
-                                   .value()
-                                   .get<std::map<int, Eigen::Vector3f>>();
+      auto val = gradientColoringsJson.find(gradientColEntry.entry.name);
+      if (val == gradientColoringsJson.end()) continue;
+
+      *gradientColEntry.data = val.value().get<std::map<int, Eigen::Vector3f>>();
     }
   }
 
   if (j.find("gradientAlphaColorings") != j.end()) {
     const nlohmann::json& gradientAColoringsJson = j.at("gradientAlphaColorings");
     for (auto& gradientAColEntry : group.gradientAlphaColorings) {
-      *gradientAColEntry.data = gradientAColoringsJson.find(gradientAColEntry.entry.name)
-                                    .value()
-                                    .get<std::map<int, Eigen::Vector4f>>();
+      auto val = gradientAColoringsJson.find(gradientAColEntry.entry.name);
+      if (val == gradientAColoringsJson.end()) continue;
+
+      *gradientAColEntry.data = val.value().get<std::map<int, Eigen::Vector4f>>();
     }
   }
 
   if (j.find("curves") != j.end()) {
     const nlohmann::json& curvesJson = j.at("curves");
     for (auto& curveEntry : group.curves) {
-      *curveEntry.data = curvesJson.find(curveEntry.entry.name).value().get<ConfigurationCurve>();
+      auto val = curvesJson.find(curveEntry.entry.name);
+      if (val == curvesJson.end()) continue;
+
+      *curveEntry.data = val.value().get<ConfigurationCurve>();
     }
   }
 
   if (j.find("floatLists") != j.end()) {
     const nlohmann::json& floatListsJson = j.at("floatLists");
     for (auto& floatListEntry : group.floatLists) {
-      *floatListEntry.data =
-          floatListsJson.find(floatListEntry.entry.name).value().get<ConfigurationList<float>>();
+      auto val = floatListsJson.find(floatListEntry.entry.name);
+      if (val == floatListsJson.end()) continue;
+
+      *floatListEntry.data = val.value().get<ConfigurationList<float>>();
     }
   }
 
   if (j.find("noiseGraphs") != j.end()) {
     const nlohmann::json& noiseGraphJson = j.at("noiseGraphs");
     for (auto& noiseGraphEntry : group.noiseGraphs) {
-      auto current = noiseGraphJson.find(noiseGraphEntry.entry.name).value();
-      fillNoiseGraphFromJson(current, *noiseGraphEntry.data);
+      auto val = noiseGraphJson.find(noiseGraphEntry.entry.name);
+      if (val == noiseGraphJson.end()) continue;
+
+      fillNoiseGraphFromJson(val.value(), *noiseGraphEntry.data);
     }
   }
 }

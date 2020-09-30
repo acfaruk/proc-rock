@@ -12,9 +12,10 @@ NoiseGraph::NoiseGraph(bool empty) {
   graph.insert_edge(second + 1, first);
 }
 
-void NoiseGraph::addOwnGroups(Configuration& config, std::string newGroupName) {
+void NoiseGraph::addOwnGroups(Configuration& config, std::string newGroupName,
+                              std::function<bool()> activeFunc) {
   Configuration::ConfigurationGroup group;
-  group.entry = {"Noise", "Modify the noise."};
+  group.entry = {"Noise", "Modify the noise.", activeFunc};
   group.noiseGraphs.push_back(Configuration::SimpleEntry<NoiseGraph>{
       {"Noise Graph", "Modify the graph that creates the final noise."}, this});
 

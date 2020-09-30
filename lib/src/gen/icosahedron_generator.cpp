@@ -3,6 +3,15 @@
 #include <igl/per_vertex_normals.h>
 
 namespace procrock {
+IcosahedronGenerator::IcosahedronGenerator() {
+  Configuration::ConfigurationGroup group;
+  group.entry = {"General Settings", "Set various parameters of the icosahedron."};
+
+  group.floats.emplace_back(Configuration::BoundedEntry<float>{
+      {"Edge length", "Length of a single edge of the Icosahedron"}, &edgeLength, 0.1, 1.0f});
+
+  config.insertToConfigGroups("General", group);
+}
 
 std::shared_ptr<Mesh> IcosahedronGenerator::generate() {
   Eigen::Matrix<double, 12, 3> vertices;
@@ -27,17 +36,6 @@ std::shared_ptr<Mesh> IcosahedronGenerator::generate() {
   return result;
 }
 
-Configuration IcosahedronGenerator::getConfiguration() {
-  Configuration::ConfigurationGroup group;
-  group.entry = {"General Settings", "Set various parameters of the icosahedron."};
-
-  group.floats.emplace_back(Configuration::BoundedEntry<float>{
-      {"Edge length", "Length of a single edge of the Icosahedron"}, &edgeLength, 0.1, 1.0f});
-
-  Configuration result;
-  result.insertToConfigGroups("General", group);
-  return result;
-}
 PipelineStageInfo& IcosahedronGenerator::getInfo() { return info; }
 
 }  // namespace procrock

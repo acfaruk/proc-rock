@@ -1,6 +1,11 @@
 #include "texadd/noise_texture_adder.h"
 
 namespace procrock {
+NoiseTextureAdder::NoiseTextureAdder() {
+  noiseGraph.addOwnGroups(config, "Noise");
+  coloring.addOwnGroups(config, "Coloring Settings");
+}
+
 std::shared_ptr<Mesh> NoiseTextureAdder::generate(Mesh* before) {
   auto result = std::make_shared<Mesh>(*before);
 
@@ -17,11 +22,4 @@ std::shared_ptr<Mesh> NoiseTextureAdder::generate(Mesh* before) {
 
 PipelineStageInfo& NoiseTextureAdder::getInfo() { return info; }
 
-Configuration NoiseTextureAdder::getConfiguration() {
-  Configuration result = getBaseConfiguration();
-  std::string baseGroupName = "Noise Function";
-  noiseGraph.addOwnGroups(result, "Noise");
-  coloring.addOwnGroups(result, "Coloring Settings");
-  return result;
-}
 }  // namespace procrock

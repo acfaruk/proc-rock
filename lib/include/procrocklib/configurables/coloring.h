@@ -15,7 +15,9 @@ class ValueAlphaColoring : public ConfigurableExtender {
 
 class GradientColoring : public ValueColoring {
  public:
-  virtual void addOwnGroups(Configuration& config, std::string newGroupName) override;
+  virtual void addOwnGroups(
+      Configuration& config, std::string newGroupName,
+      std::function<bool()> activeFunc = []() { return true; }) override;
   virtual Eigen::Vector3i colorFromValue(float value) override;
 
  private:
@@ -28,7 +30,9 @@ class GradientColoring : public ValueColoring {
 
 class GradientAlphaColoring : public ValueAlphaColoring {
  public:
-  virtual void addOwnGroups(Configuration& config, std::string newGroupName) override;
+  virtual void addOwnGroups(
+      Configuration& config, std::string newGroupName,
+      std::function<bool()> activeFunc = []() { return true; }) override;
   virtual Eigen::Vector4i colorFromValue(float value) override;
 
  private:

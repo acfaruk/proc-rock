@@ -3,6 +3,21 @@
 #include <igl/barycentric_coordinates.h>
 
 namespace procrock {
+CheckerboardTextureGenerator::CheckerboardTextureGenerator() {
+  Configuration::ConfigurationGroup group;
+  group.entry = {"General Settings", "Set various parameters of the checkerboard."};
+  group.ints.emplace_back(Configuration::BoundedEntry<int>{
+      {"Squares", "How many squares per dimension"}, &squares, 2, 100});
+
+  group.singleChoices.emplace_back(Configuration::SingleChoiceEntry{
+      {"Type", "Select how the Checkerboard should be generated"},
+      {{"Simple UV based", "Creates a 2D checkerboard texture."},
+       {"Global Mesh based", "Projects a 3D checkerboard to the texture."}},
+      &mode});
+
+  config.insertToConfigGroups("General", group);
+}
+
 std::shared_ptr<Mesh> CheckerboardTextureGenerator::generate(Mesh* before) {
   auto result = std::make_shared<Mesh>(*before);
 
@@ -46,23 +61,6 @@ std::shared_ptr<Mesh> CheckerboardTextureGenerator::generate(Mesh* before) {
       fillTexture(result->textures, colorFunction);
     } break;
   }
-  return result;
-}
-
-Configuration CheckerboardTextureGenerator::getConfiguration() {
-  Configuration::ConfigurationGroup group;
-  group.entry = {"General Settings", "Set various parameters of the checkerboard."};
-  group.ints.emplace_back(Configuration::BoundedEntry<int>{
-      {"Squares", "How many squares per dimension"}, &squares, 2, 100});
-
-  group.singleChoices.emplace_back(Configuration::SingleChoiceEntry{
-      {"Type", "Select how the Checkerboard should be generated"},
-      {{"Simple UV based", "Creates a 2D checkerboard texture."},
-       {"Global Mesh based", "Projects a 3D checkerboard to the texture."}},
-      &mode});
-
-  Configuration result = getBaseConfiguration();
-  result.insertToConfigGroups("General", group);
   return result;
 }
 PipelineStageInfo& CheckerboardTextureGenerator::getInfo() { return info; }

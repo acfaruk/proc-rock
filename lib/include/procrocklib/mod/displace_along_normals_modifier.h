@@ -8,6 +8,8 @@
 namespace procrock {
 class DisplaceAlongNormalsModifier : public Modifier {
  public:
+  DisplaceAlongNormalsModifier();
+
   int selection = 0;  // 0 = rng, 1 = noise graph
   int seed = 0;
   int ignoredVerticesCount = 0;
@@ -18,7 +20,6 @@ class DisplaceAlongNormalsModifier : public Modifier {
   Eigen::Vector3f preferredDirection{0, -1, 0};
 
   virtual std::shared_ptr<Mesh> modify(Mesh& mesh) override;
-  Configuration getConfiguration() override;
   virtual PipelineStageInfo& getInfo() override;
 
  private:

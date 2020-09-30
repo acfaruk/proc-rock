@@ -7,14 +7,18 @@ namespace procrock {
 
 class TextureGroupModifier : public ConfigurableExtender {
  public:
-  virtual void addOwnGroups(Configuration& config, std::string newGroupName) = 0;
+  virtual void addOwnGroups(
+      Configuration& config, std::string newGroupName,
+      std::function<bool()> activeFunc = []() { return true; }) = 0;
   virtual void modify(TextureGroup& textureGroup) = 0;
 };
 
 // Normals
 class GradientNormalsGenerator : public TextureGroupModifier {
  public:
-  virtual void addOwnGroups(Configuration& config, std::string newGroupName) override;
+  virtual void addOwnGroups(
+      Configuration& config, std::string newGroupName,
+      std::function<bool()> activeFunc = []() { return true; }) override;
   virtual void modify(TextureGroup& textureGroup) override;
 
  private:
@@ -29,7 +33,9 @@ class GradientNormalsGenerator : public TextureGroupModifier {
 class NormalsGenerator : public TextureGroupModifier {
  public:
   NormalsGenerator();
-  virtual void addOwnGroups(Configuration& config, std::string newGroupName) override;
+  virtual void addOwnGroups(
+      Configuration& config, std::string newGroupName,
+      std::function<bool()> activeFunc = []() { return true; }) override;
   virtual void modify(TextureGroup& textureGroup) override;
 
  private:
@@ -40,7 +46,9 @@ class NormalsGenerator : public TextureGroupModifier {
 // Roughness
 class GreyscaleRoughnessGenerator : public TextureGroupModifier {
  public:
-  virtual void addOwnGroups(Configuration& config, std::string newGroupName) override;
+  virtual void addOwnGroups(
+      Configuration& config, std::string newGroupName,
+      std::function<bool()> activeFunc = []() { return true; }) override;
   virtual void modify(TextureGroup& textureGroup) override;
 
  private:
@@ -51,7 +59,9 @@ class GreyscaleRoughnessGenerator : public TextureGroupModifier {
 class RoughnessGenerator : public TextureGroupModifier {
  public:
   RoughnessGenerator();
-  virtual void addOwnGroups(Configuration& config, std::string newGroupName) override;
+  virtual void addOwnGroups(
+      Configuration& config, std::string newGroupName,
+      std::function<bool()> activeFunc = []() { return true; }) override;
   virtual void modify(TextureGroup& textureGroup) override;
 
  private:
@@ -62,7 +72,9 @@ class RoughnessGenerator : public TextureGroupModifier {
 // Metallness
 class GreyscaleMetalnessGenerator : public TextureGroupModifier {
  public:
-  virtual void addOwnGroups(Configuration& config, std::string newGroupName) override;
+  virtual void addOwnGroups(
+      Configuration& config, std::string newGroupName,
+      std::function<bool()> activeFunc = []() { return true; }) override;
   virtual void modify(TextureGroup& textureGroup) override;
 
  private:
@@ -74,7 +86,9 @@ class GreyscaleMetalnessGenerator : public TextureGroupModifier {
 class MetalnessGenerator : public TextureGroupModifier {
  public:
   MetalnessGenerator();
-  virtual void addOwnGroups(Configuration& config, std::string newGroupName) override;
+  virtual void addOwnGroups(
+      Configuration& config, std::string newGroupName,
+      std::function<bool()> activeFunc = []() { return true; }) override;
   virtual void modify(TextureGroup& textureGroup) override;
 
  private:
@@ -85,7 +99,9 @@ class MetalnessGenerator : public TextureGroupModifier {
 // Ambient Occ
 class GreyscaleAmbientOcclusionGenerator : public TextureGroupModifier {
  public:
-  virtual void addOwnGroups(Configuration& config, std::string newGroupName) override;
+  virtual void addOwnGroups(
+      Configuration& config, std::string newGroupName,
+      std::function<bool()> activeFunc = []() { return true; }) override;
   virtual void modify(TextureGroup& textureGroup) override;
 
  private:
@@ -96,7 +112,9 @@ class GreyscaleAmbientOcclusionGenerator : public TextureGroupModifier {
 class AmbientOcclusionGenerator : public TextureGroupModifier {
  public:
   AmbientOcclusionGenerator();
-  virtual void addOwnGroups(Configuration& config, std::string newGroupName) override;
+  virtual void addOwnGroups(
+      Configuration& config, std::string newGroupName,
+      std::function<bool()> activeFunc = []() { return true; }) override;
   virtual void modify(TextureGroup& textureGroup) override;
 
  private:

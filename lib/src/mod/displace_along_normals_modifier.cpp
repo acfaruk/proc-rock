@@ -6,6 +6,47 @@
 #include <Eigen/Geometry>
 
 namespace procrock {
+DisplaceAlongNormalsModifier::DisplaceAlongNormalsModifier() {
+  Configuration::ConfigurationGroup group;
+
+  group.entry = {"General Settings", "Set various parameters of the displacement."};
+  group.singleChoices.push_back(Configuration::SingleChoiceEntry{
+      {"Type", "Choose how the displacement should be calculated."},
+      {{"RNG", "Simple random number generator."}, {"Noise", "Based on a noise graph."}},
+      &selection});
+
+  group.floats.emplace_back(
+      Configuration::BoundedEntry<float>{{"Factor", "Amount of displacement"}, &factor, -1, 1});
+
+  group.bools.emplace_back(Configuration::SimpleEntry<bool>{
+      {"Prefer Direction",
+       "Enable displacement values preferring a specific direction and therefore displacing more "
+       "in that direction."},
+      &preferDirection});
+
+  group.ints.emplace_back(Configuration::BoundedEntry<int>{
+      {"Seed", "Seed for the rng", [&]() { return selection == 0; }}, &seed, 0, 100000});
+
+  group.ints.emplace_back(Configuration::BoundedEntry<int>{
+      {"Ignored Verts", "How many vertices should NOT be modified?"},
+      &ignoredVerticesCount,
+      0,
+      vertexCount - 1});
+  config.insertToConfigGroups("General", group);
+
+  std::function<bool()> preferDirectionActive = [&]() { return preferDirection; };
+  Configuration::ConfigurationGroup preferGroup;
+  preferGroup.entry = {"General Settings", "Displacement values preferring a specific direction.",
+                       preferDirectionActive};
+  preferGroup.float3s.emplace_back(Configuration::BoundedEntry<Eigen::Vector3f>{
+      {"Direction", "Direction to prefer."}, &preferredDirection, {-1, -1, -1}, {1, 1, 1}});
+  preferGroup.floats.emplace_back(Configuration::BoundedEntry<float>{
+      {"Strength", "How strong the direction is preferred."}, &preferStrength, 1.0f, 10.0f});
+  config.insertToConfigGroups("Prefer Direction", preferGroup);
+
+  noiseGraph.addOwnGroups(config, "Noise", [&]() { return selection == 1; });
+}
+
 std::shared_ptr<Mesh> DisplaceAlongNormalsModifier::modify(Mesh& mesh) {
   std::shared_ptr<Mesh> result = std::make_shared<Mesh>();
   vertexCount = mesh.vertices.rows();
@@ -52,59 +93,6 @@ std::shared_ptr<Mesh> DisplaceAlongNormalsModifier::modify(Mesh& mesh) {
   }
   igl::per_vertex_normals(result->vertices, result->faces, result->normals);
 
-  return result;
-}
-Configuration DisplaceAlongNormalsModifier::getConfiguration() {
-  Configuration::ConfigurationGroup group;
-
-  group.entry = {"General Settings", "Set various parameters of the displacement."};
-  group.singleChoices.push_back(Configuration::SingleChoiceEntry{
-      {"Type", "Choose how the displacement should be calculated."},
-      {{"RNG", "Simple random number generator."}, {"Noise", "Based on a noise graph."}},
-      &selection});
-
-  group.floats.emplace_back(
-      Configuration::BoundedEntry<float>{{"Factor", "Amount of displacement"}, &factor, -1, 1});
-
-  group.bools.emplace_back(Configuration::SimpleEntry<bool>{
-      {"Prefer Direction",
-       "Enable displacement values preferring a specific direction and therefore displacing more "
-       "in that direction."},
-      &preferDirection});
-
-  if (selection == 0) {
-    group.ints.emplace_back(
-        Configuration::BoundedEntry<int>{{"Seed", "Seed for the rng"}, &seed, 0, 100000});
-  }
-
-  group.ints.emplace_back(Configuration::BoundedEntry<int>{
-      {"Ignored Verts", "How many vertices should NOT be modified?"},
-      &ignoredVerticesCount,
-      0,
-      vertexCount - 1});
-
-  Configuration result;
-  result.insertToConfigGroups("General", group);
-
-  if (preferDirection) {
-    Configuration::ConfigurationGroup preferGroup;
-    preferGroup.entry = {"General Settings",
-                         "Displacement values preferring a specific direction."};
-    preferGroup.float3s.emplace_back(Configuration::BoundedEntry<Eigen::Vector3f>{
-        {"Direction", "Direction to prefer."}, &preferredDirection, {-1, -1, -1}, {1, 1, 1}});
-    preferGroup.floats.emplace_back(Configuration::BoundedEntry<float>{
-        {"Strength", "How strong the direction is preferred."}, &preferStrength, 1.0f, 10.0f});
-    result.insertToConfigGroups("Prefer Direction", preferGroup);
-  }
-
-  switch (selection) {
-    case 1:
-      noiseGraph.addOwnGroups(result, "Noise");
-      break;
-    default:
-      assert(0 && "Handle all cases!");
-      break;
-  }
   return result;
 }
 PipelineStageInfo& DisplaceAlongNormalsModifier::getInfo() { return info; }

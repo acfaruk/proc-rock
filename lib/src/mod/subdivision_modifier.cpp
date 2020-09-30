@@ -7,6 +7,22 @@
 #include <igl/upsample.h>
 
 namespace procrock {
+SubdivisionModifier::SubdivisionModifier() {
+  Configuration::ConfigurationGroup group;
+
+  group.entry = {"General Settings", "Set various parameters of the subdivision."};
+  group.ints.emplace_back(
+      Configuration::BoundedEntry<int>{{"Subdivs", "How often to subdivide"}, &subdivisions, 1, 3});
+  group.singleChoices.emplace_back(Configuration::SingleChoiceEntry{
+      {"Type", "Select the type to subdivide"},
+      {{"Loop", "Smoothes the mesh"},
+       {"Upsample", "No smoothing"},
+       {"False Barycentric", "Each triangle becomes 3 triangles at their center"}},
+      &mode});
+
+  config.insertToConfigGroups("General", group);
+}
+
 std::shared_ptr<Mesh> SubdivisionModifier::modify(Mesh& mesh) {
   auto result = std::make_shared<Mesh>();
   switch (mode) {
@@ -36,23 +52,6 @@ std::shared_ptr<Mesh> SubdivisionModifier::modify(Mesh& mesh) {
 
   igl::per_vertex_normals(result->vertices, result->faces, result->normals);
 
-  return result;
-}
-Configuration SubdivisionModifier::getConfiguration() {
-  Configuration::ConfigurationGroup group;
-
-  group.entry = {"General Settings", "Set various parameters of the subdivision."};
-  group.ints.emplace_back(
-      Configuration::BoundedEntry<int>{{"Subdivs", "How often to subdivide"}, &subdivisions, 1, 3});
-  group.singleChoices.emplace_back(Configuration::SingleChoiceEntry{
-      {"Type", "Select the type to subdivide"},
-      {{"Loop", "Smoothes the mesh"},
-       {"Upsample", "No smoothing"},
-       {"False Barycentric", "Each triangle becomes 3 triangles at their center"}},
-      &mode});
-
-  Configuration result;
-  result.insertToConfigGroups("General", group);
   return result;
 }
 PipelineStageInfo& SubdivisionModifier::getInfo() { return info; }

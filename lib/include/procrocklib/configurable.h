@@ -61,6 +61,7 @@ struct Configuration {
   struct Entry {
     std::string name;
     std::string description;
+    std::function<bool()> active = []() { return true; };
   };
 
   struct SingleChoiceEntry {
@@ -137,12 +138,15 @@ struct Configuration {
     return configGroups;
   }
 };
+
 class Configurable {
  public:
-  virtual Configuration getConfiguration() = 0;
+  inline void setChanged(bool changed) { this->changed = changed; }
+  inline bool isChanged() { return changed; }
+  inline const Configuration& getConfiguration() { return config; }
 
-  void inline setChanged(bool changed) { this->changed = changed; }
-  bool inline isChanged() { return changed; }
+ protected:
+  Configuration config;
 
  private:
   bool changed = false;

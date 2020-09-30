@@ -1,6 +1,11 @@
 #include "texgen/noise_texture_generator.h"
 
 namespace procrock {
+NoiseTextureGenerator::NoiseTextureGenerator() {
+  noiseGraph.addOwnGroups(config, "Noise");
+  coloring.addOwnGroups(config, "Coloring Settings");
+}
+
 std::shared_ptr<Mesh> NoiseTextureGenerator::generate(Mesh* before) {
   auto result = std::make_shared<Mesh>(*before);
 
@@ -14,14 +19,6 @@ std::shared_ptr<Mesh> NoiseTextureGenerator::generate(Mesh* before) {
   fillTexture(result->textures, colorFunction);
   return result;
 }
-
 PipelineStageInfo& NoiseTextureGenerator::getInfo() { return info; }
 
-Configuration NoiseTextureGenerator::getConfiguration() {
-  Configuration result = getBaseConfiguration();
-  std::string baseGroupName = "Noise Function";
-  noiseGraph.addOwnGroups(result, "Noise");
-  coloring.addOwnGroups(result, "Coloring Settings");
-  return result;
-}
 }  // namespace procrock
