@@ -491,7 +491,7 @@ Configuration::ConfigurationGroup TurbulenceNoiseNode::getConfig() {
   config.floats.push_back(Configuration::BoundedEntry<float>{
       {"Power", "Scaling factor of displacement."}, &power, 0.0f, 10.0f});
   config.ints.push_back(Configuration::BoundedEntry<int>{
-      {"Roughness", "Roughness of changes to displacement."}, &roughness, 0, 20});
+      {"Roughness", "Roughness of changes to displacement."}, &roughness, 1, 20});
   config.ints.push_back(
       Configuration::BoundedEntry<int>{{"Seed", "Seed for random numbers."}, &seed, 0, 100000});
   return config;
