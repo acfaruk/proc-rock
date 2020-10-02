@@ -31,7 +31,7 @@ DisplaceAlongNormalsModifier::DisplaceAlongNormalsModifier() {
       {"Ignored Verts", "How many vertices should NOT be modified?"},
       &ignoredVerticesCount,
       0,
-      vertexCount - 1});
+      100000});
   config.insertToConfigGroups("General", group);
 
   std::function<bool()> preferDirectionActive = [&]() { return preferDirection; };

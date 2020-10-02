@@ -3,6 +3,7 @@
 #include <CImg.h>
 #include <igl/barycentric_coordinates.h>
 
+#include <Eigen/LU>
 #include <iostream>
 
 namespace procrock {

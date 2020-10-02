@@ -243,9 +243,9 @@ Configuration::ConfigurationGroup SelectNoiseNode::getConfig() {
   Configuration::ConfigurationGroup config;
   config.entry = {"Select", "Select the value between two modules with the value of the third."};
   config.floats.push_back(Configuration::BoundedEntry<float>{
-      {"Lower Bound", "Lower Bound of the selection range."}, &lowerBound, -1.0f, upperBound});
+      {"Lower Bound", "Lower Bound of the selection range."}, &lowerBound, -1.0f, 1.0f});
   config.floats.push_back(Configuration::BoundedEntry<float>{
-      {"Upper Bound", "Upper Bound of the selection range."}, &upperBound, lowerBound, 1.0f});
+      {"Upper Bound", "Upper Bound of the selection range."}, &upperBound, -1.0, 1.0f});
   config.floats.push_back(Configuration::BoundedEntry<float>{
       {"Edge Falloff", "Falloff value at the edge transition."}, &edgeFalloff, 0.0f, 1.0f});
   return config;
@@ -281,9 +281,9 @@ Configuration::ConfigurationGroup ClampNoiseNode::getConfig() {
   Configuration::ConfigurationGroup config;
   config.entry = {"Clamp Value", "Returns a clamped value of the input module."};
   config.floats.push_back(Configuration::BoundedEntry<float>{
-      {"Lower Bound", "Lower Bound of the selection range."}, &lowerBound, -1.0f, upperBound});
+      {"Lower Bound", "Lower Bound of the selection range."}, &lowerBound, -1.0f, 1.0f});
   config.floats.push_back(Configuration::BoundedEntry<float>{
-      {"Upper Bound", "Upper Bound of the selection range."}, &upperBound, lowerBound, 1.0f});
+      {"Upper Bound", "Upper Bound of the selection range."}, &upperBound, -1.0f, 1.0f});
   return config;
 }
 

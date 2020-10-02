@@ -29,7 +29,7 @@ DecimateModifier::DecimateModifier() {
                                         [&]() { return mode == 1; }},
                                        &absoluteValue,
                                        4,
-                                       faceCount - 1});
+                                       100000});
   config.insertToConfigGroups("General", group);
 }
 
