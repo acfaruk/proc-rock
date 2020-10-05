@@ -305,6 +305,14 @@ void updateWindows(const Shader& shader) {
       ImGui::SliderAngle("Pitch", &windows.viewSettingsWindow.light.pitch, 0.0f, 360.0f);
       ImGui::ColorEdit3("Ambient", &windows.viewSettingsWindow.light.ambientColor[0]);
     }
+    if (ImGui::CollapsingHeader("Ground Plane", ImGuiTreeNodeFlags_DefaultOpen)) {
+      ImGui::Checkbox("Show", &windows.viewSettingsWindow.groundPlane.show);
+      ImGui::SliderFloat("Height", &windows.viewSettingsWindow.groundPlane.height, -5.0f, 5.0f);
+
+      const char* items[] = {"Gravel", "Mossy"};
+      ImGui::Combo("Texturing", &windows.viewSettingsWindow.groundPlane.textureChoice, items,
+                   IM_ARRAYSIZE(items));
+    }
     ImGui::End();
   }
 

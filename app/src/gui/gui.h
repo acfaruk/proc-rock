@@ -79,6 +79,12 @@ struct ViewSettingsWindow : public Window {
     float pitch = 4.01f;
     glm::vec3 ambientColor = glm::vec3(0.01);
   } light;
+
+  struct GroundPlane {
+    bool show = true;
+    float height = -0.4f;
+    int textureChoice = 0;
+  } groundPlane;
 };
 
 struct MeshInfoWindow : public Window {

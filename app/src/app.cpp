@@ -106,18 +106,40 @@ bool App::init() {
   pipeline->setParameterizer(std::make_unique<XAtlasParameterizer>());
   pipeline->setTextureGenerator(std::make_unique<NoiseTextureGenerator>());
 
-  pointLight = std::make_unique<PointLight>(glm::vec3(7, 0, 0));
+  pointLight = std::make_unique<PointLight>(glm::vec3(7, 2, 0));
 
   mainShader = std::make_unique<Shader>(resourcesPath + "/shaders/main.vert",
                                         resourcesPath + "/shaders/main.frag");
 
+  groundPlane = std::make_unique<DrawableGround>();
+
   viewerFramebuffer = std::make_unique<Framebuffer>(glm::uvec2(200, 200));
 
-  renderTextureAlbedo = std::make_unique<RenderTexture>();
-  renderTextureNormal = std::make_unique<RenderTexture>();
-  renderTextureRoughness = std::make_unique<RenderTexture>();
-  renderTextureMetal = std::make_unique<RenderTexture>();
-  renderTextureAmbientOcc = std::make_unique<RenderTexture>();
+  rockTexGroup["albedo"] = std::make_unique<RenderTexture>();
+  rockTexGroup["normalMap"] = std::make_unique<RenderTexture>();
+  rockTexGroup["roughnessMap"] = std::make_unique<RenderTexture>();
+  rockTexGroup["metalMap"] = std::make_unique<RenderTexture>();
+  rockTexGroup["ambientOccMap"] = std::make_unique<RenderTexture>();
+
+  groundTexGroups[0]["albedo"] = std::make_unique<RenderTexture>();
+  groundTexGroups[0]["albedo"]->loadFromFile(resourcesPath + "/textures/gravel/albedo.jpg");
+  groundTexGroups[0]["normalMap"] = std::make_unique<RenderTexture>();
+  groundTexGroups[0]["normalMap"]->loadFromFile(resourcesPath + "/textures/gravel/normals.jpg");
+  groundTexGroups[0]["roughnessMap"] = std::make_unique<RenderTexture>();
+  groundTexGroups[0]["roughnessMap"]->loadFromFile(resourcesPath +
+                                                   "/textures/gravel/roughness.jpg");
+  groundTexGroups[0]["ambientOccMap"] = std::make_unique<RenderTexture>();
+  groundTexGroups[0]["ambientOccMap"]->loadFromFile(resourcesPath +
+                                                    "/textures/gravel/ambientOcc.jpg");
+  groundTexGroups[1]["albedo"] = std::make_unique<RenderTexture>();
+  groundTexGroups[1]["albedo"]->loadFromFile(resourcesPath + "/textures/mossy/albedo.jpg");
+  groundTexGroups[1]["normalMap"] = std::make_unique<RenderTexture>();
+  groundTexGroups[1]["normalMap"]->loadFromFile(resourcesPath + "/textures/mossy/normals.jpg");
+  groundTexGroups[1]["roughnessMap"] = std::make_unique<RenderTexture>();
+  groundTexGroups[1]["roughnessMap"]->loadFromFile(resourcesPath + "/textures/mossy/roughness.jpg");
+  groundTexGroups[1]["ambientOccMap"] = std::make_unique<RenderTexture>();
+  groundTexGroups[1]["ambientOccMap"]->loadFromFile(resourcesPath +
+                                                    "/textures/mossy/ambientOcc.jpg");
 
   InputManager::registerInputReceiver(mainCam.get());
 
@@ -131,26 +153,20 @@ bool App::update() {
   auto mesh = pipeline->getCurrentMesh();
   drawableMesh = std::make_unique<DrawableMesh>(*mesh);
 
-  renderTextureAlbedo->loadFromData(mesh->textures.albedoData.data(), mesh->textures.width,
-                                    mesh->textures.height);
+  rockTexGroup["albedo"]->loadFromData(mesh->textures.albedoData.data(), mesh->textures.width,
+                                       mesh->textures.height);
 
-  renderTextureNormal->loadFromData(mesh->textures.normalData.data(), mesh->textures.width,
-                                    mesh->textures.height);
+  rockTexGroup["normalMap"]->loadFromData(mesh->textures.normalData.data(), mesh->textures.width,
+                                          mesh->textures.height);
 
-  renderTextureRoughness->loadFromData(mesh->textures.roughnessData.data(), mesh->textures.width,
-                                       mesh->textures.height, 1);
+  rockTexGroup["roughnessMap"]->loadFromData(mesh->textures.roughnessData.data(),
+                                             mesh->textures.width, mesh->textures.height, 1);
 
-  renderTextureMetal->loadFromData(mesh->textures.metalData.data(), mesh->textures.width,
-                                   mesh->textures.height, 1);
+  rockTexGroup["metalMap"]->loadFromData(mesh->textures.metalData.data(), mesh->textures.width,
+                                         mesh->textures.height, 1);
 
-  renderTextureAmbientOcc->loadFromData(mesh->textures.ambientOccData.data(), mesh->textures.width,
-                                        mesh->textures.height, 1);
-
-  mainShader->textures["albedo"] = renderTextureAlbedo.get();
-  mainShader->textures["normalMap"] = renderTextureNormal.get();
-  mainShader->textures["roughnessMap"] = renderTextureRoughness.get();
-  mainShader->textures["metalMap"] = renderTextureMetal.get();
-  mainShader->textures["ambientOccMap"] = renderTextureAmbientOcc.get();
+  rockTexGroup["ambientOccMap"]->loadFromData(mesh->textures.ambientOccData.data(),
+                                              mesh->textures.width, mesh->textures.height, 1);
 
   gui::update(this->getWindowSize(), *viewerFramebuffer, *pipeline, *mainShader);
 
@@ -162,6 +178,8 @@ bool App::update() {
   mainShader->uniforms3f["lightPos"] = pointLight->getPosition();
   mainShader->uniforms3f["lightColor"] = pointLight->getColor();
   mainShader->uniforms3f["ambientColor"] = gui::windows.viewSettingsWindow.light.ambientColor;
+
+  groundPlane->setPosition(glm::vec3{0, gui::windows.viewSettingsWindow.groundPlane.height, 0});
 
   gui::windows.meshInfoWindow.vertices = mesh->vertices.rows();
   gui::windows.meshInfoWindow.faces = mesh->faces.rows();
@@ -182,7 +200,16 @@ bool App::render() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   viewerFramebuffer->bind();
-  drawableMesh->draw(*mainCam.get(), *mainShader.get());
+  drawableMesh->draw(*mainCam, *mainShader);
+  if (gui::windows.viewSettingsWindow.groundPlane.show) {
+    for (auto& pair : groundTexGroups[gui::windows.viewSettingsWindow.groundPlane.textureChoice]) {
+      mainShader->textures[pair.first] = pair.second.get();
+    }
+    groundPlane->draw(*mainCam, *mainShader);
+  }
+  for (auto& pair : rockTexGroup) {
+    mainShader->textures[pair.first] = pair.second.get();
+  }
   bindDefaultFrameBuffer(getFrameBufferSize());
   gui::render();
   return true;

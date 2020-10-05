@@ -6,6 +6,7 @@
 #include <string>
 
 #include "render/camera.h"
+#include "render/drawables/ground.h"
 #include "render/drawables/mesh.h"
 #include "render/framebuffer.h"
 #include "render/gl_includes.h"
@@ -40,16 +41,16 @@ class App {
 
   std::unique_ptr<Camera> mainCam;
   std::unique_ptr<Shader> mainShader;
-  std::unique_ptr<RenderTexture> renderTextureAlbedo;
-  std::unique_ptr<RenderTexture> renderTextureNormal;
-  std::unique_ptr<RenderTexture> renderTextureRoughness;
-  std::unique_ptr<RenderTexture> renderTextureMetal;
-  std::unique_ptr<RenderTexture> renderTextureAmbientOcc;
+
+  std::map<std::string, std::unique_ptr<RenderTexture>> rockTexGroup;
 
   std::unique_ptr<Pipeline> pipeline;
   std::unique_ptr<DrawableMesh> drawableMesh;
   std::unique_ptr<Framebuffer> viewerFramebuffer;
   std::unique_ptr<PointLight> pointLight;
+
+  std::unique_ptr<DrawableGround> groundPlane;
+  std::map<int, std::map<std::string, std::unique_ptr<RenderTexture>>> groundTexGroups;
 
   static void onCurrentWindowResize(GLFWwindow* window, int width, int height);
   static void onOpenGLDebugMessage(GLenum source, GLenum type, GLuint id, GLenum severity,
