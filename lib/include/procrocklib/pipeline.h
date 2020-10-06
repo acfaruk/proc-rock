@@ -5,6 +5,7 @@
 #include <procrocklib/texture_adder.h>
 #include <procrocklib/texture_generator.h>
 
+#include <iostream>
 #include <memory>
 
 namespace procrock {
@@ -35,6 +36,11 @@ class Pipeline {
 
   const std::shared_ptr<Mesh> getCurrentMesh();
 
+  bool isChanged();
+
+  void enableOutput(bool enable);
+  void setOutputStream(std::ostream* stream);
+
   void saveToFile(std::string filePath);
   void loadFromFile(std::string filePath);
 
@@ -46,5 +52,8 @@ class Pipeline {
   std::vector<std::unique_ptr<TextureAdder>> textureAdders;
 
   std::shared_ptr<Mesh> currentMesh;
+
+  bool outputEnabled = true;
+  std::ostream* outputStream = &std::cout;
 };
 }  // namespace procrock

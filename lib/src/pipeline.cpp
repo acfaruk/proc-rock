@@ -121,37 +121,75 @@ void Pipeline::addTextureAdder(std::unique_ptr<TextureAdder> textureAdder) {
 TextureAdder& Pipeline::getTextureAdder(int index) { return *this->textureAdders[index]; }
 
 const std::shared_ptr<Mesh> Pipeline::getCurrentMesh() {
+  if (outputEnabled)
+    *outputStream << "Running Generator: " << generator->getInfo().name << std::endl;
   bool changed = generator->isChanged() || generator->isFirstRun();
   auto mesh = this->generator->run();
   generator->setChanged(false);
+  if (outputEnabled) *outputStream << "Generator Finished" << std::endl << std::endl;
 
   for (auto& mod : modifiers) {
+    if (outputEnabled) *outputStream << "Running Modifier: " << mod->getInfo().name << std::endl;
     mod->setChanged(mod->isChanged() || mod->isFirstRun() || changed);
     changed = mod->isChanged();
     mesh = mod->run(mesh.get());
     mod->setChanged(false);
+    if (outputEnabled) *outputStream << "Modifier Finished." << std::endl << std::endl;
   }
 
+  if (outputEnabled) *outputStream << "All Modifiers done." << std::endl << std::endl;
+
+  if (outputEnabled)
+    *outputStream << "Running Parameterizer: " << parameterizer->getInfo().name << std::endl;
   parameterizer->setChanged(parameterizer->isChanged() || parameterizer->isFirstRun() || changed);
   changed = parameterizer->isChanged();
   mesh = parameterizer->run(mesh.get());
   parameterizer->setChanged(false);
+  if (outputEnabled) *outputStream << "Parameterizer Finished" << std::endl << std::endl;
 
+  if (outputEnabled)
+    *outputStream << "Running Texture Generator: " << parameterizer->getInfo().name << std::endl;
   textureGenerator->setChanged(textureGenerator->isChanged() || textureGenerator->isFirstRun() ||
                                changed);
   changed = textureGenerator->isChanged();
   mesh = textureGenerator->run(mesh.get());
   textureGenerator->setChanged(false);
+  if (outputEnabled) *outputStream << "Texture Generator Finished" << std::endl << std::endl;
 
   for (auto& texadd : textureAdders) {
+    if (outputEnabled)
+      *outputStream << "Running Texture Adder: " << texadd->getInfo().name << std::endl;
     texadd->setChanged(texadd->isChanged() || texadd->isFirstRun() || changed);
     changed = texadd->isChanged();
     mesh = texadd->run(mesh.get());
     texadd->setChanged(false);
+    if (outputEnabled) *outputStream << "Texture Adder Finished" << std::endl << std::endl;
   }
+  if (outputEnabled) *outputStream << "All Texture Adders done." << std::endl << std::endl;
 
   return mesh;
 }
+
+bool Pipeline::isChanged() {
+  bool result = generator->isChanged() || generator->isFirstRun();
+
+  for (auto& mod : modifiers) {
+    result |= (mod->isChanged() || mod->isFirstRun());
+  }
+
+  result |= (parameterizer->isChanged() || parameterizer->isFirstRun());
+  result |= (textureGenerator->isChanged() || textureGenerator->isFirstRun());
+
+  for (auto& texAdd : textureAdders) {
+    result |= (texAdd->isChanged() || texAdd->isFirstRun());
+  }
+
+  return result;
+}
+
+void Pipeline::enableOutput(bool enable) { this->outputEnabled = enable; }
+
+void Pipeline::setOutputStream(std::ostream* stream) { this->outputStream = stream; }
 
 void Pipeline::saveToFile(std::string filePath) {
   nlohmann::json finalJson;
@@ -222,5 +260,4 @@ void Pipeline::loadFromFile(std::string filePath) {
                        getTextureAdder(getTextureAdderCount() - 1).getConfiguration());
   }
 }
-
 }  // namespace procrock

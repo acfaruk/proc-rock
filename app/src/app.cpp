@@ -150,23 +150,30 @@ bool App::init() {
 }
 
 bool App::update() {
-  auto mesh = pipeline->getCurrentMesh();
-  drawableMesh = std::make_unique<DrawableMesh>(*mesh);
+  if (pipeline->isChanged()) {
+    auto mesh = pipeline->getCurrentMesh();
+    drawableMesh = std::make_unique<DrawableMesh>(*mesh);
 
-  rockTexGroup["albedo"]->loadFromData(mesh->textures.albedoData.data(), mesh->textures.width,
-                                       mesh->textures.height);
+    rockTexGroup["albedo"]->loadFromData(mesh->textures.albedoData.data(), mesh->textures.width,
+                                         mesh->textures.height);
 
-  rockTexGroup["normalMap"]->loadFromData(mesh->textures.normalData.data(), mesh->textures.width,
-                                          mesh->textures.height);
+    rockTexGroup["normalMap"]->loadFromData(mesh->textures.normalData.data(), mesh->textures.width,
+                                            mesh->textures.height);
 
-  rockTexGroup["roughnessMap"]->loadFromData(mesh->textures.roughnessData.data(),
-                                             mesh->textures.width, mesh->textures.height, 1);
+    rockTexGroup["roughnessMap"]->loadFromData(mesh->textures.roughnessData.data(),
+                                               mesh->textures.width, mesh->textures.height, 1);
 
-  rockTexGroup["metalMap"]->loadFromData(mesh->textures.metalData.data(), mesh->textures.width,
-                                         mesh->textures.height, 1);
+    rockTexGroup["metalMap"]->loadFromData(mesh->textures.metalData.data(), mesh->textures.width,
+                                           mesh->textures.height, 1);
 
-  rockTexGroup["ambientOccMap"]->loadFromData(mesh->textures.ambientOccData.data(),
-                                              mesh->textures.width, mesh->textures.height, 1);
+    rockTexGroup["ambientOccMap"]->loadFromData(mesh->textures.ambientOccData.data(),
+                                                mesh->textures.width, mesh->textures.height, 1);
+
+    gui::windows.meshInfoWindow.vertices = mesh->vertices.rows();
+    gui::windows.meshInfoWindow.faces = mesh->faces.rows();
+    gui::windows.meshInfoWindow.textureWidth = mesh->textures.width;
+    gui::windows.meshInfoWindow.textureHeight = mesh->textures.height;
+  }
 
   gui::update(this->getWindowSize(), *viewerFramebuffer, *pipeline, *mainShader);
 
@@ -180,11 +187,6 @@ bool App::update() {
   mainShader->uniforms3f["ambientColor"] = gui::windows.viewSettingsWindow.light.ambientColor;
 
   groundPlane->setPosition(glm::vec3{0, gui::windows.viewSettingsWindow.groundPlane.height, 0});
-
-  gui::windows.meshInfoWindow.vertices = mesh->vertices.rows();
-  gui::windows.meshInfoWindow.faces = mesh->faces.rows();
-  gui::windows.meshInfoWindow.textureWidth = mesh->textures.width;
-  gui::windows.meshInfoWindow.textureHeight = mesh->textures.height;
 
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   if (gui::windows.viewSettingsWindow.wireframe) {

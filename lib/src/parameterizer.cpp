@@ -3,8 +3,6 @@
 #include <igl/barycentric_coordinates.h>
 #include <igl/per_face_normals.h>
 
-#include <iostream>
-
 namespace procrock {
 Parameterizer::Parameterizer() {
   Configuration::ConfigurationGroup group;
