@@ -16,6 +16,11 @@ class NoiseTextureAdder : public TextureAdder {
   std::shared_ptr<Mesh> generate(Mesh* before) override;
 
  private:
+  NormalsGenerator normalsGenerator;
+  RoughnessGenerator roughnessGenerator;
+  MetalnessGenerator metalnessGenerator;
+  AmbientOcclusionGenerator ambientOccGenerator;
+
   PipelineStageInfo info{PipelineStageNames_TexAdd[PipelineStage_TexAdd_Noise],
                          "Adds Solid Noise Texture based on a noise graph.",
                          PipelineStageType::TextureAdder, PipelineStage_TexAdd_Noise};

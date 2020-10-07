@@ -67,7 +67,8 @@ const char* const PipelineStageNames_TexGen[] = {"Checkerboard", "Noise"};
 
 // Texture Adders
 const unsigned int PipelineStage_TexAdd_Noise = 0;
+const unsigned int PipelineStage_TexAdd_Cracks = 1;
 
-const char* const PipelineStageNames_TexAdd[] = {"Noise"};
+const char* const PipelineStageNames_TexAdd[] = {"Noise", "Cracks"};
 
 }  // namespace procrock

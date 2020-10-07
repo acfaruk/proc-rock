@@ -61,6 +61,8 @@ std::unique_ptr<TextureAdder> inline createTextureAdderFromId(unsigned int id) {
   switch (id) {
     case PipelineStage_TexAdd_Noise:
       return std::make_unique<NoiseTextureAdder>();
+    case PipelineStage_TexAdd_Cracks:
+      return std::make_unique<CracksTextureAdder>();
     default:
       assert(0 && "make sure all stages are handled!");
   }

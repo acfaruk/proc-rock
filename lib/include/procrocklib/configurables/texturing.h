@@ -21,9 +21,7 @@ class GradientNormalsGenerator : public TextureGroupModifier {
       std::function<bool()> activeFunc = []() { return true; }) override;
   virtual void modify(TextureGroup& textureGroup) override;
 
- private:
   float normalStrength = 1.45f;
-
   // 0 = Backward finite differences, 1 = Centered finite differences, 2 = Forward finite
   // differences, 3 = Using Sobel kernels, 4 = Using rotation invariant kernels, 5 = Using
   // Deriche recursive filter, 6 = Using Van Vliet recursive filter.
@@ -51,7 +49,6 @@ class GreyscaleRoughnessGenerator : public TextureGroupModifier {
       std::function<bool()> activeFunc = []() { return true; }) override;
   virtual void modify(TextureGroup& textureGroup) override;
 
- private:
   float scaling = 2.0f;
   int bias = 0;
 };
@@ -77,7 +74,6 @@ class GreyscaleMetalnessGenerator : public TextureGroupModifier {
       std::function<bool()> activeFunc = []() { return true; }) override;
   virtual void modify(TextureGroup& textureGroup) override;
 
- private:
   float scaling = 1.0f;
   int bias = 0;
   int cutoffValue = 10;
@@ -104,7 +100,6 @@ class GreyscaleAmbientOcclusionGenerator : public TextureGroupModifier {
       std::function<bool()> activeFunc = []() { return true; }) override;
   virtual void modify(TextureGroup& textureGroup) override;
 
- private:
   float scaling = 0.5f;
   int bias = 0;
 };

@@ -21,7 +21,7 @@ class XAtlasParameterizer : public Parameterizer {
     bool bilinear = true;
     bool blockAlign = true;
     bool bruteForce = false;
-    int padding = 0;
+    int padding = 10;
   } packOptions;
 
   virtual PipelineStageInfo& getInfo() override;

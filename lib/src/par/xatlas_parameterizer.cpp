@@ -62,7 +62,7 @@ XAtlasParameterizer::XAtlasParameterizer() {
   packGroup.bools.emplace_back(Configuration::SimpleEntry<bool>{
       {"Brute Force", "Gives best result, but is slower."}, &packOptions.bruteForce});
   packGroup.ints.emplace_back(Configuration::BoundedEntry<int>{
-      {"Padding", "Pixels to pad charts with."}, &packOptions.padding, 0, 10});
+      {"Padding", "Pixels to pad charts with."}, &packOptions.padding, 10, 50});
 
   config.insertToConfigGroups("Pack Options", packGroup);
 }

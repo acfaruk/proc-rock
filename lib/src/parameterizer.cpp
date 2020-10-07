@@ -118,7 +118,8 @@ void Parameterizer::fillTextureMapFaceBased(Mesh& mesh) {
 
         for (int n = 0; n < 9; n++) {
           auto lamda = baryCoords.row(9 * (x + boundaryWidth * y) + n);
-          if (lamda(0) < 0 || lamda(1) < 0 || lamda(2) < 0) continue;  // pixel outside of triangle
+          // if (lamda(0) < 0 || lamda(1) < 0 || lamda(2) < 0) continue;  // pixel outside of
+          // triangle
           inside = true;
 
           // Calculate coordinates in mesh / world space

@@ -10,7 +10,7 @@ namespace procrock {
 
 class TextureAdder : public PipelineStage {
  public:
-  TextureAdder();
+  TextureAdder(bool hideConfigurables = false);
 
   std::shared_ptr<Mesh> run(Mesh* before = nullptr) override;
 
@@ -22,14 +22,11 @@ class TextureAdder : public PipelineStage {
  protected:
   virtual std::shared_ptr<Mesh> generate(Mesh* before) = 0;
 
-  void addTexture(Mesh& mesh, std::function<Eigen::Vector4i(Eigen::Vector3d)> colorFunction);
+  TextureGroup createAddTexture(Mesh& mesh,
+                                std::function<Eigen::Vector4i(Eigen::Vector3d)> colorFunction);
+  void addTextures(Mesh& mesh, TextureGroup& addGroup);
 
- private:
-  NormalsGenerator normalsGenerator;
-  RoughnessGenerator roughnessGenerator;
-  MetalnessGenerator metalnessGenerator;
-  AmbientOcclusionGenerator ambientOccGenerator;
-
+ protected:
   float normalProportion = 0.01;
   float roughnessProportion = 0.1;
   float metalProportion = 1.0;
@@ -39,6 +36,7 @@ class TextureAdder : public PipelineStage {
   Eigen::Vector3f preferredNormalDirection{0, 1, 0};
   float preferredNormalStrength = 1.0f;
 
+ private:
   std::shared_ptr<Mesh> mesh;
   bool firstRun = true;
 };

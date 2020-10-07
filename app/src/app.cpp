@@ -131,6 +131,8 @@ bool App::init() {
   groundTexGroups[0]["ambientOccMap"] = std::make_unique<RenderTexture>();
   groundTexGroups[0]["ambientOccMap"]->loadFromFile(resourcesPath +
                                                     "/textures/gravel/ambientOcc.jpg");
+  groundTexGroups[0]["metalMap"] = std::make_unique<RenderTexture>();
+
   groundTexGroups[1]["albedo"] = std::make_unique<RenderTexture>();
   groundTexGroups[1]["albedo"]->loadFromFile(resourcesPath + "/textures/mossy/albedo.jpg");
   groundTexGroups[1]["normalMap"] = std::make_unique<RenderTexture>();
@@ -140,6 +142,7 @@ bool App::init() {
   groundTexGroups[1]["ambientOccMap"] = std::make_unique<RenderTexture>();
   groundTexGroups[1]["ambientOccMap"]->loadFromFile(resourcesPath +
                                                     "/textures/mossy/ambientOcc.jpg");
+  groundTexGroups[1]["metalMap"] = std::make_unique<RenderTexture>();
 
   InputManager::registerInputReceiver(mainCam.get());
 

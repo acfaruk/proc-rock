@@ -7,7 +7,9 @@
 #include <iostream>
 
 namespace procrock {
-TextureAdder::TextureAdder() {
+TextureAdder::TextureAdder(bool hideConfigurables) {
+  if (hideConfigurables) return;
+
   Configuration::ConfigurationGroup proportionGroup;
   proportionGroup.entry = {"Channel Proportions", "Decide how much a channel affects the texture."};
   proportionGroup.floats.emplace_back(Configuration::BoundedEntry<float>{
@@ -44,11 +46,6 @@ TextureAdder::TextureAdder() {
       0,
       1});
   config.insertToConfigGroups("Preferred Normal Direction", preferGroup);
-
-  normalsGenerator.addOwnGroups(config, "Normals");
-  roughnessGenerator.addOwnGroups(config, "Roughness");
-  metalnessGenerator.addOwnGroups(config, "Metalness");
-  ambientOccGenerator.addOwnGroups(config, "Ambient Occlusion");
 }
 
 std::shared_ptr<Mesh> TextureAdder::run(Mesh* before) {
@@ -63,8 +60,8 @@ std::shared_ptr<Mesh> TextureAdder::run(Mesh* before) {
 bool TextureAdder::isMoveable() const { return true; }
 bool TextureAdder::isRemovable() const { return true; }
 
-void TextureAdder::addTexture(Mesh& mesh,
-                              std::function<Eigen::Vector4i(Eigen::Vector3d)> colorFunction) {
+TextureGroup TextureAdder::createAddTexture(
+    Mesh& mesh, std::function<Eigen::Vector4i(Eigen::Vector3d)> colorFunction) {
   int index = 0;
 
   auto& texGroup = mesh.textures;
@@ -124,11 +121,12 @@ void TextureAdder::addTexture(Mesh& mesh,
     }
     index++;
   }
+  return addGroup;
+}
 
-  normalsGenerator.modify(addGroup);
-  roughnessGenerator.modify(addGroup);
-  metalnessGenerator.modify(addGroup);
-  ambientOccGenerator.modify(addGroup);
+void TextureAdder::addTextures(Mesh& mesh, TextureGroup& addGroup) {
+  auto& addTexture = addGroup.albedoData;
+  auto& texGroup = mesh.textures;
 
   for (int i = 0; i < addTexture.size() / 4; i++) {
     float alpha = addTexture[(4 * i) + 3] / 255.0f;
@@ -139,38 +137,46 @@ void TextureAdder::addTexture(Mesh& mesh,
     texGroup.albedoData[(3 * i) + 2] =
         texGroup.albedoData[(3 * i) + 2] * (1.0f - alpha) + addTexture[(4 * i) + 2] * alpha;
 
-    float normalAlpha = normalProportion * alpha;
-    texGroup.normalData[(3 * i) + 0] = texGroup.normalData[(3 * i) + 0] * (1.0f - normalAlpha) +
-                                       addGroup.normalData[(3 * i) + 0] * normalAlpha;
-    texGroup.normalData[(3 * i) + 1] = texGroup.normalData[(3 * i) + 1] * (1.0f - normalAlpha) +
-                                       addGroup.normalData[(3 * i) + 1] * normalAlpha;
-    texGroup.normalData[(3 * i) + 2] = texGroup.normalData[(3 * i) + 2] * (1.0f - normalAlpha) +
-                                       addGroup.normalData[(3 * i) + 2] * normalAlpha;
+    if (!addGroup.normalData.empty()) {
+      float normalAlpha = normalProportion * alpha;
+      texGroup.normalData[(3 * i) + 0] = texGroup.normalData[(3 * i) + 0] * (1.0f - normalAlpha) +
+                                         addGroup.normalData[(3 * i) + 0] * normalAlpha;
+      texGroup.normalData[(3 * i) + 1] = texGroup.normalData[(3 * i) + 1] * (1.0f - normalAlpha) +
+                                         addGroup.normalData[(3 * i) + 1] * normalAlpha;
+      texGroup.normalData[(3 * i) + 2] = texGroup.normalData[(3 * i) + 2] * (1.0f - normalAlpha) +
+                                         addGroup.normalData[(3 * i) + 2] * normalAlpha;
+    }
 
-    float roughnessAlpha = roughnessProportion * alpha;
-    texGroup.roughnessData[i + 0] = texGroup.roughnessData[i + 0] * (1.0f - roughnessAlpha) +
-                                    addGroup.roughnessData[i] * roughnessAlpha;
-    texGroup.roughnessData[i + 1] = texGroup.roughnessData[i + 1] * (1.0f - roughnessAlpha) +
-                                    addGroup.roughnessData[i + 1] * roughnessAlpha;
-    texGroup.roughnessData[i + 2] = texGroup.roughnessData[i + 2] * (1.0f - roughnessAlpha) +
-                                    addGroup.roughnessData[i + 2] * roughnessAlpha;
+    if (!addGroup.roughnessData.empty()) {
+      float roughnessAlpha = roughnessProportion * alpha;
+      texGroup.roughnessData[i + 0] = texGroup.roughnessData[i + 0] * (1.0f - roughnessAlpha) +
+                                      addGroup.roughnessData[i] * roughnessAlpha;
+      texGroup.roughnessData[i + 1] = texGroup.roughnessData[i + 1] * (1.0f - roughnessAlpha) +
+                                      addGroup.roughnessData[i + 1] * roughnessAlpha;
+      texGroup.roughnessData[i + 2] = texGroup.roughnessData[i + 2] * (1.0f - roughnessAlpha) +
+                                      addGroup.roughnessData[i + 2] * roughnessAlpha;
+    }
 
-    float metalAlpha = metalProportion * alpha;
-    texGroup.metalData[i + 0] =
-        texGroup.metalData[i] * (1.0f - metalAlpha) + addGroup.metalData[i + 0] * metalAlpha;
-    texGroup.metalData[i] * (1.0f - metalAlpha) + addGroup.metalData[i + 0] * metalAlpha;
-    texGroup.metalData[i + 1] =
-        texGroup.metalData[i + 1] * (1.0f - metalAlpha) + addGroup.metalData[i + 1] * metalAlpha;
-    texGroup.metalData[i + 2] =
-        texGroup.metalData[i + 2] * (1.0f - metalAlpha) + addGroup.metalData[i + 2] * metalAlpha;
+    if (!addGroup.metalData.empty()) {
+      float metalAlpha = metalProportion * alpha;
+      texGroup.metalData[i + 0] =
+          texGroup.metalData[i] * (1.0f - metalAlpha) + addGroup.metalData[i + 0] * metalAlpha;
+      texGroup.metalData[i] * (1.0f - metalAlpha) + addGroup.metalData[i + 0] * metalAlpha;
+      texGroup.metalData[i + 1] =
+          texGroup.metalData[i + 1] * (1.0f - metalAlpha) + addGroup.metalData[i + 1] * metalAlpha;
+      texGroup.metalData[i + 2] =
+          texGroup.metalData[i + 2] * (1.0f - metalAlpha) + addGroup.metalData[i + 2] * metalAlpha;
+    }
 
-    float ambientOccAlpha = ambientOccProportion * alpha;
-    texGroup.ambientOccData[i + 0] = texGroup.ambientOccData[i + 0] * (1.0f - ambientOccAlpha) +
-                                     addGroup.ambientOccData[i + 0] * ambientOccAlpha;
-    texGroup.ambientOccData[i + 1] = texGroup.ambientOccData[i + 1] * (1.0f - ambientOccAlpha) +
-                                     addGroup.ambientOccData[i + 1] * ambientOccAlpha;
-    texGroup.ambientOccData[i + 2] = texGroup.ambientOccData[i + 2] * (1.0f - ambientOccAlpha) +
-                                     addGroup.ambientOccData[i + 2] * ambientOccAlpha;
+    if (!addGroup.ambientOccData.empty()) {
+      float ambientOccAlpha = ambientOccProportion * alpha;
+      texGroup.ambientOccData[i + 0] = texGroup.ambientOccData[i + 0] * (1.0f - ambientOccAlpha) +
+                                       addGroup.ambientOccData[i + 0] * ambientOccAlpha;
+      texGroup.ambientOccData[i + 1] = texGroup.ambientOccData[i + 1] * (1.0f - ambientOccAlpha) +
+                                       addGroup.ambientOccData[i + 1] * ambientOccAlpha;
+      texGroup.ambientOccData[i + 2] = texGroup.ambientOccData[i + 2] * (1.0f - ambientOccAlpha) +
+                                       addGroup.ambientOccData[i + 2] * ambientOccAlpha;
+    }
   }
 }
 }  // namespace procrock
