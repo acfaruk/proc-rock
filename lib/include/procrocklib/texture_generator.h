@@ -12,8 +12,6 @@ class TextureGenerator : public PipelineStage {
  public:
   TextureGenerator();
 
-  float normalStrength = 1.0;
-
   std::shared_ptr<Mesh> run(Mesh* before = nullptr) override;
 
   virtual bool isMoveable() const override;
@@ -27,14 +25,7 @@ class TextureGenerator : public PipelineStage {
   void fillTexture(TextureGroup& texGroup,
                    std::function<Eigen::Vector3i(Eigen::Vector3d)> colorFunction);
 
-  void calculatePBRTextures(TextureGroup& texGroup);
-
  private:
-  NormalsGenerator normalsGenerator;
-  RoughnessGenerator roughnessGenerator;
-  MetalnessGenerator metalnessGenerator;
-  AmbientOcclusionGenerator ambientOccGenerator;
-
   std::shared_ptr<Mesh> mesh;
   bool firstRun = true;
 };

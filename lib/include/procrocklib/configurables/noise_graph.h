@@ -72,6 +72,8 @@ struct NoiseGraph : public ConfigurableExtender {
   int addNode(std::unique_ptr<NoiseNode> node, bool rootNode = false,
               Eigen::Vector2f position = {0.0f, 0.0f});
 
+  void addEdge(int fromNode, int toNode, int input = 0);
+
   void clear();
 };
 
@@ -155,11 +157,11 @@ class SelectNoiseNode : public NoiseNode {
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
- private:
   float lowerBound = -1.0f;
   float upperBound = 1.0f;
   float edgeFalloff = 0.0f;
 
+ private:
   std::unique_ptr<noise::module::Select> module;
 };
 
@@ -180,10 +182,10 @@ class ClampNoiseNode : public NoiseNode {
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
- private:
   float lowerBound = -1.0f;
   float upperBound = 1.0f;
 
+ private:
   std::unique_ptr<noise::module::Clamp> module;
 };
 
@@ -193,8 +195,9 @@ class ExponentNoiseNode : public NoiseNode {
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
- private:
   float exponent = 1.0f;
+
+ private:
   std::unique_ptr<noise::module::Exponent> module;
 };
 
@@ -214,9 +217,10 @@ class ScaleBiasNoiseNode : public NoiseNode {
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
- private:
   float bias = 0.0f;
   float scale = 1.0f;
+
+ private:
   std::unique_ptr<noise::module::ScaleBias> module;
 };
 
@@ -226,10 +230,10 @@ class TerraceNoiseNode : public NoiseNode {
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
- private:
   ConfigurationList<float> controlPoints = {std::set<float>{0, 1}, 2, 100};
   bool invertTerraces = false;
 
+ private:
   std::unique_ptr<noise::module::Terrace> module;
 };
 
@@ -239,9 +243,9 @@ class CurveNoiseNode : public NoiseNode {
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
- private:
   ConfigurationCurve configCurve = std::map<float, float>{{0, 0}, {0.1, 0.2}, {0.6, 0.15}, {1, 1}};
 
+ private:
   std::unique_ptr<noise::module::Curve> module;
 };
 
@@ -262,9 +266,9 @@ class RotatePointNoiseNode : public NoiseNode {
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
- private:
   float xAngle = 0.0f, yAngle = 0.0f, zAngle = 0.0f;
 
+ private:
   std::unique_ptr<noise::module::RotatePoint> module;
 };
 
@@ -274,9 +278,9 @@ class ScalePointNoiseNode : public NoiseNode {
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
- private:
   float xScale = 1.0f, yScale = 1.0f, zScale = 1.0f;
 
+ private:
   std::unique_ptr<noise::module::ScalePoint> module;
 };
 
@@ -286,9 +290,9 @@ class TranslatePointNoiseNode : public NoiseNode {
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
- private:
   float xTranslation = 0.0f, yTranslation = 0.0f, zTranslation = 0.0f;
 
+ private:
   std::unique_ptr<noise::module::TranslatePoint> module;
 };
 
@@ -298,10 +302,10 @@ class TurbulenceNoiseNode : public NoiseNode {
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
- private:
   float frequency = 31.0f, power = 1.0f;
   int roughness = 2, seed = 0;
 
+ private:
   std::unique_ptr<noise::module::Turbulence> module;
 };
 
@@ -312,9 +316,9 @@ class ConstNoiseNode : public NoiseNode {
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
- private:
   float value = 0.0f;
 
+ private:
   std::unique_ptr<noise::module::Const> module;
 };
 
@@ -324,7 +328,6 @@ class PerlinNoiseNode : public NoiseNode {
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
- private:
   float frequency = 31.0f;
   float lacunarity = 2.5f;
   float persistence = 0.6f;
@@ -332,6 +335,7 @@ class PerlinNoiseNode : public NoiseNode {
   int seed = 0;
   int qualityChoice = 2;
 
+ private:
   std::unique_ptr<noise::module::Perlin> module;
 };
 
@@ -341,7 +345,6 @@ class BillowNoiseNode : public NoiseNode {
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
- private:
   float frequency = 31.0f;
   float lacunarity = 2.5f;
   float persistence = 0.6f;
@@ -349,6 +352,7 @@ class BillowNoiseNode : public NoiseNode {
   int seed = 0;
   int qualityChoice = 2;
 
+ private:
   std::unique_ptr<noise::module::Billow> module;
 };
 
@@ -358,13 +362,13 @@ class RidgedMultiNoiseNode : public NoiseNode {
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
- private:
   float frequency = 31.0f;
   float lacunarity = 2.5f;
   int octaveCount = 3;
   int seed = 0;
   int qualityChoice = 2;
 
+ private:
   std::unique_ptr<noise::module::RidgedMulti> module;
 };
 
@@ -374,12 +378,12 @@ class VoronoiNoiseNode : public NoiseNode {
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
- private:
   float frequency = 31.0f;
   float displacement = 1.0f;
   bool enableDistance = false;
   int seed = 0;
 
+ private:
   std::unique_ptr<noise::module::Voronoi> module;
 };
 
@@ -389,9 +393,9 @@ class SpheresNoiseNode : public NoiseNode {
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
- private:
   float frequency = 31.0f;
 
+ private:
   std::unique_ptr<noise::module::Spheres> module;
 };
 
@@ -401,9 +405,9 @@ class CylindersNoiseNode : public NoiseNode {
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
- private:
   float frequency = 31.0f;
 
+ private:
   std::unique_ptr<noise::module::Cylinders> module;
 };
 

@@ -80,8 +80,8 @@ void main()
 	vec3 halfwayDir = normalize(lightDir + viewDir);
 
 	float distance = length(tangentSpace.lightPos - tangentSpace.fragPos);
-//	float attenuation = 1.0 / (distance * distance);
-//	vec3 radiance = lightColor * attenuation;
+	float attenuation = 1.0 / (distance * distance);
+	vec3 radiance = lightColor * attenuation;
 
 	float NDF = DistributionGGX(normal, halfwayDir, roughness);
 	float G = GeometrySmith(normal, viewDir, lightDir, roughness);
@@ -96,7 +96,7 @@ void main()
 
 	float n_dot_l = max(dot(normal, lightDir), 0.0);
 
-	vec3 lightOut =  (kD * color / M_PI + specular) /** attenuation */* n_dot_l;
+	vec3 lightOut =  (kD * color / M_PI + specular) /** radiance*/ * n_dot_l;
 
 
 	// ambient

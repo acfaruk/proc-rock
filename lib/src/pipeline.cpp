@@ -148,7 +148,7 @@ const std::shared_ptr<Mesh> Pipeline::getCurrentMesh() {
   if (outputEnabled) *outputStream << "Parameterizer Finished" << std::endl << std::endl;
 
   if (outputEnabled)
-    *outputStream << "Running Texture Generator: " << parameterizer->getInfo().name << std::endl;
+    *outputStream << "Running Texture Generator: " << textureGenerator->getInfo().name << std::endl;
   textureGenerator->setChanged(textureGenerator->isChanged() || textureGenerator->isFirstRun() ||
                                changed);
   changed = textureGenerator->isChanged();
@@ -165,7 +165,11 @@ const std::shared_ptr<Mesh> Pipeline::getCurrentMesh() {
     texadd->setChanged(false);
     if (outputEnabled) *outputStream << "Texture Adder Finished" << std::endl << std::endl;
   }
-  if (outputEnabled) *outputStream << "All Texture Adders done." << std::endl << std::endl;
+  if (outputEnabled)
+    *outputStream << "All Texture Adders done." << std::endl
+                  << std::endl
+                  << "Pipeline Done" << std::endl
+                  << "------------------------" << std::endl;
 
   return mesh;
 }

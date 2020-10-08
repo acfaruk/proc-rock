@@ -6,12 +6,7 @@
 #include <iostream>
 
 namespace procrock {
-TextureGenerator::TextureGenerator() {
-  normalsGenerator.addOwnGroups(config, "Normals");
-  roughnessGenerator.addOwnGroups(config, "Roughness");
-  metalnessGenerator.addOwnGroups(config, "Metalness");
-  ambientOccGenerator.addOwnGroups(config, "Ambient Occlusion");
-}
+TextureGenerator::TextureGenerator() {}
 
 std::shared_ptr<Mesh> TextureGenerator::run(Mesh* before) {
   if (isChanged() || firstRun) {
@@ -73,13 +68,5 @@ void TextureGenerator::fillTexture(TextureGroup& texGroup,
     }
     index++;
   }
-
-  calculatePBRTextures(texGroup);
-}
-void TextureGenerator::calculatePBRTextures(TextureGroup& texGroup) {
-  normalsGenerator.modify(texGroup);
-  roughnessGenerator.modify(texGroup);
-  metalnessGenerator.modify(texGroup);
-  ambientOccGenerator.modify(texGroup);
 }
 }  // namespace procrock

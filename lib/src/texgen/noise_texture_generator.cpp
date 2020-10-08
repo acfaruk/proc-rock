@@ -4,6 +4,11 @@ namespace procrock {
 NoiseTextureGenerator::NoiseTextureGenerator() {
   noiseGraph.addOwnGroups(config, "Noise");
   coloring.addOwnGroups(config, "Coloring Settings");
+
+  normalsGenerator.addOwnGroups(config, "Normals");
+  roughnessGenerator.addOwnGroups(config, "Roughness");
+  metalnessGenerator.addOwnGroups(config, "Metalness");
+  ambientOccGenerator.addOwnGroups(config, "Ambient Occlusion");
 }
 
 std::shared_ptr<Mesh> NoiseTextureGenerator::generate(Mesh* before) {
@@ -17,6 +22,12 @@ std::shared_ptr<Mesh> NoiseTextureGenerator::generate(Mesh* before) {
   };
 
   fillTexture(result->textures, colorFunction);
+
+  normalsGenerator.modify(result->textures);
+  roughnessGenerator.modify(result->textures);
+  metalnessGenerator.modify(result->textures);
+  ambientOccGenerator.modify(result->textures);
+
   return result;
 }
 PipelineStageInfo& NoiseTextureGenerator::getInfo() { return info; }

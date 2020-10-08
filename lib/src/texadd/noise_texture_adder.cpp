@@ -2,12 +2,13 @@
 
 namespace procrock {
 NoiseTextureAdder::NoiseTextureAdder() {
+  noiseGraph.addOwnGroups(config, "Noise");
+  coloring.addOwnGroups(config, "Coloring Settings");
+
   normalsGenerator.addOwnGroups(config, "Normals");
   roughnessGenerator.addOwnGroups(config, "Roughness");
   metalnessGenerator.addOwnGroups(config, "Metalness");
   ambientOccGenerator.addOwnGroups(config, "Ambient Occlusion");
-  noiseGraph.addOwnGroups(config, "Noise");
-  coloring.addOwnGroups(config, "Coloring Settings");
 }
 
 std::shared_ptr<Mesh> NoiseTextureAdder::generate(Mesh* before) {

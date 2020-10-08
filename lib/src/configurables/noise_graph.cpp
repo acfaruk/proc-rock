@@ -42,6 +42,10 @@ int NoiseGraph::addNode(std::unique_ptr<NoiseNode> node, bool rootNode, Eigen::V
   return result;
 }
 
+void NoiseGraph::addEdge(int fromNode, int toNode, int input) {
+  graph.insert_edge(toNode + 1 + (input)*2, fromNode);
+}
+
 void NoiseGraph::clear() {
   graph = Graph<NoiseNode*>();
   nodes.clear();

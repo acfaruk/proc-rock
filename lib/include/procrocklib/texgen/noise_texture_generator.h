@@ -22,5 +22,10 @@ class NoiseTextureGenerator : public TextureGenerator {
 
   NoiseGraph noiseGraph;
   GradientColoring coloring;
+
+  NormalsGenerator normalsGenerator;
+  RoughnessGenerator roughnessGenerator;
+  MetalnessGenerator metalnessGenerator;
+  AmbientOcclusionGenerator ambientOccGenerator;
 };
 }  // namespace procrock

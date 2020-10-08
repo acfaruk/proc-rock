@@ -16,6 +16,11 @@ CheckerboardTextureGenerator::CheckerboardTextureGenerator() {
       &mode});
 
   config.insertToConfigGroups("General", group);
+
+  normalsGenerator.addOwnGroups(config, "Normals");
+  roughnessGenerator.addOwnGroups(config, "Roughness");
+  metalnessGenerator.addOwnGroups(config, "Metalness");
+  ambientOccGenerator.addOwnGroups(config, "Ambient Occlusion");
 }
 
 std::shared_ptr<Mesh> CheckerboardTextureGenerator::generate(Mesh* before) {
@@ -43,9 +48,6 @@ std::shared_ptr<Mesh> CheckerboardTextureGenerator::generate(Mesh* before) {
           }
         }
       }
-
-      calculatePBRTextures(result->textures);
-
     } break;
     case 1:  // Global Mesh based
     {
@@ -61,6 +63,12 @@ std::shared_ptr<Mesh> CheckerboardTextureGenerator::generate(Mesh* before) {
       fillTexture(result->textures, colorFunction);
     } break;
   }
+
+  normalsGenerator.modify(result->textures);
+  roughnessGenerator.modify(result->textures);
+  metalnessGenerator.modify(result->textures);
+  ambientOccGenerator.modify(result->textures);
+
   return result;
 }
 PipelineStageInfo& CheckerboardTextureGenerator::getInfo() { return info; }
