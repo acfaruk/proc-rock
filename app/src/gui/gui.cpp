@@ -88,6 +88,15 @@ void updateMainMenu(Pipeline& pipeline) {
           noiseNodeEditor.current = nullptr;
         }
       }
+
+      if (ImGui::MenuItem("Export")) {
+        const char* patterns[] = {"*.obj"};
+        const char* file = tinyfd_saveFileDialog("Export mesh", "", 1, patterns, NULL);
+        if (file != NULL) {
+          pipeline.exportCurrent(file);
+        }
+      }
+
       ImGui::EndMenu();
     }
 

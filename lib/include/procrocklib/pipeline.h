@@ -41,8 +41,10 @@ class Pipeline {
   void enableOutput(bool enable);
   void setOutputStream(std::ostream* stream);
 
-  void saveToFile(std::string filePath);
-  void loadFromFile(std::string filePath);
+  void saveToFile(const std::string filePath);
+  void loadFromFile(const std::string filePath);
+
+  void exportCurrent(const std::string filePath);
 
  private:
   std::unique_ptr<Generator> generator;

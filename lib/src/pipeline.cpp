@@ -4,6 +4,7 @@
 #include <fstream>
 
 #include "configurable.h"
+#include "export.h"
 #include "mod/displace_along_normals_modifier.h"
 #include "mod/subdivision_modifier.h"
 #include "pipeline_stage_factory.h"
@@ -171,6 +172,7 @@ const std::shared_ptr<Mesh> Pipeline::getCurrentMesh() {
                   << "Pipeline Done" << std::endl
                   << "------------------------" << std::endl;
 
+  currentMesh = mesh;
   return mesh;
 }
 
@@ -195,7 +197,7 @@ void Pipeline::enableOutput(bool enable) { this->outputEnabled = enable; }
 
 void Pipeline::setOutputStream(std::ostream* stream) { this->outputStream = stream; }
 
-void Pipeline::saveToFile(std::string filePath) {
+void Pipeline::saveToFile(const std::string filePath) {
   nlohmann::json finalJson;
 
   nlohmann::json genJson =
@@ -230,7 +232,7 @@ void Pipeline::saveToFile(std::string filePath) {
   file.close();
 }
 
-void Pipeline::loadFromFile(std::string filePath) {
+void Pipeline::loadFromFile(const std::string filePath) {
   std::ifstream file;
   file.open(filePath);
   auto json = nlohmann::json::parse(file);
@@ -264,4 +266,7 @@ void Pipeline::loadFromFile(std::string filePath) {
                        getTextureAdder(getTextureAdderCount() - 1).getConfiguration());
   }
 }
+
+void Pipeline::exportCurrent(const std::string filePath) { exportMesh(*currentMesh, filePath); }
+
 }  // namespace procrock
