@@ -48,6 +48,9 @@ void Parameterizer::fillTextureMapFaceBased(Mesh& mesh) {
 
   igl::per_face_normals(mesh.vertices, mesh.faces, mesh.faceNormals);
 
+  std::vector<bool> calculated;
+  calculated.resize(tex.height * tex.width, false);
+
   // Loop through faces
   for (int i = 0; i < mesh.faces.rows(); i++) {
     auto face = mesh.faces.row(i);
@@ -61,11 +64,10 @@ void Parameterizer::fillTextureMapFaceBased(Mesh& mesh) {
                               mesh.vertices.row((face(2)))};
 
     // Find boundary box of uv triangle
-    double minU = std::min({uvs[0](0), uvs[1](0), uvs[2](0)});
-    double minV = std::min({uvs[0](1), uvs[1](1), uvs[2](1)});
-
-    double maxU = std::max({uvs[0](0), uvs[1](0), uvs[2](0)});
-    double maxV = std::max({uvs[0](1), uvs[1](1), uvs[2](1)});
+    double minU = std::max(0.0, std::min({uvs[0](0), uvs[1](0), uvs[2](0)}) - 0.01);
+    double minV = std::max(0.0, std::min({uvs[0](1), uvs[1](1), uvs[2](1)}) - 0.01);
+    double maxU = std::min(1.0, std::max({uvs[0](0), uvs[1](0), uvs[2](0)}) + 0.01);
+    double maxV = std::min(1.0, std::max({uvs[0](1), uvs[1](1), uvs[2](1)}) + 0.01);
 
     // This value represents one pixel in uv space
     double pixelStep = 1.0 / tex.width;
@@ -110,17 +112,17 @@ void Parameterizer::fillTextureMapFaceBased(Mesh& mesh) {
       for (int y = 0; y < boundaryHeight; y++) {
         int textureX = textureStartX + x;
         int textureY = textureStartY + y;
+        int index = (textureX + tex.width * textureY);
 
         Eigen::Vector3i accColor{0, 0, 0};
-        bool inside = false;
-
         std::vector<Eigen::Vector3d> positions;
+        bool allOutsideTriangle = true;
 
         for (int n = 0; n < 9; n++) {
           auto lamda = baryCoords.row(9 * (x + boundaryWidth * y) + n);
-          // if (lamda(0) < 0 || lamda(1) < 0 || lamda(2) < 0) continue;  // pixel outside of
-          // triangle
-          inside = true;
+          if (lamda(0) >= 0 && lamda(1) >= 0 && lamda(2) >= 0) {
+            allOutsideTriangle = false;
+          }
 
           // Calculate coordinates in mesh / world space
           Eigen::Vector3d worldPos;
@@ -130,13 +132,16 @@ void Parameterizer::fillTextureMapFaceBased(Mesh& mesh) {
 
           positions.push_back(worldPos);
         }
-        if (positions.size() == 0) continue;
 
-        int index = (textureX + tex.width * textureY);
+        if (positions.size() == 0 || calculated[index]) continue;
+        tex.worldMap[index].positions.clear();
         for (const auto& pos : positions) {
           tex.worldMap[index].positions.push_back(pos);
         }
         tex.worldMap[index].face = i;
+        if (!allOutsideTriangle) {
+          calculated[index] = true;
+        }
       }
     }
 
