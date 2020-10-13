@@ -47,7 +47,7 @@ class App {
   std::unique_ptr<Pipeline> pipeline;
   std::unique_ptr<DrawableMesh> drawableMesh;
   std::unique_ptr<Framebuffer> viewerFramebuffer;
-  std::unique_ptr<PointLight> pointLight;
+  std::vector<PointLight> pointLights;
 
   std::unique_ptr<DrawableGround> groundPlane;
   std::map<int, std::map<std::string, std::unique_ptr<RenderTexture>>> groundTexGroups;

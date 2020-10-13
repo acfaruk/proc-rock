@@ -310,9 +310,19 @@ void updateWindows(const Shader& shader) {
     ImGui::Checkbox("Wireframe Mode", &windows.viewSettingsWindow.wireframe);
     ImGui::ColorEdit3("Clear Color", &windows.viewSettingsWindow.clearColor[0]);
     if (ImGui::CollapsingHeader("Light", ImGuiTreeNodeFlags_DefaultOpen)) {
-      ImGui::SliderAngle("Yaw", &windows.viewSettingsWindow.light.yaw, 0.0f, 360.0f);
-      ImGui::SliderAngle("Pitch", &windows.viewSettingsWindow.light.pitch, 0.0f, 360.0f);
-      ImGui::ColorEdit3("Ambient", &windows.viewSettingsWindow.light.ambientColor[0]);
+      for (int i = 0; i < windows.viewSettingsWindow.lights.size(); i++) {
+        ImGui::PushID(i);
+        auto& light = windows.viewSettingsWindow.lights[i];
+
+        ImGui::SliderAngle("Yaw", &light.yaw, 0.0f, 360.0f);
+        ImGui::SliderAngle("Pitch", &light.pitch, 0.0f, 360.0f);
+        ImGui::SliderFloat("Intensity", &light.intensity, 0, 1000);
+        ImGui::ColorEdit3("Color", &light.color[0]);
+        ImGui::Separator();
+        ImGui::PopID();
+      }
+
+      ImGui::ColorEdit3("Ambient", &windows.viewSettingsWindow.ambientColor[0]);
     }
     if (ImGui::CollapsingHeader("Ground Plane", ImGuiTreeNodeFlags_DefaultOpen)) {
       ImGui::Checkbox("Show", &windows.viewSettingsWindow.groundPlane.show);

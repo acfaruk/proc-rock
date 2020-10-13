@@ -13,7 +13,7 @@ out vec3 fragPos;
 out vec2 texCoord;
 
 out TangentSpace {
-	vec3 lightPos;
+	vec3[20] lightPos;
 	vec3 camPos;
 	vec3 fragPos;
 } tangentSpace;
@@ -22,7 +22,9 @@ uniform mat4 modelMatrix;
 uniform mat4 mvpMatrix;
 uniform bool vertexColored;
 uniform vec3 camPos;
-uniform vec3 lightPos;
+
+uniform int lightCount;
+uniform vec3[20] lightPos;
 
 void main(){
 
@@ -36,7 +38,10 @@ void main(){
 	vec3 B = cross(N, T);
 	mat3 TBN = transpose(mat3(T, B, N));
 
-	tangentSpace.lightPos = TBN * lightPos;
+	for (int i = 0; i < lightCount; i++) {
+		tangentSpace.lightPos[i] = TBN * lightPos[i];
+	}
+
 	tangentSpace.camPos = TBN * camPos;
 	tangentSpace.fragPos = TBN * fragPos;
 	

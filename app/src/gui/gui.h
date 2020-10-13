@@ -73,15 +73,19 @@ struct TextureWindow : public Window {};
 
 struct ViewSettingsWindow : public Window {
   bool wireframe = false;
-  glm::vec3 clearColor = glm::vec3(0.235);
+  glm::vec3 clearColor = glm::vec3(0.6);
   struct Light {
-    float yaw = 3.67f;
-    float pitch = 4.01f;
-    glm::vec3 ambientColor = glm::vec3(0.01);
-  } light;
+    float yaw = 0;
+    float pitch = 0;
+    float intensity = 100;
+    glm::vec3 color = glm::vec3(1);
+  };
+
+  std::vector<Light> lights;
+  glm::vec3 ambientColor = glm::vec3(0.01);
 
   struct GroundPlane {
-    bool show = true;
+    bool show = false;
     float height = -0.4f;
     int textureChoice = 0;
   } groundPlane;

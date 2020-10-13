@@ -106,7 +106,23 @@ bool App::init() {
   pipeline->setParameterizer(std::make_unique<XAtlasParameterizer>());
   pipeline->setTextureGenerator(std::make_unique<NoiseTextureGenerator>());
 
-  pointLight = std::make_unique<PointLight>(glm::vec3(7, 2, 0));
+  pointLights.push_back(PointLight(glm::vec3(7, 2, 0), 300));
+  pointLights.push_back(PointLight(glm::vec3(-3, 4, 0), 50));
+  pointLights.push_back(PointLight(glm::vec3(0, 4, -3), 50));
+  pointLights.push_back(PointLight(glm::vec3(5, 0, 0), 50));
+  pointLights.push_back(PointLight(glm::vec3(-5, 0, 0), 50));
+  pointLights.push_back(PointLight(glm::vec3(0, 5, 0), 50));
+  pointLights.push_back(PointLight(glm::vec3(0, -5, 0), 50));
+  pointLights.push_back(PointLight(glm::vec3(0, 0, 5), 50));
+  pointLights.push_back(PointLight(glm::vec3(0, 0, -5), 50));
+
+  auto& guiLights = gui::windows.viewSettingsWindow.lights;
+  guiLights.resize(pointLights.size());
+  for (int i = 0; i < pointLights.size(); i++) {
+    guiLights[i].intensity = pointLights[i].intensity;
+  }
+  guiLights[0].pitch = 3.67f;
+  guiLights[0].yaw = 4.01f;
 
   mainShader = std::make_unique<Shader>(resourcesPath + "/shaders/main.vert",
                                         resourcesPath + "/shaders/main.frag");
@@ -183,11 +199,18 @@ bool App::update() {
   mainCam->setViewport(gui::viewer.size);
   mainShader->uniforms3f["camPos"] = mainCam->getPosition();
 
-  pointLight->setEulerAngles(gui::windows.viewSettingsWindow.light.yaw,
-                             gui::windows.viewSettingsWindow.light.pitch);
-  mainShader->uniforms3f["lightPos"] = pointLight->getPosition();
-  mainShader->uniforms3f["lightColor"] = pointLight->getColor();
-  mainShader->uniforms3f["ambientColor"] = gui::windows.viewSettingsWindow.light.ambientColor;
+  for (int i = 0; i < pointLights.size(); i++) {
+    const auto& light = gui::windows.viewSettingsWindow.lights[i];
+    pointLights[i].setEulerAngles(light.yaw, light.pitch);
+    pointLights[i].color = light.color;
+    pointLights[i].intensity = light.intensity;
+
+    mainShader->uniforms3f["lightPos[" + std::to_string(i) + "]"] = pointLights[i].position;
+    mainShader->uniforms3f["lightColors[" + std::to_string(i) + "]"] = pointLights[i].color;
+    mainShader->uniformsf["lightIntensities[" + std::to_string(i) + "]"] = pointLights[i].intensity;
+  }
+  mainShader->uniforms3f["ambientColor"] = gui::windows.viewSettingsWindow.ambientColor;
+  mainShader->uniformsi["lightCount"] = pointLights.size();
 
   groundPlane->setPosition(glm::vec3{0, gui::windows.viewSettingsWindow.groundPlane.height, 0});
 

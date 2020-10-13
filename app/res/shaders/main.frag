@@ -7,14 +7,16 @@ in vec3 fragPos;
 in vec2 texCoord;
 
 in TangentSpace {
-	vec3 lightPos;
+	vec3[20] lightPos;
 	vec3 camPos;
 	vec3 fragPos;
 } tangentSpace;
 
 uniform vec3 camPos;
-uniform vec3 lightPos;
-uniform vec3 lightColor;
+uniform int lightCount;
+uniform vec3[20] lightPos;
+uniform vec3[20] lightColors;
+uniform float[20] lightIntensities;
 uniform vec3 ambientColor;
 
 uniform sampler2D albedo;
@@ -66,7 +68,7 @@ vec3 FresnelSchlick(float cosTheta, vec3 F0)
 
 void main()
 {
-	vec3 color = texture(albedo, texCoord).rgb;
+	vec3 color = pow(texture(albedo, texCoord).rgb, vec3(2.2));
 	float metallic = texture(metalMap, texCoord).r;
 	float roughness = texture(roughnessMap, texCoord).r;
 	float ambientOcc = texture(ambientOccMap, texCoord).r;
@@ -76,28 +78,29 @@ void main()
 
 	vec3 F0 = mix(vec3(0.04), color, metallic);
 
-	vec3 lightDir = normalize(tangentSpace.lightPos - tangentSpace.fragPos);
-	vec3 halfwayDir = normalize(lightDir + viewDir);
+	vec3 lightOut = vec3(0.0);
+	for (int i = 0; i < lightCount; i++) {
+		vec3 lightDir = normalize(tangentSpace.lightPos[i] - tangentSpace.fragPos);
+		vec3 halfwayDir = normalize(lightDir + viewDir);
 
-	float distance = length(tangentSpace.lightPos - tangentSpace.fragPos);
-	float attenuation = 1.0 / (distance * distance);
-	vec3 radiance = lightColor * attenuation;
+		float distance = length(tangentSpace.lightPos[i] - tangentSpace.fragPos);
+		float attenuation = 1.0 / (distance * distance);
+		vec3 radiance = lightColors[0] * lightIntensities[i] * attenuation;
 
-	float NDF = DistributionGGX(normal, halfwayDir, roughness);
-	float G = GeometrySmith(normal, viewDir, lightDir, roughness);
-	vec3 F = FresnelSchlick(max(dot(halfwayDir, viewDir), 0.0), F0);
+		float NDF = DistributionGGX(normal, halfwayDir, roughness);
+		float G = GeometrySmith(normal, viewDir, lightDir, roughness);
+		vec3 F = FresnelSchlick(max(dot(halfwayDir, viewDir), 0.0), F0);
 
-	vec3 numerator = NDF * G * F;
-	float denumerator = 4 * max(dot(normal, viewDir), 0.0) * max(dot(normal, lightDir), 0.0) + 0.001;
-	vec3 specular = numerator / denumerator;
+		vec3 numerator = NDF * G * F;
+		float denumerator = 4 * max(dot(normal, viewDir), 0.0) * max(dot(normal, lightDir), 0.0) + 0.001;
+		vec3 specular = numerator / denumerator;
 
-	vec3 kD = vec3(1.0) - F;
-	kD *= 1.0 - metallic;
+		vec3 kD = vec3(1.0) - F;
+		kD *= 1.0 - metallic;
 
-	float n_dot_l = max(dot(normal, lightDir), 0.0);
-
-	vec3 lightOut =  (kD * color / M_PI + specular) /** radiance*/ * n_dot_l;
-
+		float n_dot_l = max(dot(normal, lightDir), 0.0);
+		lightOut +=  (kD * color / M_PI + specular) * radiance * n_dot_l;
+	}
 
 	// ambient
 	vec3 ambient = ambientColor * color * ambientOcc;
