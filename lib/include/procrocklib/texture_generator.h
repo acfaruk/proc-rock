@@ -26,6 +26,9 @@ class TextureGenerator : public PipelineStage {
                    std::function<Eigen::Vector3i(Eigen::Vector3d)> colorFunction);
 
  private:
+  static void fillPart(std::vector<unsigned char>& data, int startIndex, int endIndex,
+                       const std::vector<TextureGroup::WorldMapEntry>& entries,
+                       std::function<Eigen::Vector3i(Eigen::Vector3d)> colorFunction);
   std::shared_ptr<Mesh> mesh;
   bool firstRun = true;
 };

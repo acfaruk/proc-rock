@@ -32,11 +32,18 @@ class TextureAdder : public PipelineStage {
   float metalProportion = 1.0;
   float ambientOccProportion = 0.5;
 
-  bool usePreferredNormalDirection = false;
-  Eigen::Vector3f preferredNormalDirection{0, 1, 0};
-  float preferredNormalStrength = 1.0f;
+  struct PreferredNormalDirectionStruct {
+    bool enabled = false;
+    Eigen::Vector3f direction{0, 1, 0};
+    float strength = 1.0f;
+  } preferred;
 
  private:
+  static void fillPart(std::vector<unsigned char>& data, int startIndex, int endIndex,
+                       const Mesh& mesh,
+                       std::function<Eigen::Vector4i(Eigen::Vector3d)> colorFunction,
+                       PreferredNormalDirectionStruct preferred);
+
   std::shared_ptr<Mesh> mesh;
   bool firstRun = true;
 };
