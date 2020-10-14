@@ -23,12 +23,12 @@ class TextureGenerator : public PipelineStage {
   virtual std::shared_ptr<Mesh> generate(Mesh* before) = 0;
 
   void fillTexture(TextureGroup& texGroup,
-                   std::function<Eigen::Vector3i(Eigen::Vector3d)> colorFunction);
+                   std::function<Eigen::Vector3i(Eigen::Vector3f)> colorFunction);
 
  private:
   static void fillPart(std::vector<unsigned char>& data, int startIndex, int endIndex,
                        const std::vector<TextureGroup::WorldMapEntry>& entries,
-                       std::function<Eigen::Vector3i(Eigen::Vector3d)> colorFunction);
+                       std::function<Eigen::Vector3i(Eigen::Vector3f)> colorFunction);
   std::shared_ptr<Mesh> mesh;
   bool firstRun = true;
 };

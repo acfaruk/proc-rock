@@ -29,7 +29,7 @@ std::shared_ptr<Mesh> CracksTextureAdder::generate(Mesh* before) {
   voronoi.SetFrequency(frequency);
   voronoi.SetSeed(seed);
 
-  auto colorFunction = [&](Eigen::Vector3d worldPos) {
+  auto colorFunction = [&](Eigen::Vector3f worldPos) {
     float value = (voronoi.GetValue(worldPos.x(), worldPos.y(), worldPos.z()) + 1) / 2;
     int colValue = value * 255;
     return Eigen::Vector4i{colValue, colValue, colValue, 255};

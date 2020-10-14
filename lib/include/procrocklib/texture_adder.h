@@ -23,7 +23,7 @@ class TextureAdder : public PipelineStage {
   virtual std::shared_ptr<Mesh> generate(Mesh* before) = 0;
 
   TextureGroup createAddTexture(Mesh& mesh,
-                                std::function<Eigen::Vector4i(Eigen::Vector3d)> colorFunction);
+                                std::function<Eigen::Vector4i(Eigen::Vector3f)> colorFunction);
   void addTextures(Mesh& mesh, TextureGroup& addGroup);
 
  protected:
@@ -41,7 +41,7 @@ class TextureAdder : public PipelineStage {
  private:
   static void fillPart(std::vector<unsigned char>& data, int startIndex, int endIndex,
                        const Mesh& mesh,
-                       std::function<Eigen::Vector4i(Eigen::Vector3d)> colorFunction,
+                       std::function<Eigen::Vector4i(Eigen::Vector3f)> colorFunction,
                        PreferredNormalDirectionStruct preferred);
 
   std::shared_ptr<Mesh> mesh;

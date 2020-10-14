@@ -24,7 +24,7 @@ bool TextureGenerator::isMoveable() const { return false; }
 bool TextureGenerator::isRemovable() const { return false; }
 
 void TextureGenerator::fillTexture(TextureGroup& texGroup,
-                                   std::function<Eigen::Vector3i(Eigen::Vector3d)> colorFunction) {
+                                   std::function<Eigen::Vector3i(Eigen::Vector3f)> colorFunction) {
   int index = 0;
   auto& dataToFill = texGroup.albedoData;
   dataToFill.resize(3 * texGroup.width * texGroup.height);
@@ -57,7 +57,7 @@ void TextureGenerator::fillTexture(TextureGroup& texGroup,
 
 void TextureGenerator::fillPart(std::vector<unsigned char>& data, int startIndex, int endIndex,
                                 const std::vector<TextureGroup::WorldMapEntry>& entries,
-                                std::function<Eigen::Vector3i(Eigen::Vector3d)> colorFunction) {
+                                std::function<Eigen::Vector3i(Eigen::Vector3f)> colorFunction) {
   for (int i = startIndex; i < endIndex; i += 3) {
     const auto& pixel = entries[i / 3];
 

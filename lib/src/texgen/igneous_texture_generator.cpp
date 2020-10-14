@@ -62,7 +62,7 @@ std::shared_ptr<Mesh> IgneousTextureGenerator::generate(Mesh* before) {
   roughnessGenerator.scaling = 10.0f;
 
   auto noiseModule = evaluateGraph(noiseGraph);
-  auto colorFunction = [&](Eigen::Vector3d worldPos) {
+  auto colorFunction = [&](Eigen::Vector3f worldPos) {
     if (noiseModule == nullptr) return coloring.colorFromValue(0);
     float value = (noiseModule->GetValue(worldPos.x(), worldPos.y(), worldPos.z()) + 1) / 2;
     Eigen::Vector3f intermediate = coloring.colorFromValue(value).cast<float>();

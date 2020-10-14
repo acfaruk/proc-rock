@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Eigen/Core>
+#include <array>
 #include <vector>
 
 namespace procrock {
@@ -10,7 +11,7 @@ struct TextureGroup {
   unsigned int albedoChannels = 3;
 
   struct WorldMapEntry {
-    std::vector<Eigen::Vector3d> positions;
+    std::array<Eigen::Vector3f, 9> positions;
     int face;
   };
   std::vector<WorldMapEntry> worldMap;

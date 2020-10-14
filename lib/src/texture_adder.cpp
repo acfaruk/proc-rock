@@ -59,7 +59,7 @@ bool TextureAdder::isMoveable() const { return true; }
 bool TextureAdder::isRemovable() const { return true; }
 
 TextureGroup TextureAdder::createAddTexture(
-    Mesh& mesh, std::function<Eigen::Vector4i(Eigen::Vector3d)> colorFunction) {
+    Mesh& mesh, std::function<Eigen::Vector4i(Eigen::Vector3f)> colorFunction) {
   int index = 0;
 
   const auto& texGroup = mesh.textures;
@@ -157,7 +157,7 @@ void TextureAdder::addTextures(Mesh& mesh, TextureGroup& addGroup) {
 }
 void TextureAdder::fillPart(std::vector<unsigned char>& data, int startIndex, int endIndex,
                             const Mesh& mesh,
-                            std::function<Eigen::Vector4i(Eigen::Vector3d)> colorFunction,
+                            std::function<Eigen::Vector4i(Eigen::Vector3f)> colorFunction,
                             PreferredNormalDirectionStruct preferred) {
   const auto& texGroup = mesh.textures;
 

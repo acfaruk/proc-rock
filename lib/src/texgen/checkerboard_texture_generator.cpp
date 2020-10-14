@@ -51,7 +51,7 @@ std::shared_ptr<Mesh> CheckerboardTextureGenerator::generate(Mesh* before) {
     } break;
     case 1:  // Global Mesh based
     {
-      auto colorFunction = [=](Eigen::Vector3d worldPos) {
+      auto colorFunction = [=](Eigen::Vector3f worldPos) {
         int xI = (worldPos(0) / (1.0 / squares)) + 1000;
         int yI = (worldPos(1) / (1.0 / squares)) + 1000;
         int zI = (worldPos(2) / (1.0 / squares)) + 1000;
