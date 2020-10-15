@@ -3,6 +3,10 @@
 #include <igl/barycentric_coordinates.h>
 #include <igl/per_face_normals.h>
 
+#include <thread>
+
+#include "utils/vector.h"
+
 namespace procrock {
 Parameterizer::Parameterizer() {
   Configuration::ConfigurationGroup group;
@@ -41,130 +45,177 @@ void Parameterizer::setTextureGroupSize(Mesh& mesh) {
 }
 
 void Parameterizer::fillTextureMapFaceBased(Mesh& mesh) {
+  igl::per_face_normals(mesh.vertices, mesh.faces, mesh.faceNormals);
+
+  std::vector<TextureMapPatch> patches;
+  patches.resize(mesh.faces.rows());
+  const auto threadCount = std::thread::hardware_concurrency();
+  int batchCount = patches.size() / threadCount;
+  auto batches = utils::splitVector(patches, batchCount);
+
+  std::vector<std::thread> threads;
+  int sizeAcc = 0;
+  for (int i = 0; i < batches.size(); i++) {
+    if (i != 0) {
+      sizeAcc += batches[i - 1].size();
+    }
+    int startIndex = sizeAcc;
+    threads.emplace_back(std::thread(&Parameterizer::fillTextureMapPatches, startIndex,
+                                     startIndex + batches[i].size(), std::ref(batches[i]),
+                                     std::cref(mesh)));
+  }
+
+  patches.clear();
+  for (int i = 0; i < batches.size(); i++) {
+    threads[i].join();
+    patches.insert(patches.end(), batches[i].begin(), batches[i].end());
+  }
+
+  applyTextureMapPatches(mesh, patches);
+}
+void Parameterizer::fillTextureMapPatches(int startIndex, int endIndex,
+                                          std::vector<TextureMapPatch>& result, const Mesh& mesh) {
+  result.resize(endIndex - startIndex);
+  for (int i = startIndex; i < endIndex; i++) {
+    TextureMapPatch patch{i};
+    fillTextureMapPatch(patch, mesh);
+    result[i - startIndex] = std::move(patch);
+  }
+}
+
+void Parameterizer::fillTextureMapPatch(TextureMapPatch& patch, const Mesh& mesh) {
+  auto face = mesh.faces.row(patch.face);
+
+  // Uvs of the current face
+  Eigen::Vector2f uvs[3] = {mesh.uvs.row((face(0))).cast<float>(),
+                            mesh.uvs.row((face(1))).cast<float>(),
+                            mesh.uvs.row((face(2))).cast<float>()};
+
+  // Positions of the current face
+  Eigen::Vector3f pos[3] = {mesh.vertices.row((face(0))).cast<float>(),
+                            mesh.vertices.row((face(1))).cast<float>(),
+                            mesh.vertices.row((face(2))).cast<float>()};
+
+  // Find boundary box of uv triangle
+  double minU = std::max(0.0, std::min({uvs[0](0), uvs[1](0), uvs[2](0)}) - 0.01);
+  double minV = std::max(0.0, std::min({uvs[0](1), uvs[1](1), uvs[2](1)}) - 0.01);
+  double maxU = std::min(1.0, std::max({uvs[0](0), uvs[1](0), uvs[2](0)}) + 0.01);
+  double maxV = std::min(1.0, std::max({uvs[0](1), uvs[1](1), uvs[2](1)}) + 0.01);
+
+  // This value represents one pixel in uv space
+  double pixelStep = 1.0 / mesh.textures.width;
+  double pixelStepHalf = pixelStep / 2;
+
+  patch.width = std::ceil((maxU - minU) / pixelStep);
+  patch.height = std::ceil((maxV - minV) / pixelStep);
+  patch.x = minU / pixelStep;
+  patch.y = minV / pixelStep;
+
+  int matrixCols = patch.width * patch.height * 9;
+  Eigen::MatrixXf queries(matrixCols, 2);
+
+  Eigen::MatrixXf corner1(matrixCols, 2);
+  Eigen::MatrixXf corner2(matrixCols, 2);
+  Eigen::MatrixXf corner3(matrixCols, 2);
+
+  // Create queries for barycentriq coordinates
+  for (int x = 0; x < patch.width; x++) {
+    for (int y = 0; y < patch.height; y++) {
+      for (int subX = 0; subX < 3; subX++) {
+        for (int subY = 0; subY < 3; subY++) {
+          double u = minU + (x * pixelStep) + subX * pixelStepHalf;
+          double v = minV + (y * pixelStep) + subY * pixelStepHalf;
+
+          int index = 9 * (x + patch.width * y) + subX + 3 * subY;
+          queries.row(index) << u, v;
+          corner1.row(index) = uvs[0].transpose();
+          corner2.row(index) = uvs[1].transpose();
+          corner3.row(index) = uvs[2].transpose();
+        }
+      }
+    }
+  }
+
+  // Redefine as double for osx / linux builds...
+  Eigen::MatrixXd baryCoordsRes;
+  Eigen::MatrixXd queriesD = queries.cast<double>();
+  Eigen::MatrixXd corner1D = corner1.cast<double>();
+  Eigen::MatrixXd corner2D = corner2.cast<double>();
+  Eigen::MatrixXd corner3D = corner3.cast<double>();
+  igl::barycentric_coordinates(queriesD, corner1D, corner2D, corner3D, baryCoordsRes);
+
+  Eigen::MatrixXf baryCoords = baryCoordsRes.cast<float>();
+
+  // Iterate through the texture part and fill the pixels
+  if (patch.worldMap.size() < patch.height * patch.width) {
+    patch.worldMap.resize(patch.height * patch.width);
+  }
+
+  std::array<Eigen::Vector3f, 9> positionsCache;
+
+  for (int x = 0; x < patch.width; x++) {
+    for (int y = 0; y < patch.height; y++) {
+      int index = (x + patch.width * y);
+
+      bool allOutsideTriangle = true;
+
+      for (int n = 0; n < 9; n++) {
+        auto lamda = baryCoords.row(9 * (x + patch.width * y) + n);
+        if (lamda(0) >= -0.005 && lamda(1) >= -0.005 && lamda(2) >= -0.005) {
+          allOutsideTriangle = false;
+        }
+
+        // Calculate coordinates in mesh / world space
+        Eigen::Vector3f worldPos;
+        worldPos(0) = lamda(0) * pos[0](0) + lamda(1) * pos[1](0) + lamda(2) * pos[2](0);
+        worldPos(1) = lamda(0) * pos[0](1) + lamda(1) * pos[1](1) + lamda(2) * pos[2](1);
+        worldPos(2) = lamda(0) * pos[0](2) + lamda(1) * pos[1](2) + lamda(2) * pos[2](2);
+
+        positionsCache[n] = worldPos;
+      }
+
+      patch.worldMap[index].positions.fill(Eigen::Vector3f(0));
+      int posIndex = 0;
+      for (const auto& pos : positionsCache) {
+        patch.worldMap[index].positions[posIndex] = pos;
+        posIndex++;
+      }
+      if (!allOutsideTriangle) {
+        patch.worldMap[index].face = patch.face;
+      }
+    }
+  }
+  // Calculate Tangents
+  Eigen::Vector3f deltaPos1 = pos[1] - pos[0];
+  Eigen::Vector3f deltaPos2 = pos[2] - pos[0];
+
+  Eigen::Vector2f deltaUV1 = uvs[1] - uvs[0];
+  Eigen::Vector2f deltaUV2 = uvs[2] - uvs[0];
+  float r = 1.0f / (deltaUV1.x() * deltaUV2.y() - deltaUV1.y() * deltaUV2.x());
+  patch.faceTangent = (deltaPos1 * deltaUV2.y() - deltaPos2 * deltaUV1.y()) * r;
+}
+void Parameterizer::applyTextureMapPatches(Mesh& mesh,
+                                           const std::vector<TextureMapPatch>& patches) {
   mesh.faceTangents.resize(mesh.faces.rows(), 3);
   auto& tex = mesh.textures;
   tex.worldMap.clear();
   tex.worldMap.resize(tex.height * tex.width);
 
-  igl::per_face_normals(mesh.vertices, mesh.faces, mesh.faceNormals);
+  for (const auto& patch : patches) {
+    for (int x = 0; x < patch.width; x++) {
+      for (int y = 0; y < patch.height; y++) {
+        int patchIndex = (x + patch.width * y);
+        int globalIndex = (patch.x + x) + tex.width * (patch.y + y);
+        auto& worldEntry = tex.worldMap[globalIndex];
+        auto& patchEntry = patch.worldMap[patchIndex];
 
-  std::vector<bool> calculated;
-  calculated.resize(tex.height * tex.width, false);
-
-  // Loop through faces
-  for (int i = 0; i < mesh.faces.rows(); i++) {
-    auto face = mesh.faces.row(i);
-
-    // Uvs of the current face
-    Eigen::Vector2f uvs[3] = {mesh.uvs.row((face(0))).cast<float>(),
-                              mesh.uvs.row((face(1))).cast<float>(),
-                              mesh.uvs.row((face(2))).cast<float>()};
-
-    // Positions of the current face
-    Eigen::Vector3f pos[3] = {mesh.vertices.row((face(0))).cast<float>(),
-                              mesh.vertices.row((face(1))).cast<float>(),
-                              mesh.vertices.row((face(2))).cast<float>()};
-
-    // Find boundary box of uv triangle
-    double minU = std::max(0.0, std::min({uvs[0](0), uvs[1](0), uvs[2](0)}) - 0.01);
-    double minV = std::max(0.0, std::min({uvs[0](1), uvs[1](1), uvs[2](1)}) - 0.01);
-    double maxU = std::min(1.0, std::max({uvs[0](0), uvs[1](0), uvs[2](0)}) + 0.01);
-    double maxV = std::min(1.0, std::max({uvs[0](1), uvs[1](1), uvs[2](1)}) + 0.01);
-
-    // This value represents one pixel in uv space
-    double pixelStep = 1.0 / tex.width;
-    double pixelStepHalf = pixelStep / 2;
-
-    int boundaryWidth = std::ceil((maxU - minU) / pixelStep);
-    int boundaryHeight = std::ceil((maxV - minV) / pixelStep);
-
-    int matrixCols = boundaryWidth * boundaryHeight * 9;
-    Eigen::MatrixXf queries(matrixCols, 2);
-
-    Eigen::MatrixXf corner1(matrixCols, 2);
-    Eigen::MatrixXf corner2(matrixCols, 2);
-    Eigen::MatrixXf corner3(matrixCols, 2);
-
-    // Create queries for barycentriq coordinates
-    for (int x = 0; x < boundaryWidth; x++) {
-      for (int y = 0; y < boundaryHeight; y++) {
-        for (int subX = 0; subX < 3; subX++) {
-          for (int subY = 0; subY < 3; subY++) {
-            double u = minU + (x * pixelStep) + subX * pixelStepHalf;
-            double v = minV + (y * pixelStep) + subY * pixelStepHalf;
-
-            int index = 9 * (x + boundaryWidth * y) + subX + 3 * subY;
-            queries.row(index) << u, v;
-            corner1.row(index) = uvs[0].transpose();
-            corner2.row(index) = uvs[1].transpose();
-            corner3.row(index) = uvs[2].transpose();
-          }
+        if (worldEntry.face == -1) {  // if this entry is not from an in face computation...
+          worldEntry = patchEntry;
         }
       }
     }
 
-    // Redefine as double for osx / linux builds...
-    Eigen::MatrixXd baryCoordsRes;
-    Eigen::MatrixXd queriesD = queries.cast<double>();
-    Eigen::MatrixXd corner1D = corner1.cast<double>();
-    Eigen::MatrixXd corner2D = corner2.cast<double>();
-    Eigen::MatrixXd corner3D = corner3.cast<double>();
-    igl::barycentric_coordinates(queriesD, corner1D, corner2D, corner3D, baryCoordsRes);
-
-    Eigen::MatrixXf baryCoords = baryCoordsRes.cast<float>();
-
-    // Iterate through the texture part and fill the pixels
-    int textureStartX = minU / pixelStep;
-    int textureStartY = minV / pixelStep;
-
-    for (int x = 0; x < boundaryWidth; x++) {
-      for (int y = 0; y < boundaryHeight; y++) {
-        int textureX = textureStartX + x;
-        int textureY = textureStartY + y;
-        int index = (textureX + tex.width * textureY);
-
-        Eigen::Vector3i accColor{0, 0, 0};
-        std::vector<Eigen::Vector3f> positions;
-        bool allOutsideTriangle = true;
-
-        for (int n = 0; n < 9; n++) {
-          auto lamda = baryCoords.row(9 * (x + boundaryWidth * y) + n);
-          if (lamda(0) >= 0 && lamda(1) >= 0 && lamda(2) >= 0) {
-            allOutsideTriangle = false;
-          }
-
-          // Calculate coordinates in mesh / world space
-          Eigen::Vector3f worldPos;
-          worldPos(0) = lamda(0) * pos[0](0) + lamda(1) * pos[1](0) + lamda(2) * pos[2](0);
-          worldPos(1) = lamda(0) * pos[0](1) + lamda(1) * pos[1](1) + lamda(2) * pos[2](1);
-          worldPos(2) = lamda(0) * pos[0](2) + lamda(1) * pos[1](2) + lamda(2) * pos[2](2);
-
-          positions.push_back(worldPos);
-        }
-
-        if (positions.size() == 0 || calculated[index]) continue;
-        tex.worldMap[index].positions.fill(Eigen::Vector3f(0));
-        int posIndex = 0;
-        for (const auto& pos : positions) {
-          tex.worldMap[index].positions[posIndex] = pos;
-          posIndex++;
-        }
-        tex.worldMap[index].face = i;
-        if (!allOutsideTriangle) {
-          calculated[index] = true;
-        }
-      }
-    }
-
-    // Calculate Tangents
-    Eigen::Vector3f deltaPos1 = pos[1] - pos[0];
-    Eigen::Vector3f deltaPos2 = pos[2] - pos[0];
-
-    Eigen::Vector2f deltaUV1 = uvs[1] - uvs[0];
-    Eigen::Vector2f deltaUV2 = uvs[2] - uvs[0];
-    float r = 1.0f / (deltaUV1.x() * deltaUV2.y() - deltaUV1.y() * deltaUV2.x());
-    Eigen::Vector3f tangent = (deltaPos1 * deltaUV2.y() - deltaPos2 * deltaUV1.y()) * r;
-    mesh.faceTangents.row(i) = tangent.cast<double>();
+    mesh.faceTangents.row(patch.face) = patch.faceTangent.cast<double>();
   }
 }
 }  // namespace procrock

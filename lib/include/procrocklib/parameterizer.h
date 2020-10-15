@@ -26,6 +26,18 @@ class Parameterizer : public PipelineStage {
  private:
   std::shared_ptr<Mesh> mesh;
   bool firstRun = true;
+  struct TextureMapPatch {
+    int face;
+    Eigen::Vector3f faceTangent;
+    int x, y, height, width;
+    std::vector<TextureGroup::WorldMapEntry> worldMap;
+  };
+
+  static void fillTextureMapPatches(int startIndex, int endIndex,
+                                    std::vector<TextureMapPatch>& result, const Mesh& mesh);
+
+  static void fillTextureMapPatch(TextureMapPatch& patch, const Mesh& mesh);
+  void applyTextureMapPatches(Mesh& mesh, const std::vector<TextureMapPatch>& patches);
 };
 
 }  // namespace procrock

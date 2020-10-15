@@ -12,7 +12,7 @@ struct TextureGroup {
 
   struct WorldMapEntry {
     std::array<Eigen::Vector3f, 9> positions;
-    int face;
+    int face = -1;
   };
   std::vector<WorldMapEntry> worldMap;
 
