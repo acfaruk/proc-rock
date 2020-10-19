@@ -1,6 +1,7 @@
 #include "render_texture.h"
 
-#include "../io/stb_image.h"
+#include <stb_image.h>
+
 #include "gl_includes.h"
 
 namespace procrock {

@@ -1,12 +1,12 @@
 #include "noise_node_editor.h"
 
+#include <icons_font_awesome5.h>
 #include <imgui.h>
 
 #include <iostream>
 
 #include "../render/gl_includes.h"
 #include "gui.h"
-#include "icons_font_awesome5.h"
 
 namespace procrock {
 namespace gui {

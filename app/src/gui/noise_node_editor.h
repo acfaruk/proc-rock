@@ -1,10 +1,9 @@
 #pragma once
 
 #include <imgui.h>
+#include <imnodes.h>
 #include <procrocklib/configurables/graph.h>
 #include <procrocklib/configurables/noise_graph.h>
-
-#include "node-editor/imnodes.h"
 
 namespace procrock {
 namespace gui {

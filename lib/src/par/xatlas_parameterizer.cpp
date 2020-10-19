@@ -1,6 +1,6 @@
 #include "par/xatlas_parameterizer.h"
 
-#include "utils/third_party/xatlas.h"
+#include <xatlas.h>
 
 namespace procrock {
 XAtlasParameterizer::XAtlasParameterizer() {

@@ -1,8 +1,7 @@
 #include "export.h"
 
 #include <igl/writeOBJ.h>
-
-#include "utils/third_party/stb_image_write.h"
+#include <stb_image_write.h>
 
 namespace procrock {
 void exportMesh(Mesh& mesh, const std::string filepath) {

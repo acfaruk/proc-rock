@@ -11,7 +11,6 @@
 
 #include "../render/framebuffer.h"
 #include "../render/shader.h"
-#include "node-editor/imnodes.h"
 #include "noise_node_editor.h"
 
 namespace procrock {

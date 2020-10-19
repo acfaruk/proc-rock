@@ -1,12 +1,10 @@
 #include "gui.h"
 
+#include <icons_font_awesome5.h>
 #include <procrocklib/pipeline_stage_factory.h>
 #include <tinyfiledialogs/tinyfiledialogs.h>
 
 #include <iostream>
-
-#include "icons_font_awesome5.h"
-#include "node-editor/imnodes.h"
 
 namespace procrock {
 namespace gui {

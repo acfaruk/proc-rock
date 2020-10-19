@@ -30,6 +30,10 @@ target_link_libraries(proc-rock PRIVATE tinyfiledialogs::tinyfiledialogs)
 find_package(glm CONFIG REQUIRED)
 target_link_libraries(proc-rock PRIVATE glm)
 
+target_link_libraries(proc-rock PRIVATE stb)
+target_link_libraries(proc-rock PRIVATE node-editor)
+target_link_libraries(proc-rock PRIVATE font-awesome)
+
 target_link_libraries(proc-rock PRIVATE proc-rock-lib)
 
 target_compile_options(proc-rock PUBLIC "$<$<BOOL:${MSVC}>:/permissive->")
