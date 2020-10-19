@@ -76,7 +76,8 @@ void main()
 	vec3 normal = normalize(texture(normalMap, texCoord).rgb * 2.0 - 1.0);
 	vec3 viewDir = normalize(tangentSpace.camPos - tangentSpace.fragPos);
 
-	vec3 F0 = mix(vec3(0.04), color, metallic);
+	vec3 F0 = vec3(0.04); 
+    F0 = mix(F0, color, metallic);
 
 	vec3 lightOut = vec3(0.0);
 	for (int i = 0; i < lightCount; i++) {
@@ -85,7 +86,7 @@ void main()
 
 		float distance = length(tangentSpace.lightPos[i] - tangentSpace.fragPos);
 		float attenuation = 1.0 / (distance * distance);
-		vec3 radiance = lightColors[0] * lightIntensities[i] * attenuation;
+		vec3 radiance = lightColors[i] * lightIntensities[i] * attenuation;
 
 		float NDF = DistributionGGX(normal, halfwayDir, roughness);
 		float G = GeometrySmith(normal, viewDir, lightDir, roughness);

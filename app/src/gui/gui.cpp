@@ -307,7 +307,13 @@ void updateWindows(const Shader& shader) {
     ImGui::Begin("View Settings", &windows.viewSettingsWindow.show);
     ImGui::Checkbox("Wireframe Mode", &windows.viewSettingsWindow.wireframe);
     ImGui::ColorEdit3("Clear Color", &windows.viewSettingsWindow.clearColor[0]);
-    if (ImGui::CollapsingHeader("Light", ImGuiTreeNodeFlags_DefaultOpen)) {
+
+    const char* items[] = {"Default", "Single", "Well Lit"};
+
+    ImGui::Combo("Light Preset", &windows.viewSettingsWindow.lightChoice, items,
+                 IM_ARRAYSIZE(items));
+
+    if (ImGui::CollapsingHeader("Lights")) {
       for (int i = 0; i < windows.viewSettingsWindow.lights.size(); i++) {
         ImGui::PushID(i);
         auto& light = windows.viewSettingsWindow.lights[i];

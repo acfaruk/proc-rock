@@ -94,6 +94,51 @@ void App::run() {
   end();
 }
 
+void App::changeLightingMode(const LightingMode mode) {
+  currentLightningMode = mode;
+  auto& guiLights = gui::windows.viewSettingsWindow.lights;
+
+  pointLights.clear();
+  guiLights.clear();
+
+  switch (mode) {
+    case LightingMode::WellLit:
+      pointLights.push_back(PointLight(glm::vec3(7, 2, 0), 300));
+      pointLights.push_back(PointLight(glm::vec3(-3, 4, 0), 50));
+      pointLights.push_back(PointLight(glm::vec3(0, 4, -3), 50));
+      pointLights.push_back(PointLight(glm::vec3(5, 0, 0), 50));
+      pointLights.push_back(PointLight(glm::vec3(-5, 0, 0), 50));
+      pointLights.push_back(PointLight(glm::vec3(0, 5, 0), 50));
+      pointLights.push_back(PointLight(glm::vec3(0, -5, 0), 50));
+      pointLights.push_back(PointLight(glm::vec3(0, 0, 5), 50));
+      pointLights.push_back(PointLight(glm::vec3(0, 0, -5), 50));
+      break;
+    case LightingMode::Default:
+      pointLights.push_back(PointLight(glm::vec3(7, 4, 0), 200));
+      pointLights.push_back(PointLight(glm::vec3(-7, 4, 3), 200));
+      pointLights.push_back(PointLight(glm::vec3(-7, 4, -3), 200));
+      pointLights.push_back(PointLight(glm::vec3(-3, 4, 0), 10));
+      pointLights.push_back(PointLight(glm::vec3(0, 4, -3), 10));
+      pointLights.push_back(PointLight(glm::vec3(5, 0, 0), 10));
+      pointLights.push_back(PointLight(glm::vec3(-5, 0, 0), 10));
+      pointLights.push_back(PointLight(glm::vec3(0, 5, 0), 10));
+      pointLights.push_back(PointLight(glm::vec3(0, -5, 0), 10));
+      pointLights.push_back(PointLight(glm::vec3(0, 0, 5), 10));
+      pointLights.push_back(PointLight(glm::vec3(0, 0, -5), 10));
+      break;
+    case LightingMode::Single:
+      pointLights.push_back(PointLight(glm::vec3(7, 7, 0), 800));
+      break;
+    default:
+      assert("Handle all cases!" && 0);
+      break;
+  }
+  guiLights.resize(pointLights.size());
+  for (int i = 0; i < pointLights.size(); i++) {
+    guiLights[i].intensity = pointLights[i].intensity;
+  }
+}
+
 bool App::init() {
   gui::init(window, this->resourcesPath);
 
@@ -106,28 +151,12 @@ bool App::init() {
   pipeline->setParameterizer(std::make_unique<XAtlasParameterizer>());
   pipeline->setTextureGenerator(std::make_unique<NoiseTextureGenerator>());
 
-  pointLights.push_back(PointLight(glm::vec3(7, 2, 0), 300));
-  pointLights.push_back(PointLight(glm::vec3(-3, 4, 0), 50));
-  pointLights.push_back(PointLight(glm::vec3(0, 4, -3), 50));
-  pointLights.push_back(PointLight(glm::vec3(5, 0, 0), 50));
-  pointLights.push_back(PointLight(glm::vec3(-5, 0, 0), 50));
-  pointLights.push_back(PointLight(glm::vec3(0, 5, 0), 50));
-  pointLights.push_back(PointLight(glm::vec3(0, -5, 0), 50));
-  pointLights.push_back(PointLight(glm::vec3(0, 0, 5), 50));
-  pointLights.push_back(PointLight(glm::vec3(0, 0, -5), 50));
-
-  auto& guiLights = gui::windows.viewSettingsWindow.lights;
-  guiLights.resize(pointLights.size());
-  for (int i = 0; i < pointLights.size(); i++) {
-    guiLights[i].intensity = pointLights[i].intensity;
-  }
-  guiLights[0].pitch = 3.67f;
-  guiLights[0].yaw = 4.01f;
-
   mainShader = std::make_unique<Shader>(resourcesPath + "/shaders/main.vert",
                                         resourcesPath + "/shaders/main.frag");
 
   groundPlane = std::make_unique<DrawableGround>();
+
+  changeLightingMode(currentLightningMode);
 
   viewerFramebuffer = std::make_unique<Framebuffer>(glm::uvec2(200, 200));
 
@@ -209,6 +238,11 @@ bool App::update() {
     mainShader->uniforms3f["lightColors[" + std::to_string(i) + "]"] = pointLights[i].color;
     mainShader->uniformsf["lightIntensities[" + std::to_string(i) + "]"] = pointLights[i].intensity;
   }
+
+  if (static_cast<int>(currentLightningMode) != gui::windows.viewSettingsWindow.lightChoice) {
+    changeLightingMode(static_cast<LightingMode>(gui::windows.viewSettingsWindow.lightChoice));
+  }
+
   mainShader->uniforms3f["ambientColor"] = gui::windows.viewSettingsWindow.ambientColor;
   mainShader->uniformsi["lightCount"] = pointLights.size();
 

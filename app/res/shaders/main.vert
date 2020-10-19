@@ -27,8 +27,6 @@ uniform int lightCount;
 uniform vec3[20] lightPos;
 
 void main(){
-
-	vec3 vBitangent = cross(vNormal, vTangent);
 	fragPos = vec3(modelMatrix * vec4(vPosition, 1));
 
 	mat3 normalMatrix = transpose(inverse(mat3(modelMatrix)));

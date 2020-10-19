@@ -24,6 +24,9 @@ class App {
 
   static App* current;  // pointer to this for glfw callbacks
 
+  enum class LightingMode { Default = 0, Single = 1, WellLit = 2 };
+  void changeLightingMode(const LightingMode mode);
+
  private:
   bool init();
   bool update();
@@ -51,6 +54,8 @@ class App {
 
   std::unique_ptr<DrawableGround> groundPlane;
   std::map<int, std::map<std::string, std::unique_ptr<RenderTexture>>> groundTexGroups;
+
+  LightingMode currentLightningMode = LightingMode::Default;
 
   static void onCurrentWindowResize(GLFWwindow* window, int width, int height);
   static void onOpenGLDebugMessage(GLenum source, GLenum type, GLuint id, GLenum severity,

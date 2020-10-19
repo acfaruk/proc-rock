@@ -80,6 +80,7 @@ struct ViewSettingsWindow : public Window {
     glm::vec3 color = glm::vec3(1);
   };
 
+  int lightChoice = 0;
   std::vector<Light> lights;
   glm::vec3 ambientColor = glm::vec3(0.01);
 
