@@ -41,8 +41,9 @@ class PipelineStage : public Configurable {
 // Generators
 const unsigned int PipelineStage_Gen_Cuboid = 0;
 const unsigned int PipelineStage_Gen_Icosahedron = 1;
+const unsigned int PipelineStage_Gen_Pyramid = 2;
 
-const char* const PipelineStageNames_Gen[] = {"Cuboid", "Icosahedron"};
+const char* const PipelineStageNames_Gen[] = {"Cuboid", "Icosahedron", "Pyramid"};
 
 // Modifiers
 const unsigned int PipelineStage_Mod_Transform = 0;

@@ -51,7 +51,7 @@ void Parameterizer::fillTextureMapFaceBased(Mesh& mesh) {
   patches.resize(mesh.faces.rows());
   const auto threadCount = std::thread::hardware_concurrency();
   int batchCount = patches.size() / threadCount;
-  auto batches = utils::splitVector(patches, batchCount);
+  auto batches = utils::splitVector(patches, std::max(batchCount, 100));
 
   std::vector<std::thread> threads;
   int sizeAcc = 0;
