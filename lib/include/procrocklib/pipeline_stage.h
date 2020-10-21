@@ -50,9 +50,10 @@ const unsigned int PipelineStage_Mod_Transform = 0;
 const unsigned int PipelineStage_Mod_Subdivsion = 1;
 const unsigned int PipelineStage_Mod_Decimate = 2;
 const unsigned int PipelineStage_Mod_DisplaceAlongNormals = 3;
+const unsigned int PipelineStage_Mod_CutPlane = 4;
 
 const char* const PipelineStageNames_Mod[] = {"Transform", "Subdivision", "Decimation",
-                                              "Displace Along Normals"};
+                                              "Displace Along Normals", "Cut Plane"};
 
 // Parameterizers
 const unsigned int PipelineStage_Par_LSCM = 0;

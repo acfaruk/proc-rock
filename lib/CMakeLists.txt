@@ -32,6 +32,7 @@ endif()
 target_link_libraries(proc-rock-lib PRIVATE ${NOISELIB})
 target_link_libraries(proc-rock-lib PRIVATE xatlas)
 target_link_libraries(proc-rock-lib PRIVATE stb)
+target_link_libraries(proc-rock-lib PRIVATE cork)
 
 target_compile_options(proc-rock-lib PUBLIC "$<$<BOOL:${MSVC}>:/permissive->")
 

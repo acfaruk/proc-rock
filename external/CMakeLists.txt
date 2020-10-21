@@ -14,3 +14,5 @@ target_link_libraries(node-editor PRIVATE imgui::imgui)
 
 add_library(font-awesome INTERFACE)
 target_include_directories(font-awesome INTERFACE font_awesome)
+
+add_subdirectory(cork)
