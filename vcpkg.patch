@@ -1,0 +1,36 @@
+diff --git a/ports/glib/CMakeLists.txt b/ports/glib/CMakeLists.txt
+index 2315420738622c8911956f79638e3c2fd60614b5..294e73d0ed8747c0493d4b84bec983aee254a7c0 100644
+--- a/ports/glib/CMakeLists.txt
++++ b/ports/glib/CMakeLists.txt
+@@ -41,6 +41,7 @@ if(APPLE)
+     find_library(FOUNDATION_LIBRARY Foundation)
+     find_library(CORESERVICES_LIBRARY CoreServices)
+     link_libraries(${CORESERVICES_LIBRARY} ${COREFOUNDATION_LIBRARY} ${FOUNDATION_LIBRARY})
++    set(ENV{SDKROOT} ${CMAKE_OSX_SYSROOT})
+ endif()
+ 
+ if(WIN32 OR APPLE)
+diff --git a/ports/gts/support-unix.patch b/ports/gts/support-unix.patch
+index 597b4f5452000444c7cb865d55fb50079d15c81b..6b2b04f469c645169897cbee65b84da6e6e83d69 100644
+--- a/ports/gts/support-unix.patch
++++ b/ports/gts/support-unix.patch
+@@ -11,7 +11,7 @@ index c35100c..f458c35 100644
+    OUTPUT_FILE predicates_init.h
+    OUTPUT_VARIABLE OUTVAR)
+  
+-@@ -12,6 +12,31 @@ MESSAGE("${OUTVAR}")
++@@ -12,6 +12,35 @@ MESSAGE("${OUTVAR}")
+  set(kit gts)
+  project(${kit})
+  
+@@ -39,6 +39,10 @@ index c35100c..f458c35 100644
+ +  set(PACKAGE_VERSION "0.7.6")
+ +  set(STDC_HEADERS)
+ +endif()
+++
+++if (APPLE)
+++  set(HAVE_FPU_CONTROL_H 0)
+++endif()
+ +
+  set(srcs
+    src/bbtree.c

@@ -29,7 +29,10 @@ else()
 find_library(NOISELIB noise)
 endif()
 
+find_library(GTSLIB gts)
+
 target_link_libraries(proc-rock-lib PRIVATE ${NOISELIB})
+target_link_libraries(proc-rock-lib PRIVATE ${GTSLIB})
 target_link_libraries(proc-rock-lib PRIVATE xatlas)
 target_link_libraries(proc-rock-lib PRIVATE stb)
 
