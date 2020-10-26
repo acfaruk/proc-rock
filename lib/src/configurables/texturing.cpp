@@ -81,7 +81,7 @@ void GreyscaleRoughnessGenerator::addOwnGroups(Configuration& config, std::strin
                           activeFunc};
 
   greyscaleGroup.floats.emplace_back(Configuration::BoundedEntry<float>{
-      {"Scaling", "Scale the greyscale value."}, &scaling, 0.001f, 10.0f});
+      {"Scaling", "Scale the greyscale value."}, &scaling, 0.001f, 4.0f});
   greyscaleGroup.ints.emplace_back(Configuration::BoundedEntry<int>{
       {"Bias", "Apply a bias to the greyscale value."}, &bias, -255, 255});
 
@@ -143,11 +143,21 @@ void GreyscaleMetalnessGenerator::addOwnGroups(Configuration& config, std::strin
                           activeFunc};
 
   greyscaleGroup.floats.emplace_back(Configuration::BoundedEntry<float>{
-      {"Scaling", "Scale the greyscale value."}, &scaling, 0.001f, 10.0f});
+      {"Scaling", "Scale the greyscale value."}, &scaling, 0.001f, 4.0f});
   greyscaleGroup.ints.emplace_back(Configuration::BoundedEntry<int>{
       {"Bias", "Apply a bias to the greyscale value."}, &bias, -255, 255});
+  greyscaleGroup.bools.emplace_back(
+      Configuration::SimpleEntry<bool>{{"True Metal",
+                                        "When this is checked, each pixel of the metalness texture "
+                                        "can only be black or white. No inbetween."},
+                                       &trueMetal});
+  greyscaleGroup.bools.emplace_back(Configuration::SimpleEntry<bool>{
+      {"Use Cutoff", "Make everything after a certain value NOT metal."}, &useCutoff});
   greyscaleGroup.ints.emplace_back(Configuration::BoundedEntry<int>{
-      {"Cutoff", "After this value everything is NOT metal."}, &cutoffValue, 0, 255});
+      {"Cutoff", "After this value everything is NOT metal.", [&]() { return useCutoff; }},
+      &cutoffValue,
+      0,
+      255});
   config.insertToConfigGroups(newGroupName, greyscaleGroup);
 }
 void GreyscaleMetalnessGenerator::modify(TextureGroup& textureGroup) {
@@ -172,7 +182,19 @@ void GreyscaleMetalnessGenerator::modify(TextureGroup& textureGroup) {
     value *= scaling;
     value += bias;
     value = std::min(255, std::max(0, value));
-    data[i] = cutoffValue > value ? 255 : 0;
+    if (useCutoff) {
+      if (trueMetal) {
+        data[i] = cutoffValue > value ? 255 : 0;
+      } else {
+        data[i] = cutoffValue > value ? value : 0;
+      }
+    } else {
+      if (trueMetal) {
+        data[i] = value > 0 ? 255 : 0;
+      } else {
+        data[i] = value;
+      }
+    }
   }
 }
 
@@ -206,7 +228,7 @@ void GreyscaleAmbientOcclusionGenerator::addOwnGroups(Configuration& config,
                           activeFunc};
 
   greyscaleGroup.floats.emplace_back(Configuration::BoundedEntry<float>{
-      {"Scaling", "Scale the greyscale value."}, &scaling, 0.001f, 10.0f});
+      {"Scaling", "Scale the greyscale value."}, &scaling, 0.001f, 4.0f});
   greyscaleGroup.ints.emplace_back(Configuration::BoundedEntry<int>{
       {"Bias", "Apply a bias to the greyscale value."}, &bias, -255, 255});
   config.insertToConfigGroups(newGroupName, greyscaleGroup);

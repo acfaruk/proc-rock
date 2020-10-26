@@ -74,8 +74,11 @@ class GreyscaleMetalnessGenerator : public TextureGroupModifier {
       std::function<bool()> activeFunc = []() { return true; }) override;
   virtual void modify(TextureGroup& textureGroup) override;
 
-  float scaling = 1.0f;
+  float scaling = 0.2f;
   int bias = 0;
+
+  bool trueMetal = false;
+  bool useCutoff = false;
   int cutoffValue = 10;
 };
 
