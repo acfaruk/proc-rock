@@ -2,9 +2,9 @@
 
 namespace procrock {
 NoiseTextureGenerator::NoiseTextureGenerator() {
-  noiseGraph.addOwnGroups(config, "Noise");
-  coloring.addOwnGroups(config, "Coloring Settings");
+  noiseGraph.addOwnGroups(config, "Displacement / Height");
 
+  albedoGenerator.addOwnGroups(config, "Albedo");
   normalsGenerator.addOwnGroups(config, "Normals");
   roughnessGenerator.addOwnGroups(config, "Roughness");
   metalnessGenerator.addOwnGroups(config, "Metalness");
@@ -15,14 +15,15 @@ std::shared_ptr<Mesh> NoiseTextureGenerator::generate(Mesh* before) {
   auto result = std::make_shared<Mesh>(*before);
 
   auto noiseModule = evaluateGraph(noiseGraph);
-  auto colorFunction = [&](Eigen::Vector3f worldPos) {
-    if (noiseModule == nullptr) return coloring.colorFromValue(0);
+  auto heightFunction = [&](Eigen::Vector3f worldPos) {
+    if (noiseModule == nullptr) return 0.0f;
     float value = (noiseModule->GetValue(worldPos.x(), worldPos.y(), worldPos.z()) + 1) / 2;
-    return coloring.colorFromValue(value);
+    return std::max(0.0f, std::min(value, 1.0f));
   };
 
-  fillTexture(result->textures, colorFunction);
+  fillTexture(result->textures, heightFunction);
 
+  albedoGenerator.modify(result->textures);
   normalsGenerator.modify(result->textures);
   roughnessGenerator.modify(result->textures);
   metalnessGenerator.modify(result->textures);

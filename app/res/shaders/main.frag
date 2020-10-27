@@ -24,10 +24,45 @@ uniform sampler2D normalMap;
 uniform sampler2D roughnessMap;
 uniform sampler2D metalMap;
 uniform sampler2D ambientOccMap;
+uniform sampler2D displacementMap;
 
 layout(location = 0) out vec4 fragColor;
 
 #define M_PI 3.1415926535897932384626433832795
+
+vec2 ParallaxMap(vec2 texCoords, vec3 viewDir)
+{ 
+    float heightScale = 0.01;
+
+    const float minLayers = 2;
+    const float maxLayers = 64;
+    float numLayers = mix(maxLayers, minLayers, abs(dot(vec3(0.0, 0.0, 1.0), viewDir)));  
+
+    float layerDepth = 1.0 / numLayers;
+    float layerDepthCurrent = 0.0;
+
+    vec2 P = viewDir.xy * heightScale; 
+    vec2 deltaTexCoords = P / numLayers;
+  
+    vec2  texCoordsCurrent = texCoords;
+    float displaceValue = texture(displacementMap, texCoordsCurrent).r;
+      
+    while(layerDepthCurrent < displaceValue)
+    {
+        texCoordsCurrent -= deltaTexCoords;
+        displaceValue = texture(displacementMap, texCoordsCurrent).r;  
+        layerDepthCurrent += layerDepth;  
+    }
+    vec2 texCoordsPrevious = texCoordsCurrent + deltaTexCoords;
+
+    float depthAfter = displaceValue - layerDepthCurrent;
+    float depthBefore = texture(displacementMap, texCoordsPrevious).r - layerDepthCurrent + layerDepth;
+ 
+    float weight = depthAfter / (depthAfter - depthBefore);
+    vec2 finalTexCoords = texCoordsPrevious * weight + texCoordsCurrent * (1.0 - weight);
+
+    return finalTexCoords;
+}
 
 float DistributionGGX(vec3 normal, vec3 halfwayDir, float roughness)
 {
@@ -68,13 +103,18 @@ vec3 FresnelSchlick(float cosTheta, vec3 F0)
 
 void main()
 {
-	vec3 color = pow(texture(albedo, texCoord).rgb, vec3(2.2));
-	float metallic = texture(metalMap, texCoord).r;
-	float roughness = texture(roughnessMap, texCoord).r;
-	float ambientOcc = texture(ambientOccMap, texCoord).r;
-
-	vec3 normal = normalize(texture(normalMap, texCoord).rgb * 2.0 - 1.0);
 	vec3 viewDir = normalize(tangentSpace.camPos - tangentSpace.fragPos);
+
+	vec2 finalTexCoords = ParallaxMap(texCoord, viewDir);
+    if(finalTexCoords.x > 1.0 || finalTexCoords.y > 1.0 || finalTexCoords.x < 0.0 || finalTexCoords.y < 0.0)
+        discard;
+
+	vec3 color = pow(texture(albedo, finalTexCoords).rgb, vec3(2.2));
+	float metallic = texture(metalMap, finalTexCoords).r;
+	float roughness = texture(roughnessMap, finalTexCoords).r;
+	float ambientOcc = texture(ambientOccMap, finalTexCoords).r;
+
+	vec3 normal = normalize(texture(normalMap, finalTexCoords).rgb * 2.0 - 1.0);
 
 	vec3 F0 = vec3(0.04); 
     F0 = mix(F0, color, metallic);

@@ -16,6 +16,7 @@ class NoiseTextureAdder : public TextureAdder {
   std::shared_ptr<Mesh> generate(Mesh* before) override;
 
  private:
+  AlbedoAlphaGenerator albedoGenerator;
   NormalsGenerator normalsGenerator;
   RoughnessGenerator roughnessGenerator;
   MetalnessGenerator metalnessGenerator;
@@ -26,6 +27,5 @@ class NoiseTextureAdder : public TextureAdder {
                          PipelineStageType::TextureAdder, PipelineStage_TexAdd_Noise};
 
   NoiseGraph noiseGraph;
-  GradientAlphaColoring coloring;
 };
 }  // namespace procrock

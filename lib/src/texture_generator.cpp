@@ -3,6 +3,7 @@
 #include <CImg.h>
 #include <igl/barycentric_coordinates.h>
 
+#include <iostream>
 #include <thread>
 
 #include "utils/vector.h"
@@ -23,16 +24,14 @@ std::shared_ptr<Mesh> TextureGenerator::run(Mesh* before) {
 bool TextureGenerator::isMoveable() const { return false; }
 bool TextureGenerator::isRemovable() const { return false; }
 
-void TextureGenerator::fillTexture(TextureGroup& texGroup,
-                                   std::function<Eigen::Vector3i(Eigen::Vector3f)> colorFunction) {
+void TextureGenerator::fillTexture(TextureGroup& texGroup, TextureFunction texFunction) {
   int index = 0;
-  auto& dataToFill = texGroup.albedoData;
-  dataToFill.resize(3 * texGroup.width * texGroup.height);
+  auto& dataToFill = texGroup.displacementData;
+  dataToFill.resize(texGroup.width * texGroup.height);
   std::fill(dataToFill.begin(), dataToFill.end(), 0);
 
   const auto threadCount = std::thread::hardware_concurrency();
   int batchCount = dataToFill.size() / threadCount;
-  while (batchCount % 3 != 0) batchCount++;
 
   std::vector<std::thread> threads;
   auto data = utils::splitVector(dataToFill, batchCount);
@@ -45,7 +44,7 @@ void TextureGenerator::fillTexture(TextureGroup& texGroup,
     int startIndex = sizeAcc;
     threads.emplace_back(std::thread(&TextureGenerator::fillPart, std::ref(data[i]), startIndex,
                                      startIndex + data[i].size(), std::cref(texGroup.worldMap),
-                                     colorFunction));
+                                     texFunction));
   }
 
   dataToFill.clear();
@@ -55,24 +54,20 @@ void TextureGenerator::fillTexture(TextureGroup& texGroup,
   }
 }
 
-void TextureGenerator::fillPart(std::vector<unsigned char>& data, int startIndex, int endIndex,
+void TextureGenerator::fillPart(std::vector<float>& data, int startIndex, int endIndex,
                                 const std::vector<TextureGroup::WorldMapEntry>& entries,
-                                std::function<Eigen::Vector3i(Eigen::Vector3f)> colorFunction) {
-  for (int i = startIndex; i < endIndex; i += 3) {
-    const auto& pixel = entries[i / 3];
+                                TextureFunction texFunction) {
+  for (int i = startIndex; i < endIndex; i++) {
+    const auto& pixel = entries[i];
 
-    Eigen::Vector3i acc{0, 0, 0};
+    float acc = 0;
     for (const auto& pos : pixel.positions) {
-      acc += colorFunction(pos);
+      acc += texFunction(pos);
     }
 
     int index = i - startIndex;
-    if (pixel.positions.size() != 0) {
-      acc /= pixel.positions.size();
-      data[index] = acc.x();
-      data[index + 1] = acc.y();
-      data[index + 2] = acc.z();
-    }
+    acc /= pixel.positions.size();
+    data[index] = acc;
   }
 }
 }  // namespace procrock

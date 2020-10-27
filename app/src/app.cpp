@@ -165,6 +165,7 @@ bool App::init() {
   rockTexGroup["roughnessMap"] = std::make_unique<RenderTexture>();
   rockTexGroup["metalMap"] = std::make_unique<RenderTexture>();
   rockTexGroup["ambientOccMap"] = std::make_unique<RenderTexture>();
+  rockTexGroup["displacementMap"] = std::make_unique<RenderTexture>();
 
   groundTexGroups[0]["albedo"] = std::make_unique<RenderTexture>();
   groundTexGroups[0]["albedo"]->loadFromFile(resourcesPath + "/textures/gravel/albedo.jpg");
@@ -177,6 +178,7 @@ bool App::init() {
   groundTexGroups[0]["ambientOccMap"]->loadFromFile(resourcesPath +
                                                     "/textures/gravel/ambientOcc.jpg");
   groundTexGroups[0]["metalMap"] = std::make_unique<RenderTexture>();
+  groundTexGroups[0]["displacementMap"] = std::make_unique<RenderTexture>();
 
   groundTexGroups[1]["albedo"] = std::make_unique<RenderTexture>();
   groundTexGroups[1]["albedo"]->loadFromFile(resourcesPath + "/textures/mossy/albedo.jpg");
@@ -188,6 +190,7 @@ bool App::init() {
   groundTexGroups[1]["ambientOccMap"]->loadFromFile(resourcesPath +
                                                     "/textures/mossy/ambientOcc.jpg");
   groundTexGroups[1]["metalMap"] = std::make_unique<RenderTexture>();
+  groundTexGroups[1]["displacementMap"] = std::make_unique<RenderTexture>();
 
   InputManager::registerInputReceiver(mainCam.get());
 
@@ -215,6 +218,9 @@ bool App::update() {
                                            mesh->textures.height, 1);
 
     rockTexGroup["ambientOccMap"]->loadFromData(mesh->textures.ambientOccData.data(),
+                                                mesh->textures.width, mesh->textures.height, 1);
+
+    rockTexGroup["displacementMap"]->loadFromData(mesh->textures.displacementData.data(),
                                                 mesh->textures.width, mesh->textures.height, 1);
 
     gui::windows.meshInfoWindow.vertices = mesh->vertices.rows();

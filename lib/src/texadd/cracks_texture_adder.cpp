@@ -32,36 +32,34 @@ std::shared_ptr<Mesh> CracksTextureAdder::generate(Mesh* before) {
   auto colorFunction = [&](Eigen::Vector3f worldPos) {
     float value = (voronoi.GetValue(worldPos.x(), worldPos.y(), worldPos.z()) + 1) / 2;
     int colValue = value * 255;
-    return Eigen::Vector4i{colValue, colValue, colValue, 255};
+    return colValue;
   };
 
   auto texGroup = createAddTexture(*result, colorFunction);
-  CImg<unsigned char> image(texGroup.albedoData.data(), texGroup.albedoChannels, texGroup.width,
-                            texGroup.height);
+  CImg<float> image(texGroup.displacementData.data(), 1, texGroup.width, texGroup.height);
   image.permute_axes("YZCX");
   auto gradients = image.get_gradient("xy", 3);
   int index = 0;
   for (auto& pixel : result->textures.worldMap) {
-    if (pixel.positions.size() > 0) {
-      Eigen::Vector2f value;
-      value.x() = std::abs(gradients[0](index));
-      value.y() = std::abs(gradients[1](index));
+    Eigen::Vector2f value;
+    value.x() = std::abs(gradients[0](index));
+    value.y() = std::abs(gradients[1](index));
 
-      int relValue = ((value.x() + value.y()) / 2.0);
-      relValue = std::min(255, (int)(relValue * strength));
-      texGroup.albedoData[(4 * index)] = relValue;
-      texGroup.albedoData[(4 * index) + 1] = relValue;
-      texGroup.albedoData[(4 * index) + 2] = relValue;
-      texGroup.albedoData[(4 * index) + 3] = relValue;
-    }
+    int relValue = ((value.x() + value.y()) / 2.0);
+    relValue = std::min(255, (int)(relValue * strength));
+    texGroup.displacementData[index] = relValue / 255.0;
     index++;
   }
+
+  GradientAlbedoGenerator albedoGen;
+  albedoGen.modify(texGroup);
 
   GradientNormalsGenerator normalsGen;
   normalsGen.modify(texGroup);
   GreyscaleAmbientOcclusionGenerator ambientOccGen;
   ambientOccGen.modify(texGroup);
 
+  displacementProportion = 1;
   ambientOccProportion = 1;
   normalProportion = 1;
   addTextures(*result, texGroup);

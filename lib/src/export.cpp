@@ -39,5 +39,14 @@ void exportMesh(Mesh& mesh, const std::string filepath) {
   std::string ambientOccFile = base + "ambientOcc.png";
   stbi_write_png(ambientOccFile.c_str(), mesh.textures.width, mesh.textures.height, 1,
                  mesh.textures.ambientOccData.data(), 0);
+
+  std::vector<unsigned char> displacementExport;
+  displacementExport.resize(mesh.textures.displacementData.size());
+  for (int i = 0; i < mesh.textures.displacementData.size(); i++) {
+    displacementExport[i] = mesh.textures.displacementData[i] * 255;
+  }
+  std::string displacementFile = base + "displacement.png";
+  stbi_write_png(displacementFile.c_str(), mesh.textures.width, mesh.textures.height, 1,
+                 displacementExport.data(), 0);
 }
 }  // namespace procrock

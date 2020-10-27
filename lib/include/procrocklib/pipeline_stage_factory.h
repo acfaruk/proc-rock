@@ -50,8 +50,6 @@ std::unique_ptr<Parameterizer> inline createParameterizerFromId(unsigned int id)
 
 std::unique_ptr<TextureGenerator> inline createTextureGeneratorFromId(unsigned int id) {
   switch (id) {
-    case PipelineStage_TexGen_Checkerboard:
-      return std::make_unique<CheckerboardTextureGenerator>();
     case PipelineStage_TexGen_Noise:
       return std::make_unique<NoiseTextureGenerator>();
     case PipelineStage_TexGen_Igneous:

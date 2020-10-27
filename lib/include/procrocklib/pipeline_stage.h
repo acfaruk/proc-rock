@@ -61,11 +61,10 @@ const unsigned int PipelineStage_Par_XATLAS = 1;
 const char* const PipelineStageNames_Par[] = {"LSCM Parameterizer", "xatlas Parameterizer"};
 
 // Texture Generators
-const unsigned int PipelineStage_TexGen_Checkerboard = 0;
-const unsigned int PipelineStage_TexGen_Noise = 1;
-const unsigned int PipelineStage_TexGen_Igneous = 2;
+const unsigned int PipelineStage_TexGen_Noise = 0;
+const unsigned int PipelineStage_TexGen_Igneous = 1;
 
-const char* const PipelineStageNames_TexGen[] = {"Checkerboard", "Noise", "Igneous"};
+const char* const PipelineStageNames_TexGen[] = {"Noise", "Igneous"};
 
 // Texture Adders
 const unsigned int PipelineStage_TexAdd_Noise = 0;

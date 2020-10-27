@@ -21,8 +21,8 @@ class NoiseTextureGenerator : public TextureGenerator {
                          PipelineStageType::TextureGenerator, PipelineStage_TexGen_Noise};
 
   NoiseGraph noiseGraph;
-  GradientColoring coloring;
-
+  
+  AlbedoGenerator albedoGenerator;
   NormalsGenerator normalsGenerator;
   RoughnessGenerator roughnessGenerator;
   MetalnessGenerator metalnessGenerator;
