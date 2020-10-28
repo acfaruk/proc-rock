@@ -23,6 +23,9 @@ target_link_libraries(proc-rock-lib PRIVATE CImg::CImg)
 find_package(nlohmann_json CONFIG REQUIRED)
 target_link_libraries(proc-rock-lib PRIVATE nlohmann_json nlohmann_json::nlohmann_json)
 
+find_package(CGAL CONFIG REQUIRED)
+target_link_libraries(proc-rock-lib PRIVATE CGAL::CGAL)
+
 if (UNIX)
 find_library(NOISELIB noise-static)
 else()

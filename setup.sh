@@ -5,4 +5,4 @@ git checkout tags/2020.07
 
 ./bootstrap-vcpkg.sh
 ./vcpkg update
-./vcpkg install glfw3 tinyfiledialogs imgui[opengl3-glew-binding,glfw-binding] glew glm libigl libnoise cimg nlohmann-json
+./vcpkg install glfw3 tinyfiledialogs imgui[opengl3-glew-binding,glfw-binding] glew glm cgal libigl libnoise cimg nlohmann-json
