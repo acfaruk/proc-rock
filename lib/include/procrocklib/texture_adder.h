@@ -20,13 +20,16 @@ class TextureAdder : public PipelineStage {
   inline bool isFirstRun() const { return firstRun; }
 
  protected:
+  // Maps position to height value
+  typedef std::function<float(Eigen::Vector3f)> TextureFunction;
+
   virtual std::shared_ptr<Mesh> generate(Mesh* before) = 0;
 
-  TextureGroup createAddTexture(Mesh& mesh,
-                                std::function<Eigen::Vector4i(Eigen::Vector3f)> colorFunction);
+  TextureGroup createAddTexture(Mesh& mesh, TextureFunction texFunction);
   void addTextures(Mesh& mesh, TextureGroup& addGroup);
 
  protected:
+  float displacementProportion = 0.5;
   float normalProportion = 0.01;
   float roughnessProportion = 0.1;
   float metalProportion = 1.0;
@@ -39,10 +42,8 @@ class TextureAdder : public PipelineStage {
   } preferred;
 
  private:
-  static void fillPart(std::vector<unsigned char>& data, int startIndex, int endIndex,
-                       const Mesh& mesh,
-                       std::function<Eigen::Vector4i(Eigen::Vector3f)> colorFunction,
-                       PreferredNormalDirectionStruct preferred);
+  static void fillPart(std::vector<float>& data, int startIndex, int endIndex, const Mesh& mesh,
+                       TextureFunction texFunction, PreferredNormalDirectionStruct preferred);
 
   std::shared_ptr<Mesh> mesh;
   bool firstRun = true;

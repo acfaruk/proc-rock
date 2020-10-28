@@ -30,6 +30,7 @@ class IgneousTextureGenerator : public TextureGenerator {
   PerlinNoiseNode* perlinModule;
   TurbulenceNoiseNode* turbulenceModule;
 
+  GradientAlbedoGenerator albedoGenerator;
   GradientNormalsGenerator normalsGenerator;
   GreyscaleRoughnessGenerator roughnessGenerator;
   MetalnessGenerator metalnessGenerator;

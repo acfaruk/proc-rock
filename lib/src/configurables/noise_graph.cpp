@@ -19,7 +19,7 @@ void NoiseGraph::addOwnGroups(Configuration& config, std::string newGroupName,
   group.noiseGraphs.push_back(Configuration::SimpleEntry<NoiseGraph>{
       {"Noise Graph", "Modify the graph that creates the final noise."}, this});
 
-  config.insertToConfigGroups(newGroupName + ": Noise", group);
+  config.insertToConfigGroups(newGroupName, group);
 }
 
 int NoiseGraph::addNode(std::unique_ptr<NoiseNode> node, bool rootNode, Eigen::Vector2f position) {

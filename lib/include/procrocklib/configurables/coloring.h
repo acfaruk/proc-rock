@@ -20,7 +20,6 @@ class GradientColoring : public ValueColoring {
       std::function<bool()> activeFunc = []() { return true; }) override;
   virtual Eigen::Vector3i colorFromValue(float value) override;
 
- private:
   std::map<int, Eigen::Vector3f> colorGradient{{0, {0.827, 0.784, 0.517}},
                                                {30, {0.286, 0.225, 0.225}},
                                                {45, {0.427, 0.395, 0.395}},
@@ -35,7 +34,6 @@ class GradientAlphaColoring : public ValueAlphaColoring {
       std::function<bool()> activeFunc = []() { return true; }) override;
   virtual Eigen::Vector4i colorFromValue(float value) override;
 
- private:
   std::map<int, Eigen::Vector4f> colorGradient{{0, {0.827, 0.784, 0.517, 0.1}},
                                                {30, {0.286, 0.225, 0.225, 0.3}},
                                                {45, {0.427, 0.395, 0.395, 0.45}},

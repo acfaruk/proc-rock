@@ -174,7 +174,7 @@ void Parameterizer::fillTextureMapPatch(TextureMapPatch& patch, const Mesh& mesh
         positionsCache[n] = worldPos;
       }
 
-      patch.worldMap[index].positions.fill(Eigen::Vector3f(0));
+      // patch.worldMap[index].positions.fill(Eigen::Vector3f(0));
       int posIndex = 0;
       for (const auto& pos : positionsCache) {
         patch.worldMap[index].positions[posIndex] = pos;
@@ -192,7 +192,9 @@ void Parameterizer::fillTextureMapPatch(TextureMapPatch& patch, const Mesh& mesh
   Eigen::Vector2f deltaUV1 = uvs[1] - uvs[0];
   Eigen::Vector2f deltaUV2 = uvs[2] - uvs[0];
   float r = 1.0f / (deltaUV1.x() * deltaUV2.y() - deltaUV1.y() * deltaUV2.x());
-  patch.faceTangent = (deltaPos1 * deltaUV2.y() - deltaPos2 * deltaUV1.y()) * r;
+  patch.faceTangent.x() = r * (deltaUV2.y() * deltaPos1.x() - deltaUV1.y() * deltaPos2.x());
+  patch.faceTangent.y() = r * (deltaUV2.y() * deltaPos1.y() - deltaUV1.y() * deltaPos2.y());
+  patch.faceTangent.z() = r * (deltaUV2.y() * deltaPos1.z() - deltaUV1.y() * deltaPos2.z());
 }
 void Parameterizer::applyTextureMapPatches(Mesh& mesh,
                                            const std::vector<TextureMapPatch>& patches) {

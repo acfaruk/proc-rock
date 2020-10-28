@@ -6,8 +6,8 @@
 
 namespace procrock {
 struct TextureGroup {
-  unsigned int width = 256;
-  unsigned int height = 256;
+  unsigned int width = 512;
+  unsigned int height = 512;
   unsigned int albedoChannels = 3;
 
   struct WorldMapEntry {
@@ -17,6 +17,7 @@ struct TextureGroup {
   std::vector<WorldMapEntry> worldMap;
 
   std::vector<unsigned char> albedoData;
+  std::vector<float> displacementData;
   std::vector<unsigned char> normalData;
   std::vector<unsigned char> roughnessData;
   std::vector<unsigned char> metalData;

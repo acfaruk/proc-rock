@@ -4,8 +4,94 @@
 
 namespace procrock {
 
-// Normals
+// Albedo
+void GradientAlphaAlbedoGenerator::addOwnGroups(Configuration& config, std::string newGroupName,
+                                                std::function<bool()> activeFunc) {
+  coloring.addOwnGroups(config, newGroupName, activeFunc);
+}
+void GradientAlphaAlbedoGenerator::modify(TextureGroup& textureGroup) {
+  textureGroup.albedoData.resize(textureGroup.albedoChannels * textureGroup.width *
+                                 textureGroup.height);
 
+  const int channels = textureGroup.albedoChannels;
+
+  for (int i = 0; i < textureGroup.displacementData.size(); i++) {
+    auto color = coloring.colorFromValue(textureGroup.displacementData[i]);
+
+    for (int c = 0; c < channels; c++) {
+      textureGroup.albedoData[channels * i + c] = color(c);
+    }
+  }
+}
+
+AlbedoAlphaGenerator::AlbedoAlphaGenerator() {
+  methods.emplace_back(std::make_unique<GradientAlphaAlbedoGenerator>());
+}
+
+void AlbedoAlphaGenerator::addOwnGroups(Configuration& config, std::string newGroupName,
+                                        std::function<bool()> activeFunc) {
+  Configuration::ConfigurationGroup albedoGroup;
+  albedoGroup.entry = {"General", "General Settings for albedo generation.", activeFunc};
+  albedoGroup.singleChoices.emplace_back(Configuration::SingleChoiceEntry{
+      {"Method", "Choose how to generate the albedo."},
+      {{"Gradient Coloring",
+        "Create albedo based on a color gradient applied to the displacement."}},
+      &choice});
+
+  config.insertToConfigGroups(newGroupName, albedoGroup);
+
+  for (int i = 0; i < methods.size(); i++) {
+    auto func = [=]() { return activeFunc() && choice == i; };
+    methods[i]->addOwnGroups(config, newGroupName, func);
+  }
+}
+void AlbedoAlphaGenerator::modify(TextureGroup& textureGroup) {
+  methods[choice]->modify(textureGroup);
+}
+
+void GradientAlbedoGenerator::addOwnGroups(Configuration& config, std::string newGroupName,
+                                           std::function<bool()> activeFunc) {
+  coloring.addOwnGroups(config, newGroupName, activeFunc);
+}
+void GradientAlbedoGenerator::modify(TextureGroup& textureGroup) {
+  textureGroup.albedoData.resize(textureGroup.albedoChannels * textureGroup.width *
+                                 textureGroup.height);
+
+  const int channels = textureGroup.albedoChannels;
+
+  for (int i = 0; i < textureGroup.displacementData.size(); i++) {
+    auto color = coloring.colorFromValue(textureGroup.displacementData[i]);
+
+    for (int c = 0; c < channels; c++) {
+      textureGroup.albedoData[channels * i + c] = color(c);
+    }
+  }
+}
+
+AlbedoGenerator::AlbedoGenerator() {
+  methods.emplace_back(std::make_unique<GradientAlbedoGenerator>());
+}
+
+void AlbedoGenerator::addOwnGroups(Configuration& config, std::string newGroupName,
+                                   std::function<bool()> activeFunc) {
+  Configuration::ConfigurationGroup albedoGroup;
+  albedoGroup.entry = {"General", "General Settings for albedo generation.", activeFunc};
+  albedoGroup.singleChoices.emplace_back(Configuration::SingleChoiceEntry{
+      {"Method", "Choose how to generate the albedo."},
+      {{"Gradient Coloring",
+        "Create albedo based on a color gradient applied to the displacement."}},
+      &choice});
+
+  config.insertToConfigGroups(newGroupName, albedoGroup);
+
+  for (int i = 0; i < methods.size(); i++) {
+    auto func = [=]() { return activeFunc() && choice == i; };
+    methods[i]->addOwnGroups(config, newGroupName, func);
+  }
+}
+void AlbedoGenerator::modify(TextureGroup& textureGroup) { methods[choice]->modify(textureGroup); }
+
+// Normals
 void GradientNormalsGenerator::addOwnGroups(Configuration& config, std::string newGroupName,
                                             std::function<bool()> activeFunc) {
   Configuration::ConfigurationGroup gradientGroup;
@@ -17,6 +103,11 @@ void GradientNormalsGenerator::addOwnGroups(Configuration& config, std::string n
       1.0f,
       1.9f});
 
+  gradientGroup.singleChoices.emplace_back(Configuration::SingleChoiceEntry{
+      {"Source Channel", "Which texture channel should the gradient be based on?"},
+      {{"Displacement", "Calculate the gradient on the displacement texture."},
+       {"Albedo", "Calculate the gradient on the albedo texture."}},
+      &sourceChannel});
   gradientGroup.singleChoices.emplace_back(
       Configuration::SingleChoiceEntry{{"Mode", "Which gradient method to use."},
                                        {{"BFD", "Backward Finite Differences"},
@@ -37,14 +128,30 @@ void GradientNormalsGenerator::modify(TextureGroup& textureGroup) {
   data.clear();
   data.resize(textureGroup.width * textureGroup.height * 3);
 
-  CImg<unsigned char> image(textureGroup.albedoData.data(), textureGroup.albedoChannels,
-                            textureGroup.width, textureGroup.height);
+  CImg<float> image;
+  switch (sourceChannel) {
+    case 0:
+      image = CImg<float>(textureGroup.displacementData.data(), 1, textureGroup.width,
+                          textureGroup.height);
+      break;
+    case 1:
+      image = CImg<unsigned char>(textureGroup.albedoData.data(), textureGroup.albedoChannels,
+                                  textureGroup.width, textureGroup.height);
+      break;
+    default:
+      assert("Handle all cases!" && 0);
+  }
   image.permute_axes("YZCX");
   auto gradients = image.get_gradient("xy", mode - 1);
+
+  float maxValue = std::max(gradients[0].max(), gradients[1].max());
+  float minValue = std::min(gradients[0].min(), gradients[1].min());
+  float max = std::max(std::abs(minValue), std::abs(maxValue));
+
   for (int i = 0; i < textureGroup.width * textureGroup.height; i++) {
     Eigen::Vector3f normal;
-    normal.x() = (gradients[0](i) + 1024) / 2048.0;
-    normal.y() = (gradients[1](i) + 1024) / 2048.0;
+    normal.x() = (gradients[0](i) + max) / (2 * max);
+    normal.y() = (gradients[1](i) + max) / (2 * max);
     normal.z() = 1 / normalStrength;
     normal = 255 * normal;
 
@@ -68,7 +175,10 @@ void NormalsGenerator::addOwnGroups(Configuration& config, std::string newGroupN
       &choice});
 
   config.insertToConfigGroups(newGroupName, normalGroup);
-  methods[choice]->addOwnGroups(config, newGroupName, activeFunc);
+  for (int i = 0; i < methods.size(); i++) {
+    auto func = [=]() { return activeFunc() && choice == i; };
+    methods[i]->addOwnGroups(config, newGroupName, func);
+  }
 }
 void NormalsGenerator::modify(TextureGroup& textureGroup) { methods[choice]->modify(textureGroup); }
 
@@ -77,9 +187,13 @@ void GreyscaleRoughnessGenerator::addOwnGroups(Configuration& config, std::strin
                                                std::function<bool()> activeFunc) {
   Configuration::ConfigurationGroup greyscaleGroup;
   greyscaleGroup.entry = {"Greyscale Based Roughness",
-                          "Create roughness based on the greyscale values of the image.",
+                          "Create roughness based on the greyscale values of an image.",
                           activeFunc};
-
+  greyscaleGroup.singleChoices.emplace_back(Configuration::SingleChoiceEntry{
+      {"Source Channel", "Which texture channel should the roughness be based on?"},
+      {{"Greyscale Albedo", "Use Greyscale albedo values."},
+       {"Displacement", "Use displacement values."}},
+      &sourceChannel});
   greyscaleGroup.floats.emplace_back(Configuration::BoundedEntry<float>{
       {"Scaling", "Scale the greyscale value."}, &scaling, 0.001f, 4.0f});
   greyscaleGroup.ints.emplace_back(Configuration::BoundedEntry<int>{
@@ -96,20 +210,34 @@ void GreyscaleRoughnessGenerator::modify(TextureGroup& textureGroup) {
   data.clear();
   data.resize(textureGroup.width * textureGroup.height);
 
-  CImg<unsigned char> image(textureGroup.albedoData.data(), textureGroup.albedoChannels,
-                            textureGroup.width, textureGroup.height);
+  CImg<float> image;
+  switch (sourceChannel) {
+    case 0:
+      image = CImg<unsigned char>(textureGroup.albedoData.data(), textureGroup.albedoChannels,
+                                  textureGroup.width, textureGroup.height);
+      break;
+    case 1:
+      image = CImg<float>(textureGroup.displacementData.data(), 1, textureGroup.width,
+                          textureGroup.height);
+      break;
+    default:
+      assert("Handle all cases!" && 0);
+  }
+
   image.permute_axes("YZCX");
 
   for (int i = 0; i < textureGroup.width * textureGroup.height; i++) {
     int value = 0;
     int y = i / textureGroup.width;
     int x = i % textureGroup.width;
-    value = 0.2989 * (float)image(x, y, 0, 0) + 0.5970 * (float)image(x, y, 0, 1) +
-            0.1140 * (float)image(x, y, 0, 2);
-
+    if (sourceChannel == 0) {
+      value = 0.2989 * (float)image(x, y, 0, 0) + 0.5970 * (float)image(x, y, 0, 1) +
+              0.1140 * (float)image(x, y, 0, 2);
+    } else {
+      value = image(x, y) * 255;
+    }
     value *= scaling;
     value += bias;
-
     data[i] = std::min(255, std::max(0, value));
   }
 }
@@ -124,11 +252,14 @@ void RoughnessGenerator::addOwnGroups(Configuration& config, std::string newGrou
   roughnessGroup.entry = {"General", "General Settings for roughness generation.", activeFunc};
   roughnessGroup.singleChoices.emplace_back(Configuration::SingleChoiceEntry{
       {"Method", "Choose how to generate the roughness."},
-      {{"Greyscale", "Create the roughness based on the grayscale values of the albedo."}},
+      {{"Greyscale", "Create the roughness based on the grayscale values of an image / channel."}},
       &choice});
 
   config.insertToConfigGroups(newGroupName, roughnessGroup);
-  methods[choice]->addOwnGroups(config, newGroupName, activeFunc);
+  for (int i = 0; i < methods.size(); i++) {
+    auto func = [=]() { return activeFunc() && choice == i; };
+    methods[i]->addOwnGroups(config, newGroupName, func);
+  }
 }
 void RoughnessGenerator::modify(TextureGroup& textureGroup) {
   methods[choice]->modify(textureGroup);
@@ -142,6 +273,11 @@ void GreyscaleMetalnessGenerator::addOwnGroups(Configuration& config, std::strin
                           "Create metalness based on the greyscale values of the image.",
                           activeFunc};
 
+  greyscaleGroup.singleChoices.emplace_back(Configuration::SingleChoiceEntry{
+      {"Source Channel", "Which texture channel should the metalness be based on?"},
+      {{"Greyscale Albedo", "Use Greyscale albedo values."},
+       {"Displacement", "Use displacement values."}},
+      &sourceChannel});
   greyscaleGroup.floats.emplace_back(Configuration::BoundedEntry<float>{
       {"Scaling", "Scale the greyscale value."}, &scaling, 0.001f, 4.0f});
   greyscaleGroup.ints.emplace_back(Configuration::BoundedEntry<int>{
@@ -168,16 +304,31 @@ void GreyscaleMetalnessGenerator::modify(TextureGroup& textureGroup) {
   data.clear();
   data.resize(textureGroup.width * textureGroup.height);
 
-  CImg<unsigned char> image(textureGroup.albedoData.data(), textureGroup.albedoChannels,
-                            textureGroup.width, textureGroup.height);
+  CImg<float> image;
+  switch (sourceChannel) {
+    case 0:
+      image = CImg<unsigned char>(textureGroup.albedoData.data(), textureGroup.albedoChannels,
+                                  textureGroup.width, textureGroup.height);
+      break;
+    case 1:
+      image = CImg<float>(textureGroup.displacementData.data(), 1, textureGroup.width,
+                          textureGroup.height);
+      break;
+    default:
+      assert("Handle all cases!" && 0);
+  }
   image.permute_axes("YZCX");
 
   for (int i = 0; i < textureGroup.width * textureGroup.height; i++) {
     int value = 0;
     int y = i / textureGroup.width;
     int x = i % textureGroup.width;
-    value = 0.2989 * (float)image(x, y, 0, 0) + 0.5970 * (float)image(x, y, 0, 1) +
-            0.1140 * (float)image(x, y, 0, 2);
+    if (sourceChannel == 0) {
+      value = 0.2989 * (float)image(x, y, 0, 0) + 0.5970 * (float)image(x, y, 0, 1) +
+              0.1140 * (float)image(x, y, 0, 2);
+    } else {
+      value = image(x, y) * 255;
+    }
 
     value *= scaling;
     value += bias;
@@ -212,7 +363,10 @@ void MetalnessGenerator::addOwnGroups(Configuration& config, std::string newGrou
       &choice});
 
   config.insertToConfigGroups(newGroupName, metalnessGroup);
-  methods[choice]->addOwnGroups(config, newGroupName, activeFunc);
+  for (int i = 0; i < methods.size(); i++) {
+    auto func = [=]() { return activeFunc() && choice == i; };
+    methods[i]->addOwnGroups(config, newGroupName, func);
+  }
 }
 void MetalnessGenerator::modify(TextureGroup& textureGroup) {
   methods[choice]->modify(textureGroup);
@@ -226,7 +380,11 @@ void GreyscaleAmbientOcclusionGenerator::addOwnGroups(Configuration& config,
   greyscaleGroup.entry = {"Greyscale Based Ambient Occlusion",
                           "Create ambient occlusion based on the greyscale values of the image.",
                           activeFunc};
-
+  greyscaleGroup.singleChoices.emplace_back(Configuration::SingleChoiceEntry{
+      {"Source Channel", "Which texture channel should the occlusion be based on?"},
+      {{"Displacement", "Use displacement values."},
+       {"Greyscale Albedo", "Use Greyscale albedo values."}},
+      &sourceChannel});
   greyscaleGroup.floats.emplace_back(Configuration::BoundedEntry<float>{
       {"Scaling", "Scale the greyscale value."}, &scaling, 0.001f, 4.0f});
   greyscaleGroup.ints.emplace_back(Configuration::BoundedEntry<int>{
@@ -241,16 +399,31 @@ void GreyscaleAmbientOcclusionGenerator::modify(TextureGroup& textureGroup) {
   data.clear();
   data.resize(textureGroup.width * textureGroup.height);
 
-  CImg<unsigned char> image(textureGroup.albedoData.data(), textureGroup.albedoChannels,
-                            textureGroup.width, textureGroup.height);
+  CImg<float> image;
+  switch (sourceChannel) {
+    case 0:
+      image = CImg<float>(textureGroup.displacementData.data(), 1, textureGroup.width,
+                          textureGroup.height);
+      break;
+    case 1:
+      image = CImg<unsigned char>(textureGroup.albedoData.data(), textureGroup.albedoChannels,
+                                  textureGroup.width, textureGroup.height);
+      break;
+    default:
+      assert("Handle all cases!" && 0);
+  }
   image.permute_axes("YZCX");
 
   for (int i = 0; i < textureGroup.width * textureGroup.height; i++) {
     int value = 0;
     int y = i / textureGroup.width;
     int x = i % textureGroup.width;
-    value = 0.2989 * (float)image(x, y, 0, 0) + 0.5970 * (float)image(x, y, 0, 1) +
-            0.1140 * (float)image(x, y, 0, 2);
+    if (sourceChannel == 1) {
+      value = 0.2989 * (float)image(x, y, 0, 0) + 0.5970 * (float)image(x, y, 0, 1) +
+              0.1140 * (float)image(x, y, 0, 2);
+    } else {
+      value = image(x, y) * 255;
+    }
 
     value *= scaling;
     value += bias;
@@ -272,9 +445,13 @@ void AmbientOcclusionGenerator::addOwnGroups(Configuration& config, std::string 
       &choice});
 
   config.insertToConfigGroups(newGroupName, ambOccGroup);
-  methods[choice]->addOwnGroups(config, newGroupName, activeFunc);
+  for (int i = 0; i < methods.size(); i++) {
+    auto func = [=]() { return activeFunc() && choice == i; };
+    methods[i]->addOwnGroups(config, newGroupName, func);
+  }
 }
 void AmbientOcclusionGenerator::modify(TextureGroup& textureGroup) {
   methods[choice]->modify(textureGroup);
 }
+
 }  // namespace procrock

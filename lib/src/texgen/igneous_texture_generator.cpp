@@ -63,14 +63,14 @@ std::shared_ptr<Mesh> IgneousTextureGenerator::generate(Mesh* before) {
 
   auto noiseModule = evaluateGraph(noiseGraph);
   auto colorFunction = [&](Eigen::Vector3f worldPos) {
-    if (noiseModule == nullptr) return coloring.colorFromValue(0);
+    if (noiseModule == nullptr) return 0.0f;
     float value = (noiseModule->GetValue(worldPos.x(), worldPos.y(), worldPos.z()) + 1) / 2;
-    Eigen::Vector3f intermediate = coloring.colorFromValue(value).cast<float>();
-
-    return Eigen::Vector3i((intermediate / std::max((mineralComposition * 7), 1.0f)).cast<int>());
+    return value / std::max((mineralComposition * 7), 1.0f);
   };
 
   fillTexture(result->textures, colorFunction);
+
+  albedoGenerator.modify(result->textures);
   normalsGenerator.modify(result->textures);
   roughnessGenerator.modify(result->textures);
   metalnessGenerator.modify(result->textures);

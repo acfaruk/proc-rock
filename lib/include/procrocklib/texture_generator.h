@@ -19,16 +19,18 @@ class TextureGenerator : public PipelineStage {
 
   inline bool isFirstRun() const { return firstRun; }
 
+  // Maps position to height value
+  typedef std::function<float(Eigen::Vector3f)> TextureFunction;
+
  protected:
   virtual std::shared_ptr<Mesh> generate(Mesh* before) = 0;
 
-  void fillTexture(TextureGroup& texGroup,
-                   std::function<Eigen::Vector3i(Eigen::Vector3f)> colorFunction);
+  void fillTexture(TextureGroup& texGroup, TextureFunction texFunction);
 
  private:
-  static void fillPart(std::vector<unsigned char>& data, int startIndex, int endIndex,
+  static void fillPart(std::vector<float>& data, int startIndex, int endIndex,
                        const std::vector<TextureGroup::WorldMapEntry>& entries,
-                       std::function<Eigen::Vector3i(Eigen::Vector3f)> colorFunction);
+                       TextureFunction texFunction);
   std::shared_ptr<Mesh> mesh;
   bool firstRun = true;
 };

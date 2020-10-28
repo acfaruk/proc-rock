@@ -15,6 +15,8 @@ TextureAdder::TextureAdder(bool hideConfigurables) {
   Configuration::ConfigurationGroup proportionGroup;
   proportionGroup.entry = {"Channel Proportions", "Decide how much a channel affects the texture."};
   proportionGroup.floats.emplace_back(Configuration::BoundedEntry<float>{
+      {"Displacement", "How much the displacement is affected."}, &displacementProportion, 0, 1});
+  proportionGroup.floats.emplace_back(Configuration::BoundedEntry<float>{
       {"Normals", "How much the normals are affected."}, &normalProportion, 0, 1});
   proportionGroup.floats.emplace_back(Configuration::BoundedEntry<float>{
       {"Roughness", "How much the roughness is affected."}, &roughnessProportion, 0, 1});
@@ -58,8 +60,7 @@ std::shared_ptr<Mesh> TextureAdder::run(Mesh* before) {
 bool TextureAdder::isMoveable() const { return true; }
 bool TextureAdder::isRemovable() const { return true; }
 
-TextureGroup TextureAdder::createAddTexture(
-    Mesh& mesh, std::function<Eigen::Vector4i(Eigen::Vector3f)> colorFunction) {
+TextureGroup TextureAdder::createAddTexture(Mesh& mesh, TextureFunction texFunction) {
   int index = 0;
 
   const auto& texGroup = mesh.textures;
@@ -69,14 +70,13 @@ TextureGroup TextureAdder::createAddTexture(
   addGroup.width = texGroup.width;
   addGroup.height = texGroup.height;
 
-  auto& addTexture = addGroup.albedoData;
+  auto& addTexture = addGroup.displacementData;
 
-  addTexture.resize(addGroup.albedoChannels * addGroup.width * addGroup.height);
+  addTexture.resize(addGroup.width * addGroup.height);
   std::fill(addTexture.begin(), addTexture.end(), 0);
 
   const auto threadCount = std::thread::hardware_concurrency();
   int batchCount = addTexture.size() / threadCount;
-  while (batchCount % 4 != 0) batchCount++;
 
   std::vector<std::thread> threads;
   auto data = utils::splitVector(addTexture, batchCount);
@@ -88,7 +88,7 @@ TextureGroup TextureAdder::createAddTexture(
     }
     int startIndex = sizeAcc;
     threads.emplace_back(std::thread(&TextureAdder::fillPart, std::ref(data[i]), startIndex,
-                                     startIndex + data[i].size(), std::cref(mesh), colorFunction,
+                                     startIndex + data[i].size(), std::cref(mesh), texFunction,
                                      preferred));
   }
 
@@ -105,6 +105,38 @@ void TextureAdder::addTextures(Mesh& mesh, TextureGroup& addGroup) {
   auto& texGroup = mesh.textures;
 
   for (int i = 0; i < addTexture.size() / 4; i++) {
+    if (preferred.enabled) {
+      auto& pixel = mesh.textures.worldMap[i];
+
+      Eigen::Vector3i textureNormalSample = {texGroup.normalData[(3 * i)],
+                                             texGroup.normalData[(3 * i) + 1],
+                                             texGroup.normalData[(3 * i) + 2]};
+      Eigen::Vector3f textureNormal = (textureNormalSample.cast<float>() / 255) * 2.0;
+      textureNormal = textureNormal.array() - 1;
+      Eigen::Vector3f faceTangent = mesh.faceTangents.row(pixel.face).cast<float>().normalized();
+      Eigen::Vector3f faceNormal = mesh.faceNormals.row(pixel.face).cast<float>().normalized();
+
+      Eigen::DiagonalMatrix<float, 3> diagMatrix(1, 1, 1);
+      Eigen::Matrix3f normalMatrix = diagMatrix.toDenseMatrix().inverse();
+
+      Eigen::Vector3f T = normalMatrix * faceTangent;
+      Eigen::Vector3f N = normalMatrix * faceNormal;
+      Eigen::Vector3f B = N.cross(T);
+
+      Eigen::Matrix3f TBN;
+      TBN.col(0) = T.normalized();
+      TBN.col(1) = B.normalized();
+      TBN.col(2) = N.normalized();
+
+      Eigen::Vector3f normal = (TBN * textureNormal.normalized()).normalized();
+
+      Eigen::Vector3f distance = normal - preferred.direction.normalized();
+      float norm = distance.norm();
+      float prefer = norm * preferred.strength;
+      int value = std::min(255.0f, addTexture[(4 * i) + 3] / prefer);
+      addTexture[(4 * i) + 3] = value;
+    }
+
     float alpha = addTexture[(4 * i) + 3] / 255.0f;
     texGroup.albedoData[(3 * i)] =
         texGroup.albedoData[(3 * i)] * (1.0f - alpha) + addTexture[(4 * i)] * alpha;
@@ -112,6 +144,12 @@ void TextureAdder::addTextures(Mesh& mesh, TextureGroup& addGroup) {
         texGroup.albedoData[(3 * i) + 1] * (1.0f - alpha) + addTexture[(4 * i) + 1] * alpha;
     texGroup.albedoData[(3 * i) + 2] =
         texGroup.albedoData[(3 * i) + 2] * (1.0f - alpha) + addTexture[(4 * i) + 2] * alpha;
+
+    if (!addGroup.displacementData.empty()) {
+      float displacementAlpha = displacementProportion * alpha;
+      texGroup.displacementData[i] = texGroup.displacementData[i] * (1.0f - displacementAlpha) +
+                                     addGroup.displacementData[i] * displacementAlpha;
+    }
 
     if (!addGroup.normalData.empty()) {
       float normalAlpha = normalProportion * alpha;
@@ -125,90 +163,39 @@ void TextureAdder::addTextures(Mesh& mesh, TextureGroup& addGroup) {
 
     if (!addGroup.roughnessData.empty()) {
       float roughnessAlpha = roughnessProportion * alpha;
-      texGroup.roughnessData[i + 0] = texGroup.roughnessData[i + 0] * (1.0f - roughnessAlpha) +
-                                      addGroup.roughnessData[i] * roughnessAlpha;
-      texGroup.roughnessData[i + 1] = texGroup.roughnessData[i + 1] * (1.0f - roughnessAlpha) +
-                                      addGroup.roughnessData[i + 1] * roughnessAlpha;
-      texGroup.roughnessData[i + 2] = texGroup.roughnessData[i + 2] * (1.0f - roughnessAlpha) +
-                                      addGroup.roughnessData[i + 2] * roughnessAlpha;
+      texGroup.roughnessData[i] = texGroup.roughnessData[i] * (1.0f - roughnessAlpha) +
+                                  addGroup.roughnessData[i] * roughnessAlpha;
     }
 
     if (!addGroup.metalData.empty()) {
       float metalAlpha = metalProportion * alpha;
-      texGroup.metalData[i + 0] =
-          texGroup.metalData[i] * (1.0f - metalAlpha) + addGroup.metalData[i + 0] * metalAlpha;
-      texGroup.metalData[i] * (1.0f - metalAlpha) + addGroup.metalData[i + 0] * metalAlpha;
-      texGroup.metalData[i + 1] =
-          texGroup.metalData[i + 1] * (1.0f - metalAlpha) + addGroup.metalData[i + 1] * metalAlpha;
-      texGroup.metalData[i + 2] =
-          texGroup.metalData[i + 2] * (1.0f - metalAlpha) + addGroup.metalData[i + 2] * metalAlpha;
+      texGroup.metalData[i] =
+          texGroup.metalData[i] * (1.0f - metalAlpha) + addGroup.metalData[i] * metalAlpha;
     }
 
     if (!addGroup.ambientOccData.empty()) {
       float ambientOccAlpha = ambientOccProportion * alpha;
-      texGroup.ambientOccData[i + 0] = texGroup.ambientOccData[i + 0] * (1.0f - ambientOccAlpha) +
-                                       addGroup.ambientOccData[i + 0] * ambientOccAlpha;
-      texGroup.ambientOccData[i + 1] = texGroup.ambientOccData[i + 1] * (1.0f - ambientOccAlpha) +
-                                       addGroup.ambientOccData[i + 1] * ambientOccAlpha;
-      texGroup.ambientOccData[i + 2] = texGroup.ambientOccData[i + 2] * (1.0f - ambientOccAlpha) +
-                                       addGroup.ambientOccData[i + 2] * ambientOccAlpha;
+      texGroup.ambientOccData[i] = texGroup.ambientOccData[i] * (1.0f - ambientOccAlpha) +
+                                   addGroup.ambientOccData[i] * ambientOccAlpha;
     }
   }
 }
-void TextureAdder::fillPart(std::vector<unsigned char>& data, int startIndex, int endIndex,
-                            const Mesh& mesh,
-                            std::function<Eigen::Vector4i(Eigen::Vector3f)> colorFunction,
+void TextureAdder::fillPart(std::vector<float>& data, int startIndex, int endIndex,
+                            const Mesh& mesh, TextureFunction texFunction,
                             PreferredNormalDirectionStruct preferred) {
   const auto& texGroup = mesh.textures;
 
-  for (int i = startIndex; i < endIndex; i += 4) {
-    const auto& pixel = texGroup.worldMap[i / 4];
+  for (int i = startIndex; i < endIndex; i++) {
+    const auto& pixel = texGroup.worldMap[i];
 
-    Eigen::Vector4i acc{0, 0, 0, 0};
+    float acc = 0;
     for (const auto& pos : pixel.positions) {
-      acc += colorFunction(pos);
+      acc += texFunction(pos);
     }
 
     int index = i - startIndex;
-    if (pixel.positions.size() != 0) {
-      acc /= pixel.positions.size();
-      data[(index)] = acc.x();
-      data[(index) + 1] = acc.y();
-      data[(index) + 2] = acc.z();
-
-      if (preferred.enabled) {
-        Eigen::Vector3i textureNormalSample = {texGroup.normalData[(3 * i)],
-                                               texGroup.normalData[(3 * i) + 1],
-                                               texGroup.normalData[(3 * i) + 2]};
-        Eigen::Vector3f textureNormal = (textureNormalSample.cast<float>() / 255) * 2.0;
-        textureNormal = textureNormal.array() - 1;
-        Eigen::Vector3f faceTangent = mesh.faceTangents.row(pixel.face).cast<float>().normalized();
-        Eigen::Vector3f faceNormal = mesh.faceNormals.row(pixel.face).cast<float>().normalized();
-
-        Eigen::DiagonalMatrix<float, 3> diagMatrix(1, 1, 1);
-        Eigen::Matrix3f normalMatrix = diagMatrix.toDenseMatrix().inverse();
-
-        Eigen::Vector3f T = normalMatrix * faceTangent;
-        Eigen::Vector3f N = normalMatrix * faceNormal;
-        Eigen::Vector3f B = N.cross(T);
-
-        Eigen::Matrix3f TBN;
-        TBN.col(0) = T.normalized();
-        TBN.col(1) = B.normalized();
-        TBN.col(2) = N.normalized();
-
-        Eigen::Vector3f normal = (TBN * textureNormal.normalized()).normalized();
-
-        Eigen::Vector3f distance = normal - preferred.direction.normalized();
-        float norm = distance.norm();
-        float prefer = norm * preferred.strength;
-        int value = std::min(255.0f, acc.w() / prefer);
-        data[(index) + 3] = value;
-      } else {
-        data[(index) + 3] = acc.w();
-      }
-    }
-    index++;
+    acc /= pixel.positions.size();
+    data[index] = acc;
   }
 }
 }  // namespace procrock

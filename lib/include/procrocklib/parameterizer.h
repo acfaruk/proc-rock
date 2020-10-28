@@ -9,7 +9,7 @@ class Parameterizer : public PipelineStage {
  public:
   Parameterizer();
 
-  int textureSizeChoice = 1;
+  int textureSizeChoice = 2;
 
   virtual std::shared_ptr<Mesh> run(Mesh* before = nullptr) override;
 
