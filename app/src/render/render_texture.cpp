@@ -2,6 +2,8 @@
 
 #include <stb_image.h>
 
+#include <iostream>
+
 #include "gl_includes.h"
 
 namespace procrock {

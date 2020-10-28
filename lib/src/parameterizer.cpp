@@ -174,7 +174,7 @@ void Parameterizer::fillTextureMapPatch(TextureMapPatch& patch, const Mesh& mesh
         positionsCache[n] = worldPos;
       }
 
-      patch.worldMap[index].positions.fill(Eigen::Vector3f(0));
+      // patch.worldMap[index].positions.fill(Eigen::Vector3f(0));
       int posIndex = 0;
       for (const auto& pos : positionsCache) {
         patch.worldMap[index].positions[posIndex] = pos;

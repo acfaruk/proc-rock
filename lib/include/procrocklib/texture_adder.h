@@ -42,9 +42,8 @@ class TextureAdder : public PipelineStage {
   } preferred;
 
  private:
-  static void fillPart(std::vector<float>& data, int startIndex, int endIndex,
-                       const Mesh& mesh, TextureFunction texFunction,
-                       PreferredNormalDirectionStruct preferred);
+  static void fillPart(std::vector<float>& data, int startIndex, int endIndex, const Mesh& mesh,
+                       TextureFunction texFunction, PreferredNormalDirectionStruct preferred);
 
   std::shared_ptr<Mesh> mesh;
   bool firstRun = true;

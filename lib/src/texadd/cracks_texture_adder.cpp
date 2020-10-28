@@ -51,7 +51,12 @@ std::shared_ptr<Mesh> CracksTextureAdder::generate(Mesh* before) {
     index++;
   }
 
-  GradientAlbedoGenerator albedoGen;
+  GradientAlphaAlbedoGenerator albedoGen;
+  auto& gradient = albedoGen.coloring.colorGradient;
+  gradient.clear();
+  gradient.insert({0, {1, 1, 1, 0}});
+  gradient.insert({100, {1, 1, 1, 1}});
+
   albedoGen.modify(texGroup);
 
   GradientNormalsGenerator normalsGen;

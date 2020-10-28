@@ -177,8 +177,10 @@ bool App::init() {
   groundTexGroups[0]["ambientOccMap"] = std::make_unique<RenderTexture>();
   groundTexGroups[0]["ambientOccMap"]->loadFromFile(resourcesPath +
                                                     "/textures/gravel/ambientOcc.jpg");
-  groundTexGroups[0]["metalMap"] = std::make_unique<RenderTexture>();
   groundTexGroups[0]["displacementMap"] = std::make_unique<RenderTexture>();
+  groundTexGroups[0]["displacementMap"]->loadFromFile(resourcesPath +
+                                                      "/textures/gravel/displacement.jpg");
+  groundTexGroups[0]["metalMap"] = std::make_unique<RenderTexture>();
 
   groundTexGroups[1]["albedo"] = std::make_unique<RenderTexture>();
   groundTexGroups[1]["albedo"]->loadFromFile(resourcesPath + "/textures/mossy/albedo.jpg");
@@ -189,8 +191,11 @@ bool App::init() {
   groundTexGroups[1]["ambientOccMap"] = std::make_unique<RenderTexture>();
   groundTexGroups[1]["ambientOccMap"]->loadFromFile(resourcesPath +
                                                     "/textures/mossy/ambientOcc.jpg");
-  groundTexGroups[1]["metalMap"] = std::make_unique<RenderTexture>();
   groundTexGroups[1]["displacementMap"] = std::make_unique<RenderTexture>();
+  groundTexGroups[1]["displacementMap"]->loadFromFile(resourcesPath +
+                                                      "/textures/mossy/displacement.jpg");
+
+  groundTexGroups[1]["metalMap"] = std::make_unique<RenderTexture>();
 
   InputManager::registerInputReceiver(mainCam.get());
 
@@ -221,7 +226,7 @@ bool App::update() {
                                                 mesh->textures.width, mesh->textures.height, 1);
 
     rockTexGroup["displacementMap"]->loadFromData(mesh->textures.displacementData.data(),
-                                                mesh->textures.width, mesh->textures.height, 1);
+                                                  mesh->textures.width, mesh->textures.height, 1);
 
     gui::windows.meshInfoWindow.vertices = mesh->vertices.rows();
     gui::windows.meshInfoWindow.faces = mesh->faces.rows();

@@ -106,8 +106,6 @@ void main()
 	vec3 viewDir = normalize(tangentSpace.camPos - tangentSpace.fragPos);
 
 	vec2 finalTexCoords = ParallaxMap(texCoord, viewDir);
-    if(finalTexCoords.x > 1.0 || finalTexCoords.y > 1.0 || finalTexCoords.x < 0.0 || finalTexCoords.y < 0.0)
-        discard;
 
 	vec3 color = pow(texture(albedo, finalTexCoords).rgb, vec3(2.2));
 	float metallic = texture(metalMap, finalTexCoords).r;

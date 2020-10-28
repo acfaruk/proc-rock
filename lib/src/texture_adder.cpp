@@ -105,6 +105,38 @@ void TextureAdder::addTextures(Mesh& mesh, TextureGroup& addGroup) {
   auto& texGroup = mesh.textures;
 
   for (int i = 0; i < addTexture.size() / 4; i++) {
+    if (preferred.enabled) {
+      auto& pixel = mesh.textures.worldMap[i];
+
+      Eigen::Vector3i textureNormalSample = {texGroup.normalData[(3 * i)],
+                                             texGroup.normalData[(3 * i) + 1],
+                                             texGroup.normalData[(3 * i) + 2]};
+      Eigen::Vector3f textureNormal = (textureNormalSample.cast<float>() / 255) * 2.0;
+      textureNormal = textureNormal.array() - 1;
+      Eigen::Vector3f faceTangent = mesh.faceTangents.row(pixel.face).cast<float>().normalized();
+      Eigen::Vector3f faceNormal = mesh.faceNormals.row(pixel.face).cast<float>().normalized();
+
+      Eigen::DiagonalMatrix<float, 3> diagMatrix(1, 1, 1);
+      Eigen::Matrix3f normalMatrix = diagMatrix.toDenseMatrix().inverse();
+
+      Eigen::Vector3f T = normalMatrix * faceTangent;
+      Eigen::Vector3f N = normalMatrix * faceNormal;
+      Eigen::Vector3f B = N.cross(T);
+
+      Eigen::Matrix3f TBN;
+      TBN.col(0) = T.normalized();
+      TBN.col(1) = B.normalized();
+      TBN.col(2) = N.normalized();
+
+      Eigen::Vector3f normal = (TBN * textureNormal.normalized()).normalized();
+
+      Eigen::Vector3f distance = normal - preferred.direction.normalized();
+      float norm = distance.norm();
+      float prefer = norm * preferred.strength;
+      int value = std::min(255.0f, addTexture[(4 * i) + 3] / prefer);
+      addTexture[(4 * i) + 3] = value;
+    }
+
     float alpha = addTexture[(4 * i) + 3] / 255.0f;
     texGroup.albedoData[(3 * i)] =
         texGroup.albedoData[(3 * i)] * (1.0f - alpha) + addTexture[(4 * i)] * alpha;
@@ -164,38 +196,6 @@ void TextureAdder::fillPart(std::vector<float>& data, int startIndex, int endInd
     int index = i - startIndex;
     acc /= pixel.positions.size();
     data[index] = acc;
-
-    /*if (preferred.enabled) {
-      Eigen::Vector3i textureNormalSample = {texGroup.normalData[(3 * i)],
-                                             texGroup.normalData[(3 * i) + 1],
-                                             texGroup.normalData[(3 * i) + 2]};
-      Eigen::Vector3f textureNormal = (textureNormalSample.cast<float>() / 255) * 2.0;
-      textureNormal = textureNormal.array() - 1;
-      Eigen::Vector3f faceTangent = mesh.faceTangents.row(pixel.face).cast<float>().normalized();
-      Eigen::Vector3f faceNormal = mesh.faceNormals.row(pixel.face).cast<float>().normalized();
-
-      Eigen::DiagonalMatrix<float, 3> diagMatrix(1, 1, 1);
-      Eigen::Matrix3f normalMatrix = diagMatrix.toDenseMatrix().inverse();
-
-      Eigen::Vector3f T = normalMatrix * faceTangent;
-      Eigen::Vector3f N = normalMatrix * faceNormal;
-      Eigen::Vector3f B = N.cross(T);
-
-      Eigen::Matrix3f TBN;
-      TBN.col(0) = T.normalized();
-      TBN.col(1) = B.normalized();
-      TBN.col(2) = N.normalized();
-
-      Eigen::Vector3f normal = (TBN * textureNormal.normalized()).normalized();
-
-      Eigen::Vector3f distance = normal - preferred.direction.normalized();
-      float norm = distance.norm();
-      float prefer = norm * preferred.strength;
-      int value = std::min(255.0f, acc.w() / prefer);
-      data[(index) + 3] = value;
-    } else {
-      data[(index) + 3] = acc.w();
-    }*/
   }
 }
 }  // namespace procrock
