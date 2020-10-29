@@ -32,6 +32,8 @@ std::unique_ptr<Modifier> inline createModifierFromId(unsigned int id) {
       return std::make_unique<DecimateModifier>();
     case PipelineStage_Mod_DisplaceAlongNormals:
       return std::make_unique<DisplaceAlongNormalsModifier>();
+    case PipelineStage_Mod_CutPlane:
+      return std::make_unique<CutPlaneModifier>();
     default:
       assert(0 && "make sure all stages are handled!");
   }

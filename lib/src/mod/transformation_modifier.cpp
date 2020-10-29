@@ -5,6 +5,8 @@
 
 #include <Eigen/Geometry>
 
+#include "utils/mesh.h"
+
 namespace procrock {
 TransformationModifier::TransformationModifier() {
   Configuration::ConfigurationGroup group;
@@ -24,19 +26,7 @@ TransformationModifier::TransformationModifier() {
 std::shared_ptr<Mesh> TransformationModifier::modify(Mesh& mesh) {
   auto result = std::make_shared<Mesh>(mesh);
 
-  Eigen::Transform<double, 3, Eigen::Affine> transform;
-
-  Eigen::AngleAxisd xAxisRot = Eigen::AngleAxisd(rotation.x(), Eigen::Vector3d{1.0, 0.0, 0.0});
-  Eigen::AngleAxisd yAxisRot = Eigen::AngleAxisd(rotation.y(), Eigen::Vector3d{0.0, 1.0, 0.0});
-  Eigen::AngleAxisd zAxisRot = Eigen::AngleAxisd(rotation.z(), Eigen::Vector3d{0.0, 0.0, 1.0});
-
-  transform =
-      Eigen::Translation3d(translation.cast<double>()) * Eigen::Scaling(scale.cast<double>());
-  transform = transform * xAxisRot * yAxisRot * zAxisRot;
-
-  for (int i = 0; i < mesh.vertices.rows(); i++) {
-    result->vertices.row(i) = transform * (Eigen::Vector3d)result->vertices.row(i);
-  }
+  utils::transform(*result, translation, scale, rotation);
 
   igl::per_vertex_normals(result->vertices, result->faces, result->normals);
   return result;
