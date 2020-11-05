@@ -1,6 +1,6 @@
 git clone https://github.com/microsoft/vcpkg.git
 cd vcpkg
-git checkout tags/2020.07
+git checkout tags/2020.11-1
 call bootstrap-vcpkg.bat
 
 SET VCPKG_DEFAULT_TRIPLET=x64-windows
