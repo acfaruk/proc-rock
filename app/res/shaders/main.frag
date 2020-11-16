@@ -1,16 +1,11 @@
 #version 330 core
 
-in vec3 vertexColor;
-in vec3 vertexNormal;
-in vec3 vertexTangent;
-in vec3 fragPos;
-in vec2 texCoord;
-
-in TangentSpace {
-	vec3[20] lightPos;
-	vec3 camPos;
-	vec3 fragPos;
-} tangentSpace;
+in vec3 fColor;
+in vec3 fNormal;
+in vec3 fTangent;
+in vec3 fBinormal;
+in vec3 fPosition;
+in vec2 fTexCoord;
 
 uniform vec3 camPos;
 uniform int lightCount;
@@ -34,10 +29,9 @@ vec2 ParallaxMap(vec2 texCoords, vec3 viewDir)
 { 
     float heightScale = 0.01;
 
-    const float minLayers = 2;
+    const float minLayers = 4;
     const float maxLayers = 64;
     float numLayers = mix(maxLayers, minLayers, abs(dot(vec3(0.0, 0.0, 1.0), viewDir)));  
-
     float layerDepth = 1.0 / numLayers;
     float layerDepthCurrent = 0.0;
 
@@ -60,7 +54,6 @@ vec2 ParallaxMap(vec2 texCoords, vec3 viewDir)
  
     float weight = depthAfter / (depthAfter - depthBefore);
     vec2 finalTexCoords = texCoordsPrevious * weight + texCoordsCurrent * (1.0 - weight);
-
     return finalTexCoords;
 }
 
@@ -103,26 +96,32 @@ vec3 FresnelSchlick(float cosTheta, vec3 F0)
 
 void main()
 {
-	vec3 viewDir = normalize(tangentSpace.camPos - tangentSpace.fragPos);
+    mat3 TBN = transpose(mat3(fTangent, fBinormal, fNormal));
+	vec3 viewDir = normalize(camPos - fPosition);
 
-	vec2 finalTexCoords = ParallaxMap(texCoord, viewDir);
+    vec3 tCamPos = TBN * camPos;
+    vec3 tPos = TBN * fPosition;
 
+	vec2 finalTexCoords = ParallaxMap(fTexCoord, normalize(tCamPos - tPos));
+    
 	vec3 color = pow(texture(albedo, finalTexCoords).rgb, vec3(2.2));
 	float metallic = texture(metalMap, finalTexCoords).r;
 	float roughness = texture(roughnessMap, finalTexCoords).r;
 	float ambientOcc = texture(ambientOccMap, finalTexCoords).r;
 
 	vec3 normal = normalize(texture(normalMap, finalTexCoords).rgb * 2.0 - 1.0);
+    normal = normalize(normal * TBN);
+
 
 	vec3 F0 = vec3(0.04); 
     F0 = mix(F0, color, metallic);
 
 	vec3 lightOut = vec3(0.0);
 	for (int i = 0; i < lightCount; i++) {
-		vec3 lightDir = normalize(tangentSpace.lightPos[i] - tangentSpace.fragPos);
+		vec3 lightDir = normalize(lightPos[i] - fPosition);
 		vec3 halfwayDir = normalize(lightDir + viewDir);
 
-		float distance = length(tangentSpace.lightPos[i] - tangentSpace.fragPos);
+		float distance = length(lightPos[i] - fPosition);
 		float attenuation = 1.0 / (distance * distance);
 		vec3 radiance = lightColors[i] * lightIntensities[i] * attenuation;
 
