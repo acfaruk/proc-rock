@@ -1,5 +1,7 @@
 #include "texgen/igneous_texture_generator.h"
 
+#include "utils/texturing.h"
+
 namespace procrock {
 IgneousTextureGenerator::IgneousTextureGenerator() {
   noiseGraph.clear();
@@ -68,7 +70,7 @@ std::shared_ptr<Mesh> IgneousTextureGenerator::generate(Mesh* before) {
     return value / std::max((mineralComposition * 7), 1.0f);
   };
 
-  fillTexture(result->textures, colorFunction);
+  utils::fillFloatTexture(result->textures, colorFunction, result->textures.displacementData);
 
   albedoGenerator.modify(result->textures);
   normalsGenerator.modify(result->textures);

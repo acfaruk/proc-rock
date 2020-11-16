@@ -68,28 +68,28 @@ jobs:
     - name: cmake make
       run: cmake --build build/ --target proc-rock
   
-  build-windows:
-    runs-on: windows-latest
+  # build-windows:
+  #   runs-on: windows-latest
     
-    steps:
-    - uses: actions/checkout@v2
+  #   steps:
+  #   - uses: actions/checkout@v2
     
-    - name: cache setup
-      id: cache-setup
-      uses: actions/cache@v2
-      with:
-        path: vcpkg
-        key: ${{ runner.os }}-vcpkg-${{ hashFiles('setup.bat') }}
+  #   - name: cache setup
+  #     id: cache-setup
+  #     uses: actions/cache@v2
+  #     with:
+  #       path: vcpkg
+  #       key: ${{ runner.os }}-vcpkg-${{ hashFiles('setup.bat') }}
 
-    - name: setup
-      if: steps.cache-setup.outputs.cache-hit != 'true'
-      run: ./setup.bat
+  #   - name: setup
+  #     if: steps.cache-setup.outputs.cache-hit != 'true'
+  #     run: ./setup.bat
 
-    - name: mkdir
-      run: mkdir build
+  #   - name: mkdir
+  #     run: mkdir build
 
-    - name: cmake build
-      run: cmake -Bbuild
+  #   - name: cmake build
+  #     run: cmake -Bbuild
 
-    - name: cmake make
-      run: cmake --build build/ --target proc-rock
+  #   - name: cmake make
+  #     run: cmake --build build/ --target proc-rock

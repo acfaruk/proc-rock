@@ -2,6 +2,7 @@
 
 #include <procrocklib/configurables/coloring.h>
 #include <procrocklib/configurables/configurable_extender.h>
+#include <procrocklib/configurables/noise_graph.h>
 #include <procrocklib/mesh.h>
 
 namespace procrock {
@@ -45,6 +46,16 @@ class GradientAlbedoGenerator : public TextureGroupModifier {
       std::function<bool()> activeFunc = []() { return true; }) override;
   virtual void modify(TextureGroup& textureGroup) override;
 
+  GradientColoring coloring;
+};
+
+class NoiseGradientAlbedoGenerator : public TextureGroupModifier {
+  virtual void addOwnGroups(
+      Configuration& config, std::string newGroupName,
+      std::function<bool()> activeFunc = []() { return true; }) override;
+  virtual void modify(TextureGroup& textureGroup) override;
+
+  NoiseGraph noiseGraph;
   GradientColoring coloring;
 };
 

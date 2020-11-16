@@ -2,6 +2,8 @@
 
 #include <CImg.h>
 
+#include "utils/texturing.h"
+
 namespace procrock {
 
 // Albedo
@@ -68,7 +70,39 @@ void GradientAlbedoGenerator::modify(TextureGroup& textureGroup) {
   }
 }
 
+void NoiseGradientAlbedoGenerator::addOwnGroups(Configuration& config, std::string newGroupName,
+                                                std::function<bool()> activeFunc) {
+  noiseGraph.addOwnGroups(config, newGroupName, activeFunc);
+  coloring.addOwnGroups(config, newGroupName, activeFunc);
+}
+
+void NoiseGradientAlbedoGenerator::modify(TextureGroup& textureGroup) {
+  textureGroup.albedoData.resize(textureGroup.albedoChannels * textureGroup.width *
+                                 textureGroup.height);
+
+  auto noiseModule = evaluateGraph(noiseGraph);
+  auto floatFunction = [&](Eigen::Vector3f worldPos) {
+    if (noiseModule == nullptr) return 0.0f;
+    float value = (noiseModule->GetValue(worldPos.x(), worldPos.y(), worldPos.z()) + 1) / 2;
+    return std::max(0.0f, std::min(value, 1.0f));
+  };
+
+  std::vector<float> tmpFloatTexture;
+  utils::fillFloatTexture(textureGroup, floatFunction, tmpFloatTexture);
+
+  const int channels = textureGroup.albedoChannels;
+
+  for (int i = 0; i < tmpFloatTexture.size(); i++) {
+    auto color = coloring.colorFromValue(tmpFloatTexture[i]);
+
+    for (int c = 0; c < channels; c++) {
+      textureGroup.albedoData[channels * i + c] = color(c);
+    }
+  }
+}
+
 AlbedoGenerator::AlbedoGenerator() {
+  methods.emplace_back(std::make_unique<NoiseGradientAlbedoGenerator>());
   methods.emplace_back(std::make_unique<GradientAlbedoGenerator>());
 }
 
@@ -78,7 +112,9 @@ void AlbedoGenerator::addOwnGroups(Configuration& config, std::string newGroupNa
   albedoGroup.entry = {"General", "General Settings for albedo generation.", activeFunc};
   albedoGroup.singleChoices.emplace_back(Configuration::SingleChoiceEntry{
       {"Method", "Choose how to generate the albedo."},
-      {{"Gradient Coloring",
+      {{"Noise Gradient Coloring",
+        "Create albedo based on a color gradient applied to noise values."},
+       {"Gradient Coloring",
         "Create albedo based on a color gradient applied to the displacement."}},
       &choice});
 

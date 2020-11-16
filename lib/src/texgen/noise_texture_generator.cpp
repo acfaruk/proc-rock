@@ -1,5 +1,7 @@
 #include "texgen/noise_texture_generator.h"
 
+#include "utils/texturing.h"
+
 namespace procrock {
 NoiseTextureGenerator::NoiseTextureGenerator() {
   noiseGraph.addOwnGroups(config, "Displacement / Height");
@@ -21,7 +23,7 @@ std::shared_ptr<Mesh> NoiseTextureGenerator::generate(Mesh* before) {
     return std::max(0.0f, std::min(value, 1.0f));
   };
 
-  fillTexture(result->textures, heightFunction);
+  utils::fillFloatTexture(result->textures, heightFunction, result->textures.displacementData);
 
   albedoGenerator.modify(result->textures);
   normalsGenerator.modify(result->textures);
