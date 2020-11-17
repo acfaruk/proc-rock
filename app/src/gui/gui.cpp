@@ -363,8 +363,6 @@ void updateWindows(const Shader& shader) {
 }
 
 void updatePipelineStage(Pipeline& pipeline, PipelineStage& stage) {
-  stage.setChanged(false);
-
   bool current = currentStageEditor.current == &stage;
   auto info = stage.getInfo();
   std::string id = stage.getId();
