@@ -72,6 +72,8 @@ struct TextureWindow : public Window {};
 
 struct ViewSettingsWindow : public Window {
   bool wireframe = false;
+  bool enableParallax = true;
+  float parallaxDepth = 0.01;
   glm::vec3 clearColor = glm::vec3(0.6);
   struct Light {
     float yaw = 0;

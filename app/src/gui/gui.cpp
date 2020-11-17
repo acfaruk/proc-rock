@@ -306,6 +306,9 @@ void updateWindows(const Shader& shader) {
     ImGui::SetNextWindowSizeConstraints(ImVec2(sideBar.width, 0), ImVec2(FLT_MAX, FLT_MAX));
     ImGui::Begin("View Settings", &windows.viewSettingsWindow.show);
     ImGui::Checkbox("Wireframe Mode", &windows.viewSettingsWindow.wireframe);
+    ImGui::Checkbox("Enable Parallax", &windows.viewSettingsWindow.enableParallax);
+    ImGui::SliderFloat("Parallax Depth", &windows.viewSettingsWindow.parallaxDepth, 0.001, 0.1);
+
     ImGui::ColorEdit3("Clear Color", &windows.viewSettingsWindow.clearColor[0]);
 
     const char* items[] = {"Default", "Single", "Well Lit"};
@@ -579,7 +582,9 @@ void updateConfigurable(PipelineStage& stage) {
       }
     }
   }
-  stage.setChanged(changed);
+  if (changed) {
+    stage.setChanged(changed);
+  }
 }
 
 void helpMarker(std::string& description) {

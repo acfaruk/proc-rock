@@ -256,6 +256,8 @@ bool App::update() {
 
   mainShader->uniforms3f["ambientColor"] = gui::windows.viewSettingsWindow.ambientColor;
   mainShader->uniformsi["lightCount"] = pointLights.size();
+  mainShader->uniformsi["enableParallax"] = gui::windows.viewSettingsWindow.enableParallax;
+  mainShader->uniformsf["parallaxDepth"] = gui::windows.viewSettingsWindow.parallaxDepth;
 
   groundPlane->setPosition(glm::vec3{0, gui::windows.viewSettingsWindow.groundPlane.height, 0});
 

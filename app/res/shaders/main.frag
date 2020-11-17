@@ -13,6 +13,8 @@ uniform vec3[20] lightPos;
 uniform vec3[20] lightColors;
 uniform float[20] lightIntensities;
 uniform vec3 ambientColor;
+uniform bool enableParallax;
+uniform float parallaxDepth;
 
 uniform sampler2D albedo;
 uniform sampler2D normalMap;
@@ -27,7 +29,7 @@ layout(location = 0) out vec4 fragColor;
 
 vec2 ParallaxMap(vec2 texCoords, vec3 viewDir)
 { 
-    float heightScale = 0.01;
+    float heightScale = parallaxDepth;
 
     const float minLayers = 4;
     const float maxLayers = 64;
@@ -102,8 +104,13 @@ void main()
     vec3 tCamPos = TBN * camPos;
     vec3 tPos = TBN * fPosition;
 
-	vec2 finalTexCoords = ParallaxMap(fTexCoord, normalize(tCamPos - tPos));
-    
+    vec2 finalTexCoords = vec2(0, 0);
+    if (enableParallax){
+        finalTexCoords = ParallaxMap(fTexCoord, normalize(tCamPos - tPos));
+    } else {
+        finalTexCoords = fTexCoord;
+    }
+
 	vec3 color = pow(texture(albedo, finalTexCoords).rgb, vec3(2.2));
 	float metallic = texture(metalMap, finalTexCoords).r;
 	float roughness = texture(roughnessMap, finalTexCoords).r;
