@@ -9,7 +9,7 @@ layout(location = 4) in vec2 vTexCoords;
 out vec3 fColor;
 out vec3 fNormal;
 out vec3 fTangent;
-out vec3 fBinormal;
+out vec3 fBitangent;
 out vec3 fPosition;
 out vec2 fTexCoord;
 
@@ -30,8 +30,10 @@ void main(){
 	fNormal = normalize(normalMatrix * vNormal);
 	fTangent = normalize(normalMatrix * vTangent);
 	fTangent = normalize(fTangent - dot(fTangent, fNormal) * fNormal);
+//	fBitangent = normalize(normalMatrix * vBitangent);
 //	fBinormal = normalize(normalMatrix*cross(vNormal, vTangent));
-	fBinormal = cross(fNormal, fTangent);
+	fBitangent = cross(fNormal, fTangent);
+	
 
 	if (vertexColored){
 		fColor = vColor;

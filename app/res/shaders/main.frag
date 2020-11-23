@@ -3,7 +3,7 @@
 in vec3 fColor;
 in vec3 fNormal;
 in vec3 fTangent;
-in vec3 fBinormal;
+in vec3 fBitangent;
 in vec3 fPosition;
 in vec2 fTexCoord;
 
@@ -32,8 +32,9 @@ vec2 ParallaxMap(vec2 texCoords, vec3 viewDir)
     float heightScale = parallaxDepth;
 
     const float minLayers = 4;
-    const float maxLayers = 64;
-    float numLayers = mix(maxLayers, minLayers, abs(dot(vec3(0.0, 0.0, 1.0), viewDir)));  
+    const float maxLayers = 32;
+//    float numLayers = mix(maxLayers, minLayers, abs(dot(vec3(0.0, 0.0, 1.0), viewDir)));   // this crashes nvidia driver sometimes?
+    float numLayers = 16;
     float layerDepth = 1.0 / numLayers;
     float layerDepthCurrent = 0.0;
 
@@ -49,6 +50,8 @@ vec2 ParallaxMap(vec2 texCoords, vec3 viewDir)
         displaceValue = texture(displacementMap, texCoordsCurrent).r;  
         layerDepthCurrent += layerDepth;  
     }
+//    return texCoordsCurrent;
+
     vec2 texCoordsPrevious = texCoordsCurrent + deltaTexCoords;
 
     float depthAfter = displaceValue - layerDepthCurrent;
@@ -98,17 +101,12 @@ vec3 FresnelSchlick(float cosTheta, vec3 F0)
 
 void main()
 {
-    mat3 TBN = transpose(mat3(fTangent, fBinormal, fNormal));
+    mat3 TBN = mat3(fTangent, fBitangent, fNormal);
 	vec3 viewDir = normalize(camPos - fPosition);
 
-    vec3 tCamPos = TBN * camPos;
-    vec3 tPos = TBN * fPosition;
-
-    vec2 finalTexCoords = vec2(0, 0);
+    vec2 finalTexCoords = fTexCoord;
     if (enableParallax){
-        finalTexCoords = ParallaxMap(fTexCoord, normalize(tCamPos - tPos));
-    } else {
-        finalTexCoords = fTexCoord;
+        finalTexCoords = ParallaxMap(fTexCoord, normalize(transpose(TBN) * viewDir));
     }
 
 	vec3 color = pow(texture(albedo, finalTexCoords).rgb, vec3(2.2));
@@ -117,7 +115,7 @@ void main()
 	float ambientOcc = texture(ambientOccMap, finalTexCoords).r;
 
 	vec3 normal = normalize(texture(normalMap, finalTexCoords).rgb * 2.0 - 1.0);
-    normal = normalize(normal * TBN);
+    normal = normalize(TBN * normal);
 
 
 	vec3 F0 = vec3(0.04); 
