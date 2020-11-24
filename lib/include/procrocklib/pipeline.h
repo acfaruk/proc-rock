@@ -44,7 +44,19 @@ class Pipeline {
   void saveToFile(const std::string filePath);
   void loadFromFile(const std::string filePath);
 
-  void exportCurrent(const std::string filePath);
+  struct ExportSettings {
+    bool exportLODs = false;
+    int lodCount = 3;
+
+    bool exportAlbedo = true;
+    bool exportNormals = true;
+    bool exportRoughness = true;
+    bool exportMetal = true;
+    bool exportDisplacement = true;
+    bool exportAmbientOcc = true;
+  };
+
+  void exportCurrent(const std::string filePath, ExportSettings settings);
 
  private:
   std::unique_ptr<Generator> generator;

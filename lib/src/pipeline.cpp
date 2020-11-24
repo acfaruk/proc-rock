@@ -267,6 +267,45 @@ void Pipeline::loadFromFile(const std::string filePath) {
   }
 }
 
-void Pipeline::exportCurrent(const std::string filePath) { exportMesh(*currentMesh, filePath); }
+void Pipeline::exportCurrent(const std::string filePath, ExportSettings settings) {
+  if (outputEnabled) *outputStream << "Exporting rock..." << std::endl;
+  if (!settings.exportLODs) {
+    exportMesh(*currentMesh, filePath, settings.exportAlbedo, settings.exportNormals,
+               settings.exportRoughness, settings.exportMetal, settings.exportDisplacement,
+               settings.exportAmbientOcc);
+  } else {
+    int originalTextureSizeChoice = parameterizer->textureSizeChoice;
+
+    auto decimateMod = std::make_unique<DecimateModifier>();
+    auto* mod = decimateMod.get();
+
+    addModifier(std::move(decimateMod));
+
+    for (int i = settings.lodCount - 1; i >= 0; i--) {
+      if (outputEnabled) *outputStream << "Working on LOD " << i << "..." << std::endl;
+      mod->relativeValue = std::pow(0.5, settings.lodCount - i - 1);
+      parameterizer->textureSizeChoice = std::max(0, parameterizer->textureSizeChoice - 1);
+
+      auto oldOutput = outputEnabled;
+      outputEnabled = false;
+      generator->setChanged(true);
+      getCurrentMesh();
+      outputEnabled = oldOutput;
+
+      const size_t period_idx = filePath.rfind('.');
+      std::string changedPath = filePath;
+      changedPath.insert(period_idx, "-lod" + std::to_string(i));
+      exportMesh(*currentMesh, changedPath, settings.exportAlbedo, settings.exportNormals,
+                 settings.exportRoughness, settings.exportMetal, settings.exportDisplacement,
+                 settings.exportAmbientOcc);
+      if (outputEnabled) *outputStream << "Exported LOD " << i << "..." << std::endl;
+    }
+
+    parameterizer->textureSizeChoice = originalTextureSizeChoice;
+    removePipelineStage(mod);
+  }
+
+  if (outputEnabled) *outputStream << "Export finished..." << std::endl;
+}
 
 }  // namespace procrock

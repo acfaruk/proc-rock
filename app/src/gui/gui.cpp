@@ -54,6 +54,7 @@ void update(glm::uvec2 windowSize, Framebuffer& viewerFrame, Pipeline& pipeline,
   updateViewer(windowSize, viewerFrame);
   updateStatusBar(windowSize);
   updateWindows(shader);
+  updatePopups(pipeline);
 
   if (noiseNodeEditor.current != nullptr) {
     noiseNodeEditor.position =
@@ -88,11 +89,7 @@ void updateMainMenu(Pipeline& pipeline) {
       }
 
       if (ImGui::MenuItem("Export")) {
-        const char* patterns[] = {"*.obj"};
-        const char* file = tinyfd_saveFileDialog("Export mesh", "", 1, patterns, NULL);
-        if (file != NULL) {
-          pipeline.exportCurrent(file);
-        }
+        windows.exportPopup.show = true;
       }
 
       ImGui::EndMenu();
@@ -362,6 +359,56 @@ void updateWindows(const Shader& shader) {
     ImGui::NextColumn();
     ImGui::Text(std::to_string(windows.meshInfoWindow.textureHeight).c_str());
     ImGui::End();
+  }
+}
+
+void updatePopups(Pipeline& pipeline) {
+  ImVec2 center(ImGui::GetIO().DisplaySize.x * 0.5f, ImGui::GetIO().DisplaySize.y * 0.5f);
+  ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+  if (windows.exportPopup.show) {
+    ImGui::OpenPopup("Export");
+    windows.exportPopup.show = false;
+  }
+
+  if (ImGui::BeginPopupModal("Export", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+    auto& p = windows.exportPopup;
+    ImGui::Text("Export the current rock to disk.\n\n");
+    ImGui::Separator();
+
+    ImGui::Checkbox("Export LODs", &p.exportLODs);
+
+    if (windows.exportPopup.exportLODs) {
+      ImGui::SliderInt("LOD Count", &p.lodCount, 2, 6);
+    }
+
+    ImGui::Separator();
+    ImGui::Text("Select the texture channels to export: ");
+    ImGui::Checkbox("Albedo", &p.exportAlbedo);
+    ImGui::Checkbox("Normals", &p.exportNormals);
+    ImGui::Checkbox("Roughness", &p.exportRoughness);
+    ImGui::Checkbox("Metal", &p.exportMetal);
+    ImGui::Checkbox("Displacement", &p.exportDisplacement);
+    ImGui::Checkbox("Ambient Occ.", &p.exportAmbientOcc);
+
+    ImGui::Separator();
+
+    if (ImGui::Button("Export", ImVec2(120, 0))) {
+      const char* patterns[] = {"*.obj"};
+      const char* file = tinyfd_saveFileDialog("Export mesh", "", 1, patterns, NULL);
+      if (file != NULL) {
+        pipeline.exportCurrent(
+            file, {p.exportLODs, p.lodCount, p.exportAlbedo, p.exportNormals, p.exportRoughness,
+                   p.exportMetal, p.exportDisplacement, p.exportAmbientOcc});
+      }
+      ImGui::CloseCurrentPopup();
+    }
+    ImGui::SetItemDefaultFocus();
+    ImGui::SameLine();
+    if (ImGui::Button("Cancel", ImVec2(120, 0))) {
+      ImGui::CloseCurrentPopup();
+    }
+    ImGui::EndPopup();
   }
 }
 

@@ -26,6 +26,7 @@ void udpateCurrentStageEditor(glm::uvec2 windowSize);
 void updateViewer(glm::uvec2 windowSize, Framebuffer& viewerFrame);
 void updateStatusBar(glm::uvec2 windowSize);
 void updateWindows(const Shader& shader);
+void updatePopups(Pipeline& pipeline);
 
 void updatePipelineStage(Pipeline& pipeline, PipelineStage& stage);
 void updateConfigurable(PipelineStage& stage);
@@ -100,10 +101,23 @@ struct MeshInfoWindow : public Window {
   int textureHeight = 0;
 };
 
+struct ExportPopup : public Window {
+  bool exportLODs = false;
+  int lodCount = 3;
+
+  bool exportAlbedo = true;
+  bool exportNormals = true;
+  bool exportRoughness = true;
+  bool exportMetal = true;
+  bool exportDisplacement = true;
+  bool exportAmbientOcc = true;
+};
+
 struct Windows {
   TextureWindow textureWindow;
   ViewSettingsWindow viewSettingsWindow;
   MeshInfoWindow meshInfoWindow;
+  ExportPopup exportPopup;
 };
 
 extern MainMenu mainMenu;
