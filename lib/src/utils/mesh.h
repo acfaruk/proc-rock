@@ -6,6 +6,7 @@
 #include <mesh.h>
 
 #include <Eigen/Core>
+#include <Eigen/Geometry>
 
 namespace procrock {
 namespace utils {

@@ -17,6 +17,8 @@ std::unique_ptr<Generator> inline createGeneratorFromId(unsigned int id) {
       return std::make_unique<IcosahedronGenerator>();
     case PipelineStage_Gen_Pyramid:
       return std::make_unique<PyramidGenerator>();
+    case PipelineStage_Gen_SkinSurface:
+      return std::make_unique<SkinSurfaceGenerator>();
     default:
       assert(0 && "make sure all stages are handled!");
   }
