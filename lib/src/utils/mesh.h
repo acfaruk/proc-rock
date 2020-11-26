@@ -2,7 +2,7 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Point_3.h>
-#include <CGAL/Surface_mesh/Surface_mesh.h>
+#include <CGAL/Surface_mesh.h>
 #include <mesh.h>
 
 #include <Eigen/Core>
@@ -14,7 +14,6 @@ namespace utils {
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
-
 typedef CGAL::Surface_mesh<Point> CGAL_Mesh;
 
 void inline convert(const Mesh& from, CGAL_Mesh& to) {

@@ -4,11 +4,7 @@
 #include <CGAL/make_skin_surface_mesh_3.h>
 #include <CGAL/point_generators_d.h>
 
-#include <fstream>
-
 #include "igl/per_vertex_normals.h"
-#include "igl/writeOBJ.h"
-#include "utils/mesh.h"
 
 namespace procrock {
 SkinSurfaceGenerator::SkinSurfaceGenerator() {
