@@ -1,5 +1,6 @@
 #pragma once
 #include <CGAL/Random.h>
+#include <procrocklib/configurables/noise_graph.h>
 #include <procrocklib/generator.h>
 
 namespace procrock {
@@ -11,9 +12,13 @@ class SkinSurfaceGenerator : public Generator {
 
   int pointAmount = 20;
   int seed = 0;
+  int resolution = 10;
 
-  float pointSize = 0.2;
+  float pointSize = 0.1;
   float shrinkFactor = 0.5;
+  float noiseRange = 0.05;
+
+  NoiseGraph noiseGraph;
 
   virtual PipelineStageInfo& getInfo() override;
 

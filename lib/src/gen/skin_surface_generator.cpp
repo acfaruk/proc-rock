@@ -17,11 +17,12 @@ SkinSurfaceGenerator::SkinSurfaceGenerator() {
 
   group.singleChoices.emplace_back(Configuration::SingleChoiceEntry{
       {"Distribution Method", "Select how the points should be distributed."},
-      {{"RNG", "Simple random points in a geometric shape."}},
+      {{"RNG", "Simple random points in a geometric shape."},
+       {"Noise", "Points distributed according to a noise graph."}},
       &distributionMethod});
 
   group.floats.emplace_back(Configuration::BoundedEntry<float>{
-      {"Point Size", "Size of the balls to be combined."}, &pointSize, 0.01, 0.4});
+      {"Point Size", "Size of the balls to be combined."}, &pointSize, 0.001, 0.4});
   group.floats.emplace_back(Configuration::BoundedEntry<float>{
       {"Shrink Factor", "Shrink Factor used in the CGAL package."}, &shrinkFactor, 0.01, 1.0});
 
@@ -31,12 +32,25 @@ SkinSurfaceGenerator::SkinSurfaceGenerator() {
                          RNGdistrFunc};
 
   RNGdistrGroup.ints.emplace_back(Configuration::BoundedEntry<int>{
-      {"Points", "Amount of points to generate."}, &pointAmount, 10, 100});
+      {"Points", "Amount of points to generate."}, &pointAmount, 10, 1000});
   RNGdistrGroup.ints.emplace_back(
       Configuration::BoundedEntry<int>{{"Seed", "Seed for "}, &seed, 0, 1000000});
 
+  Configuration::ConfigurationGroup noiseDistrGroup;
+  auto noiseDistrFunc = [&] { return distributionMethod == 1; };
+  noiseDistrGroup.entry = {"Noise Distribution", "Points distributed according to a noise graph.",
+                           noiseDistrFunc};
+
+  noiseDistrGroup.noiseGraphs.emplace_back(
+      Configuration::SimpleEntry<NoiseGraph>{{"Noise", "Noise Graph to be used."}, &noiseGraph});
+  noiseDistrGroup.ints.emplace_back(Configuration::BoundedEntry<int>{
+      {"Resolution", "Resolution of noise scanning."}, &resolution, 5, 20});
+  noiseDistrGroup.floats.emplace_back(Configuration::BoundedEntry<float>{
+      {"Noise Range", "+- this value of 0 is considered a point."}, &noiseRange, 0.001, 0.1});
+
   config.insertToConfigGroups("General", group);
   config.insertToConfigGroups("General", RNGdistrGroup);
+  config.insertToConfigGroups("General", noiseDistrGroup);
 }
 
 std::shared_ptr<Mesh> SkinSurfaceGenerator::generate() {
@@ -52,13 +66,37 @@ std::shared_ptr<Mesh> SkinSurfaceGenerator::generate() {
 
   auto result = std::make_shared<Mesh>();
   std::list<Weighted_point> points;
-  CGAL::Random rng(seed);
 
-  CGAL::Random_points_in_ball_d<Point> gen(3, 1, rng);
+  if (distributionMethod == 0) {
+    CGAL::Random rng(seed);
+    CGAL::Random_points_in_ball_d<Point> gen(3, 1, rng);
 
-  for (int i = 0; i < pointAmount; i++) {
-    points.push_back(Weighted_point(Bare_point(gen->x(), gen->y(), gen->z()), pointSize));
-    gen++;
+    for (int i = 0; i < pointAmount; i++) {
+      points.push_back(Weighted_point(Bare_point(gen->x(), gen->y(), gen->z()), pointSize));
+      gen++;
+    }
+
+  } else if (distributionMethod == 1) {
+    Eigen::Vector3d originPoint{-0.5, -0.5, -0.5};
+    auto noise = evaluateGraph(noiseGraph);
+    for (int z = 0; z < resolution; z++) {
+      for (int y = 0; y < resolution; y++) {
+        for (int x = 0; x < resolution; x++) {
+          int index = x + y * resolution + z * resolution * resolution;
+          Eigen::Vector3d point = originPoint;
+          point.x() += x * (1.0 / resolution);
+          point.y() += y * (1.0 / resolution);
+          point.z() += z * (1.0 / resolution);
+
+          double value = noise->GetValue(point.x(), point.y(), point.z());
+
+          if (value < noiseRange && value > -noiseRange) {
+            points.push_back(
+                Weighted_point(Bare_point(point.x(), point.y(), point.z()), pointSize));
+          }
+        }
+      }
+    }
   }
 
   Polyhedron p;
