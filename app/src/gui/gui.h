@@ -104,6 +104,7 @@ struct MeshInfoWindow : public Window {
 struct ExportPopup : public Window {
   bool exportLODs = false;
   int lodCount = 3;
+  bool lodTextures = false;
 
   bool exportAlbedo = true;
   bool exportNormals = true;

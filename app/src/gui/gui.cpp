@@ -380,6 +380,10 @@ void updatePopups(Pipeline& pipeline) {
 
     if (windows.exportPopup.exportLODs) {
       ImGui::SliderInt("LOD Count", &p.lodCount, 2, 6);
+      ImGui::Checkbox("LOD Textures", &p.lodTextures);
+      ImGui::SameLine();
+      std::string lodTexturesHelp = "Lower LODs get smaller textures.";
+      helpMarker(lodTexturesHelp);
     }
 
     ImGui::Separator();
@@ -398,8 +402,8 @@ void updatePopups(Pipeline& pipeline) {
       const char* file = tinyfd_saveFileDialog("Export mesh", "", 1, patterns, NULL);
       if (file != NULL) {
         pipeline.exportCurrent(
-            file, {p.exportLODs, p.lodCount, p.exportAlbedo, p.exportNormals, p.exportRoughness,
-                   p.exportMetal, p.exportDisplacement, p.exportAmbientOcc});
+            file, {p.exportLODs, p.lodCount, p.lodTextures, p.exportAlbedo, p.exportNormals,
+                   p.exportRoughness, p.exportMetal, p.exportDisplacement, p.exportAmbientOcc});
       }
       ImGui::CloseCurrentPopup();
     }

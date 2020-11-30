@@ -284,7 +284,6 @@ void Pipeline::exportCurrent(const std::string filePath, ExportSettings settings
     for (int i = settings.lodCount - 1; i >= 0; i--) {
       if (outputEnabled) *outputStream << "Working on LOD " << i << "..." << std::endl;
       mod->relativeValue = std::pow(0.5, settings.lodCount - i - 1);
-      parameterizer->textureSizeChoice = std::max(0, parameterizer->textureSizeChoice - 1);
 
       auto oldOutput = outputEnabled;
       outputEnabled = false;
@@ -299,6 +298,9 @@ void Pipeline::exportCurrent(const std::string filePath, ExportSettings settings
                  settings.exportRoughness, settings.exportMetal, settings.exportDisplacement,
                  settings.exportAmbientOcc);
       if (outputEnabled) *outputStream << "Exported LOD " << i << "..." << std::endl;
+      if (settings.lodTextures) {
+        parameterizer->textureSizeChoice = std::max(0, parameterizer->textureSizeChoice - 1);
+      }
     }
 
     parameterizer->textureSizeChoice = originalTextureSizeChoice;

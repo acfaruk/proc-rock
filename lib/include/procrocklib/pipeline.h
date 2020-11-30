@@ -47,6 +47,7 @@ class Pipeline {
   struct ExportSettings {
     bool exportLODs = false;
     int lodCount = 3;
+    bool lodTextures = false;
 
     bool exportAlbedo = true;
     bool exportNormals = true;
