@@ -9,6 +9,7 @@
 #include <iostream>
 #include <map>
 
+#include "../abstracted_pipeline/abstracted_pipeline.h"
 #include "../render/framebuffer.h"
 #include "../render/shader.h"
 #include "noise_node_editor.h"
@@ -29,7 +30,7 @@ void updateWindows(const Shader& shader);
 void updatePopups(Pipeline& pipeline);
 
 void updatePipelineStage(Pipeline& pipeline, PipelineStage& stage);
-void updateConfigurable(PipelineStage& stage);
+void updateConfigurable(Configurable& configurable);
 
 void helpMarker(std::string& description);
 
@@ -47,6 +48,8 @@ struct MainMenu {
 
 struct SideBar {
   int width = 350;
+
+  AbstractedPipeline* currentAbstractedPipeline = nullptr;
 };
 
 struct CurrentStageEditor {

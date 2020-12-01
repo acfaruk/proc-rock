@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 
+#include "abstracted_pipeline/abstracted_pipeline.h"
 #include "render/camera.h"
 #include "render/drawables/ground.h"
 #include "render/drawables/mesh.h"
@@ -27,6 +28,8 @@ class App {
   enum class LightingMode { Default = 0, Single = 1, WellLit = 2 };
   void changeLightingMode(const LightingMode mode);
 
+  void setAbstractedPipeline(std::unique_ptr<AbstractedPipeline> abstractedPipeline);
+
  private:
   bool init();
   bool update();
@@ -48,6 +51,7 @@ class App {
   std::map<std::string, std::unique_ptr<RenderTexture>> rockTexGroup;
 
   std::unique_ptr<Pipeline> pipeline;
+  std::unique_ptr<AbstractedPipeline> abstractedPipeline;
   std::unique_ptr<DrawableMesh> drawableMesh;
   std::unique_ptr<Framebuffer> viewerFramebuffer;
   std::vector<PointLight> pointLights;

@@ -6,6 +6,9 @@
 
 #include <iostream>
 
+#include "../abstracted_pipeline/abstracted_pipeline_factory.h"
+#include "../app.h"
+
 namespace procrock {
 namespace gui {
 
@@ -115,108 +118,151 @@ void updateSideBar(glm::uvec2 windowSize, Pipeline& pipeline) {
                    ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove |
                    ImGuiWindowFlags_NoBringToFrontOnFocus |
                    ImGuiWindowFlags_AlwaysVerticalScrollbar);
-  sideBar.width = (int)ImGui::GetWindowWidth();
-  ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
-  if (ImGui::CollapsingHeader("Generator", ImGuiTreeNodeFlags_DefaultOpen)) {
-    if (ImGui::Button("Select Generator...", ImVec2(-1, 0))) {
-      ImGui::OpenPopup("gen_select_popup");
+
+  ImGui::BeginTabBar("sidebar-tab-bar");
+  if (ImGui::BeginTabItem("Simple Mode")) {
+    currentStageEditor.current = nullptr;
+    noiseNodeEditor.current = nullptr;
+    if (ImGui::Button("Select Abstracted Pipeline...", ImVec2(-1, 0))) {
+      ImGui::OpenPopup("select_abstr_pipeline");
     }
-    if (ImGui::BeginPopup("gen_select_popup")) {
-      for (int i = 0; i < IM_ARRAYSIZE(PipelineStageNames_Gen); i++) {
-        if (ImGui::Selectable(PipelineStageNames_Gen[i])) {
-          pipeline.setGenerator(createGeneratorFromId(i));
-          currentStageEditor.current = &pipeline.getGenerator();
-          noiseNodeEditor.current = nullptr;
+    if (ImGui::BeginPopup("select_abstr_pipeline")) {
+      for (int i = 0; i < IM_ARRAYSIZE(AbstractedPipeline_Names); i++) {
+        if (ImGui::Selectable(AbstractedPipeline_Names[i])) {
+          App::current->setAbstractedPipeline(createAbstractPipelineFromId(i));
         }
       }
+
       ImGui::EndPopup();
     }
 
-    auto& gen = pipeline.getGenerator();
-    updatePipelineStage(pipeline, gen);
-  }
+    auto absPipeline = sideBar.currentAbstractedPipeline;
 
-  if (ImGui::CollapsingHeader("Modifiers", ImGuiTreeNodeFlags_DefaultOpen)) {
-    if (ImGui::Button("Add Modifier...", ImVec2(-1, 0))) {
-      ImGui::OpenPopup("mod_select_popup");
-    }
-    if (ImGui::BeginPopup("mod_select_popup")) {
-      for (int i = 0; i < IM_ARRAYSIZE(PipelineStageNames_Mod); i++) {
-        if (ImGui::Selectable(PipelineStageNames_Mod[i])) {
-          pipeline.addModifier(createModifierFromId(i));
-          currentStageEditor.current = &pipeline.getModifier(pipeline.getModifierCount() - 1);
-          noiseNodeEditor.current = nullptr;
+    if (absPipeline != nullptr) {
+      ImGui::Separator();
+      ImGui::Text("Abstracted Pipeline");
+      ImGui::Separator();
+
+      if (absPipeline->isConnected()) {
+        ImGui::TextWrapped(
+            "Connected to pipeline, change something manually in the pipeline to disconnect.");
+      } else {
+        ImGui::TextWrapped(
+            "The abstracted pipeline is not connected. Please connect it by pressing the button "
+            "below.");
+        if (ImGui::Button("Connect to Pipeline", ImVec2(-1, 0))) {
+          absPipeline->connect(&pipeline);
         }
       }
-      ImGui::EndPopup();
     }
-
-    for (int i = 0; i < pipeline.getModifierCount(); i++) {
-      auto& mod = pipeline.getModifier(i);
-      updatePipelineStage(pipeline, mod);
-    }
+    ImGui::EndTabItem();
   }
 
-  if (ImGui::CollapsingHeader("Parameterizer", ImGuiTreeNodeFlags_DefaultOpen)) {
-    if (ImGui::Button("Select Parameterizer...", ImVec2(-1, 0))) {
-      ImGui::OpenPopup("par_select_popup");
-    }
-    if (ImGui::BeginPopup("par_select_popup")) {
-      for (int i = 0; i < IM_ARRAYSIZE(PipelineStageNames_Par); i++) {
-        if (ImGui::Selectable(PipelineStageNames_Par[i])) {
-          pipeline.setParameterizer(createParameterizerFromId(i));
-          currentStageEditor.current = &pipeline.getParameterizer();
-          noiseNodeEditor.current = nullptr;
-        }
+  if (ImGui::BeginTabItem("Pipeline Mode")) {
+    sideBar.width = (int)ImGui::GetWindowWidth();
+    if (ImGui::CollapsingHeader("Generator", ImGuiTreeNodeFlags_DefaultOpen)) {
+      if (ImGui::Button("Select Generator...", ImVec2(-1, 0))) {
+        ImGui::OpenPopup("gen_select_popup");
       }
-      ImGui::EndPopup();
-    }
-
-    auto& par = pipeline.getParameterizer();
-    updatePipelineStage(pipeline, par);
-  }
-
-  if (ImGui::CollapsingHeader("Texture Generator", ImGuiTreeNodeFlags_DefaultOpen)) {
-    if (ImGui::Button("Select Texture Gen...", ImVec2(-1, 0))) {
-      ImGui::OpenPopup("texgen_select_popup");
-    }
-    if (ImGui::BeginPopup("texgen_select_popup")) {
-      for (int i = 0; i < IM_ARRAYSIZE(PipelineStageNames_TexGen); i++) {
-        if (ImGui::Selectable(PipelineStageNames_TexGen[i])) {
-          pipeline.setTextureGenerator(createTextureGeneratorFromId(i));
-          currentStageEditor.current = &pipeline.getTextureGenerator();
-          noiseNodeEditor.current = nullptr;
+      if (ImGui::BeginPopup("gen_select_popup")) {
+        for (int i = 0; i < IM_ARRAYSIZE(PipelineStageNames_Gen); i++) {
+          if (ImGui::Selectable(PipelineStageNames_Gen[i])) {
+            pipeline.setGenerator(createGeneratorFromId(i));
+            currentStageEditor.current = &pipeline.getGenerator();
+            noiseNodeEditor.current = nullptr;
+          }
         }
+        ImGui::EndPopup();
       }
-      ImGui::EndPopup();
+
+      auto& gen = pipeline.getGenerator();
+      updatePipelineStage(pipeline, gen);
     }
 
-    auto& texGen = pipeline.getTextureGenerator();
-    updatePipelineStage(pipeline, texGen);
-  }
-
-  if (ImGui::CollapsingHeader("Texture Adders", ImGuiTreeNodeFlags_DefaultOpen)) {
-    if (ImGui::Button("Add Texture Adder...", ImVec2(-1, 0))) {
-      ImGui::OpenPopup("texadd_select_popup");
-    }
-    if (ImGui::BeginPopup("texadd_select_popup")) {
-      for (int i = 0; i < IM_ARRAYSIZE(PipelineStageNames_TexAdd); i++) {
-        if (ImGui::Selectable(PipelineStageNames_TexAdd[i])) {
-          pipeline.addTextureAdder(createTextureAdderFromId(i));
-          currentStageEditor.current =
-              &pipeline.getTextureAdder(pipeline.getTextureAdderCount() - 1);
-          noiseNodeEditor.current = nullptr;
+    if (ImGui::CollapsingHeader("Modifiers", ImGuiTreeNodeFlags_DefaultOpen)) {
+      if (ImGui::Button("Add Modifier...", ImVec2(-1, 0))) {
+        ImGui::OpenPopup("mod_select_popup");
+      }
+      if (ImGui::BeginPopup("mod_select_popup")) {
+        for (int i = 0; i < IM_ARRAYSIZE(PipelineStageNames_Mod); i++) {
+          if (ImGui::Selectable(PipelineStageNames_Mod[i])) {
+            pipeline.addModifier(createModifierFromId(i));
+            currentStageEditor.current = &pipeline.getModifier(pipeline.getModifierCount() - 1);
+            noiseNodeEditor.current = nullptr;
+          }
         }
+        ImGui::EndPopup();
       }
-      ImGui::EndPopup();
+
+      for (int i = 0; i < pipeline.getModifierCount(); i++) {
+        auto& mod = pipeline.getModifier(i);
+        updatePipelineStage(pipeline, mod);
+      }
     }
 
-    for (int i = 0; i < pipeline.getTextureAdderCount(); i++) {
-      auto& texadd = pipeline.getTextureAdder(i);
-      updatePipelineStage(pipeline, texadd);
+    if (ImGui::CollapsingHeader("Parameterizer", ImGuiTreeNodeFlags_DefaultOpen)) {
+      if (ImGui::Button("Select Parameterizer...", ImVec2(-1, 0))) {
+        ImGui::OpenPopup("par_select_popup");
+      }
+      if (ImGui::BeginPopup("par_select_popup")) {
+        for (int i = 0; i < IM_ARRAYSIZE(PipelineStageNames_Par); i++) {
+          if (ImGui::Selectable(PipelineStageNames_Par[i])) {
+            pipeline.setParameterizer(createParameterizerFromId(i));
+            currentStageEditor.current = &pipeline.getParameterizer();
+            noiseNodeEditor.current = nullptr;
+          }
+        }
+        ImGui::EndPopup();
+      }
+
+      auto& par = pipeline.getParameterizer();
+      updatePipelineStage(pipeline, par);
     }
+
+    if (ImGui::CollapsingHeader("Texture Generator", ImGuiTreeNodeFlags_DefaultOpen)) {
+      if (ImGui::Button("Select Texture Gen...", ImVec2(-1, 0))) {
+        ImGui::OpenPopup("texgen_select_popup");
+      }
+      if (ImGui::BeginPopup("texgen_select_popup")) {
+        for (int i = 0; i < IM_ARRAYSIZE(PipelineStageNames_TexGen); i++) {
+          if (ImGui::Selectable(PipelineStageNames_TexGen[i])) {
+            pipeline.setTextureGenerator(createTextureGeneratorFromId(i));
+            currentStageEditor.current = &pipeline.getTextureGenerator();
+            noiseNodeEditor.current = nullptr;
+          }
+        }
+        ImGui::EndPopup();
+      }
+
+      auto& texGen = pipeline.getTextureGenerator();
+      updatePipelineStage(pipeline, texGen);
+    }
+
+    if (ImGui::CollapsingHeader("Texture Adders", ImGuiTreeNodeFlags_DefaultOpen)) {
+      if (ImGui::Button("Add Texture Adder...", ImVec2(-1, 0))) {
+        ImGui::OpenPopup("texadd_select_popup");
+      }
+      if (ImGui::BeginPopup("texadd_select_popup")) {
+        for (int i = 0; i < IM_ARRAYSIZE(PipelineStageNames_TexAdd); i++) {
+          if (ImGui::Selectable(PipelineStageNames_TexAdd[i])) {
+            pipeline.addTextureAdder(createTextureAdderFromId(i));
+            currentStageEditor.current =
+                &pipeline.getTextureAdder(pipeline.getTextureAdderCount() - 1);
+            noiseNodeEditor.current = nullptr;
+          }
+        }
+        ImGui::EndPopup();
+      }
+
+      for (int i = 0; i < pipeline.getTextureAdderCount(); i++) {
+        auto& texadd = pipeline.getTextureAdder(i);
+        updatePipelineStage(pipeline, texadd);
+      }
+    }
+    ImGui::EndTabItem();
   }
 
+  ImGui::EndTabBar();
   ImGui::End();
 }
 
@@ -465,8 +511,8 @@ void updatePipelineStage(Pipeline& pipeline, PipelineStage& stage) {
   if (current) ImGui::PopStyleColor();
 }
 
-void updateConfigurable(PipelineStage& stage) {
-  auto config = stage.getConfiguration();
+void updateConfigurable(Configurable& configurable) {
+  auto config = configurable.getConfiguration();
   bool changed = false;
   int idCounter = 0;
   for (auto mainGroup : config.getConfigGroups()) {
@@ -634,7 +680,7 @@ void updateConfigurable(PipelineStage& stage) {
     }
   }
   if (changed) {
-    stage.setChanged(changed);
+    configurable.setChanged(changed);
   }
 }
 

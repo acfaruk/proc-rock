@@ -139,6 +139,10 @@ void App::changeLightingMode(const LightingMode mode) {
   }
 }
 
+void App::setAbstractedPipeline(std::unique_ptr<AbstractedPipeline> abstractedPipeline) {
+  this->abstractedPipeline = std::move(abstractedPipeline);
+}
+
 bool App::init() {
   gui::init(window, this->resourcesPath);
 
@@ -234,7 +238,11 @@ bool App::update() {
     gui::windows.meshInfoWindow.textureHeight = mesh->textures.height;
   }
 
+  gui::sideBar.currentAbstractedPipeline = abstractedPipeline.get();
   gui::update(this->getWindowSize(), *viewerFramebuffer, *pipeline, *mainShader);
+  if (abstractedPipeline != nullptr) {
+    abstractedPipeline->update();
+  }
 
   mainCam->setViewport(gui::viewer.size);
   mainShader->uniforms3f["camPos"] = mainCam->getPosition();
