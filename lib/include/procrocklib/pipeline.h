@@ -36,6 +36,8 @@ class Pipeline {
 
   const std::shared_ptr<Mesh> getCurrentMesh();
 
+  void clear();
+
   bool isChanged();
 
   void enableOutput(bool enable);

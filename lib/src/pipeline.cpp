@@ -176,6 +176,14 @@ const std::shared_ptr<Mesh> Pipeline::getCurrentMesh() {
   return mesh;
 }
 
+void Pipeline::clear() {
+  this->generator = std::make_unique<CuboidGenerator>();
+  this->modifiers.clear();
+  this->parameterizer = std::make_unique<XAtlasParameterizer>();
+  this->textureGenerator = std::make_unique<NoiseTextureGenerator>();
+  this->textureAdders.clear();
+}
+
 bool Pipeline::isChanged() {
   bool result = generator->isChanged() || generator->isFirstRun();
 

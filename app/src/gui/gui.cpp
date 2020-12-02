@@ -91,6 +91,10 @@ void updateMainMenu(Pipeline& pipeline) {
         }
       }
 
+      if (ImGui::MenuItem("Clear Pipeline")) {
+        pipeline.clear();
+      }
+
       if (ImGui::MenuItem("Export")) {
         windows.exportPopup.show = true;
       }
@@ -146,6 +150,8 @@ void updateSideBar(glm::uvec2 windowSize, Pipeline& pipeline) {
       if (absPipeline->isConnected()) {
         ImGui::TextWrapped(
             "Connected to pipeline, change something manually in the pipeline to disconnect.");
+        ImGui::Separator();
+        updateConfigurable(*absPipeline);
       } else {
         ImGui::TextWrapped(
             "The abstracted pipeline is not connected. Please connect it by pressing the button "
