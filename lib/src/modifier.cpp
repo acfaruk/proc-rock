@@ -2,7 +2,9 @@
 
 namespace procrock {
 std::shared_ptr<Mesh> Modifier::run(Mesh* before) {
-  if (isChanged() || firstRun) {
+  if (isDisabled()) {
+    mesh = std::make_shared<Mesh>(*before);
+  } else if (isChanged() || firstRun) {
     mesh = modify(*before);
   }
 

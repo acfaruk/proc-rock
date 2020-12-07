@@ -69,7 +69,7 @@ class AlbedoGenerator : public TextureGroupModifier {
 
  private:
   std::vector<std::unique_ptr<TextureGroupModifier>> methods;
-  int choice = 0;
+  int choice = 1;
 };
 
 // Normals

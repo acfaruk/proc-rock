@@ -4,7 +4,7 @@
 #include <procrocklib/pipeline_stage.h>
 
 namespace procrock {
-class Modifier : public PipelineStage {
+class Modifier : public PipelineStage, public Disablable {
  public:
   std::shared_ptr<Mesh> run(Mesh* before = nullptr) override;
 

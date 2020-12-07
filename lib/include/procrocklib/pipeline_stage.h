@@ -38,6 +38,15 @@ class PipelineStage : public Configurable {
   }
 };
 
+class Disablable {
+ public:
+  inline const bool isDisabled() { return disabled; }
+  inline void setDisabled(bool disabled) { this->disabled = disabled; }
+
+ private:
+  bool disabled = false;
+};
+
 // Generators
 const unsigned int PipelineStage_Gen_Cuboid = 0;
 const unsigned int PipelineStage_Gen_Icosahedron = 1;

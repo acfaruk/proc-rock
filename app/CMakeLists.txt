@@ -37,3 +37,4 @@ target_link_libraries(proc-rock PRIVATE font-awesome)
 target_link_libraries(proc-rock PRIVATE proc-rock-lib)
 
 target_compile_options(proc-rock PUBLIC "$<$<BOOL:${MSVC}>:/permissive->")
+target_compile_definitions(proc-rock PRIVATE _USE_MATH_DEFINES)

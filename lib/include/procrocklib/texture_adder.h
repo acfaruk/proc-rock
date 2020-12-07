@@ -8,7 +8,7 @@
 
 namespace procrock {
 
-class TextureAdder : public PipelineStage {
+class TextureAdder : public PipelineStage, public Disablable {
  public:
   TextureAdder(bool hideConfigurables = false);
 

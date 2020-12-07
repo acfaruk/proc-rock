@@ -49,7 +49,9 @@ TextureAdder::TextureAdder(bool hideConfigurables) {
 }
 
 std::shared_ptr<Mesh> TextureAdder::run(Mesh* before) {
-  if (isChanged() || firstRun) {
+  if (isDisabled()) {
+    mesh = std::make_shared<Mesh>(*before);
+  } else if (isChanged() || firstRun) {
     mesh = generate(before);
   }
 
