@@ -15,7 +15,7 @@ class AbstractedPipeline : public Configurable {
  protected:
   virtual void setupPipeline() = 0;
   virtual void updatePipeline() = 0;
-  Pipeline* pipeline = nullptr;  // Pipeline to be modified, if nullptr we are not connected to a pipeline
+  Pipeline* pipeline = nullptr;  // nullptr means we are not connected to a pipeline
 };
 
 const unsigned int AbstractedPipeline_Igneous = 0;

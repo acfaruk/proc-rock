@@ -473,14 +473,13 @@ void updatePipelineStage(Pipeline& pipeline, PipelineStage& stage) {
   auto info = stage.getInfo();
   std::string id = stage.getId();
   if (current) ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1, 1, 1, 1));
-  ImGui::BeginChild(id.c_str(), ImVec2(0, 45), true);
+  ImGui::BeginChild(id.c_str(), ImVec2(0, 65), true);
 
   // Info and description
   ImGui::Text(info.name.c_str());
   ImGui::SameLine();
   helpMarker(info.description);
 
-  ImGui::SameLine();
   ImGui::Dummy(ImVec2(0, 25));
 
   if (stage.isRemovable()) {
@@ -505,6 +504,22 @@ void updatePipelineStage(Pipeline& pipeline, PipelineStage& stage) {
     ImGui::SameLine((float)sideBar.width - 120);
     if (ImGui::Button(ICON_FA_ARROW_ALT_CIRCLE_UP)) {
       pipeline.movePipelineStageUp(&stage);
+    }
+  }
+
+  auto stageDis = dynamic_cast<Disablable*>(&stage);
+  if (stageDis != nullptr) {
+    ImGui::SameLine((float)sideBar.width - 150);
+    if (stageDis->isDisabled()) {
+      if (ImGui::Button(ICON_FA_CIRCLE)) {
+        stageDis->setDisabled(false);
+        stage.setChanged(true);
+      }
+    } else {
+      if (ImGui::Button(ICON_FA_CHECK_CIRCLE)) {
+        stageDis->setDisabled(true);
+        stage.setChanged(true);
+      }
     }
   }
 
