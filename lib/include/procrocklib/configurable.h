@@ -111,6 +111,88 @@ struct Configuration {
     std::vector<GradientColoringEntry> gradientColorings;
     std::vector<GradientAlphaColoringEntry> gradientAlphaColorings;
     std::vector<SimpleEntry<ConfigurationCurve>> curves;
+
+    inline int* getInt(std::string value) {
+      for (int i = 0; i < ints.size(); i++) {
+        if (ints[i].entry.active() && ints[i].entry.name == value) {
+          return ints[i].data;
+        }
+      }
+      return nullptr;
+    }
+    inline float* getFloat(std::string value) {
+      for (int i = 0; i < floats.size(); i++) {
+        if (floats[i].entry.active() && floats[i].entry.name == value) {
+          return floats[i].data;
+        }
+      }
+      return nullptr;
+    }
+    inline Eigen::Vector3f* getFloat3(std::string value) {
+      for (int i = 0; i < float3s.size(); i++) {
+        if (float3s[i].entry.active() && float3s[i].entry.name == value) {
+          return float3s[i].data;
+        }
+      }
+      return nullptr;
+    }
+    inline bool* getBool(std::string value) {
+      for (int i = 0; i < bools.size(); i++) {
+        if (bools[i].entry.active() && bools[i].entry.name == value) {
+          return bools[i].data;
+        }
+      }
+      return nullptr;
+    }
+    inline NoiseGraph* getNoiseGraph(std::string value) {
+      for (int i = 0; i < noiseGraphs.size(); i++) {
+        if (noiseGraphs[i].entry.active() && noiseGraphs[i].entry.name == value) {
+          return noiseGraphs[i].data;
+        }
+      }
+      return nullptr;
+    }
+    inline ConfigurationList<float>* getFloatList(std::string value) {
+      for (int i = 0; i < floatLists.size(); i++) {
+        if (floatLists[i].entry.active() && floatLists[i].entry.name == value) {
+          return floatLists[i].data;
+        }
+      }
+      return nullptr;
+    }
+    inline int* getSingleChoiceEntry(std::string value) {
+      for (int i = 0; i < singleChoices.size(); i++) {
+        if (singleChoices[i].entry.active() && singleChoices[i].entry.name == value) {
+          return singleChoices[i].choice;
+        }
+      }
+      return nullptr;
+    }
+    inline std::map<int, Eigen::Vector3f>* getGradientColoring(std::string value) {
+      for (int i = 0; i < gradientColorings.size(); i++) {
+        if (gradientColorings[i].entry.active() && gradientColorings[i].entry.name == value) {
+          return gradientColorings[i].data;
+        }
+      }
+      return nullptr;
+    }
+    inline std::map<int, Eigen::Vector4f>* getGradientAlphaColoring(std::string value) {
+      for (int i = 0; i < gradientAlphaColorings.size(); i++) {
+        if (gradientAlphaColorings[i].entry.active() &&
+            gradientAlphaColorings[i].entry.name == value) {
+          return gradientAlphaColorings[i].data;
+        }
+      }
+      return nullptr;
+    }
+    inline ConfigurationCurve* getConfigurationCurve(std::string value) {
+      for (int i = 0; i < curves.size(); i++) {
+        if (curves[i].entry.active() && curves[i].entry.name == value) {
+          return curves[i].data;
+        }
+      }
+      return nullptr;
+    }
   };
 
  private:
@@ -136,6 +218,21 @@ struct Configuration {
   inline std::vector<ConfigurationGroupsElement>& getConfigGroups() { return configGroups; }
   inline const std::vector<ConfigurationGroupsElement>& getConfigGroupsConst() const {
     return configGroups;
+  }
+
+  inline ConfigurationGroup getConfigGroup(std::string main, std::string sub) {
+    for (int i = 0; i < configGroups.size(); i++) {
+      if (configGroups[i].first == main) {
+        auto& mainGroup = configGroups[i].second;
+        for (int j = 0; j < mainGroup.size(); j++) {
+          if (mainGroup[j].entry.active() && mainGroup[j].entry.name == sub) {
+            return mainGroup[j];
+          }
+        }
+      }
+    }
+
+    return ConfigurationGroup();
   }
 };
 

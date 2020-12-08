@@ -11,6 +11,7 @@ class NoiseTextureAdder : public TextureAdder {
   NoiseTextureAdder();
 
   virtual PipelineStageInfo& getInfo() override;
+  NoiseGraph noiseGraph;
 
  protected:
   std::shared_ptr<Mesh> generate(Mesh* before) override;
@@ -25,7 +26,5 @@ class NoiseTextureAdder : public TextureAdder {
   PipelineStageInfo info{PipelineStageNames_TexAdd[PipelineStage_TexAdd_Noise],
                          "Adds Solid Noise Texture based on a noise graph.",
                          PipelineStageType::TextureAdder, PipelineStage_TexAdd_Noise};
-
-  NoiseGraph noiseGraph;
 };
 }  // namespace procrock

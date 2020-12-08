@@ -11,6 +11,7 @@ class NoiseTextureGenerator : public TextureGenerator {
   NoiseTextureGenerator();
 
   virtual PipelineStageInfo& getInfo() override;
+  NoiseGraph noiseGraph;
 
  protected:
   std::shared_ptr<Mesh> generate(Mesh* before) override;
@@ -19,8 +20,6 @@ class NoiseTextureGenerator : public TextureGenerator {
   PipelineStageInfo info{PipelineStageNames_TexGen[PipelineStage_TexGen_Noise],
                          "Generates Solid Noise Textures based on a noise graph.",
                          PipelineStageType::TextureGenerator, PipelineStage_TexGen_Noise};
-
-  NoiseGraph noiseGraph;
 
   AlbedoGenerator albedoGenerator;
   NormalsGenerator normalsGenerator;
