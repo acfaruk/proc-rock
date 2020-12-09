@@ -2,6 +2,7 @@
 #include <procrocklib/configurables/noise_graph.h>
 #include <procrocklib/gen/skin_surface_generator.h>
 #include <procrocklib/mod/all.h>
+#include <procrocklib/texadd/all.h>
 #include <procrocklib/texgen/noise_texture_generator.h>
 
 #include "abstracted_pipeline.h"
@@ -15,6 +16,10 @@ class IgneousPipeline : public AbstractedPipeline {
   virtual void setupPipeline() override;
   virtual void updatePipeline() override;
 
+  void updateTextureGenerator();
+  void updateTextureAdderVariance();
+  void updateTextureAdderMoss();
+
   SkinSurfaceGenerator* generator;
 
   CutPlaneModifier* modCutGround;
@@ -23,9 +28,15 @@ class IgneousPipeline : public AbstractedPipeline {
 
   NoiseTextureGenerator* textureGenerator;
 
+  NoiseTextureAdder* textureAdderVariance;
+  NoiseTextureAdder* textureAdderMoss;
+
   int seed = 0;
   bool cutGround = true;
 
   int grainChoice = 0;  // 0 = fine grained, 1 = coarse, 2 = two distinct
+
+  bool textureVariance = true;
+  bool textureMoss = false;
 };
 }  // namespace procrock
