@@ -605,6 +605,15 @@ void updateConfigurable(Configurable& configurable) {
           helpMarker(var.entry.description);
         }
 
+        for (auto var : group.colors) {
+          if (!var.entry.active()) continue;
+          ImGui::ColorEdit3(var.entry.name.c_str(), var.data->data());
+
+          changed |= ImGui::IsItemDeactivatedAfterEdit();
+          ImGui::SameLine();
+          helpMarker(var.entry.description);
+        }
+
         for (auto gradient : group.gradientColorings) {
           if (!gradient.entry.active()) continue;
           ImGui::Text(gradient.entry.name.c_str());

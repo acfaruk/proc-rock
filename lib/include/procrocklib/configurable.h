@@ -104,6 +104,7 @@ struct Configuration {
 
     std::vector<SimpleEntry<bool>> bools;
     std::vector<SimpleEntry<NoiseGraph>> noiseGraphs;
+    std::vector<SimpleEntry<Eigen::Vector3f>> colors;
 
     std::vector<ListEntry<float>> floatLists;
 
@@ -164,6 +165,14 @@ struct Configuration {
       for (int i = 0; i < singleChoices.size(); i++) {
         if (singleChoices[i].entry.active() && singleChoices[i].entry.name == value) {
           return singleChoices[i].choice;
+        }
+      }
+      return nullptr;
+    }
+    inline Eigen::Vector3f* getColor(std::string value) {
+      for (int i = 0; i < colors.size(); i++) {
+        if (colors[i].entry.active() && colors[i].entry.name == value) {
+          return colors[i].data;
         }
       }
       return nullptr;

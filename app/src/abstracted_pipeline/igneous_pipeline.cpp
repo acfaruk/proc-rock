@@ -20,6 +20,13 @@ IgneousPipeline::IgneousPipeline() {
        {"Porphyritic", "Two distinct grain sizes."}},
       &grainChoice});
 
+  grainGroup.colors.push_back(
+      Configuration::SimpleEntry<Eigen::Vector3f>{{"Base", "Base color of grains."}, &baseColor});
+  grainGroup.colors.push_back(Configuration::SimpleEntry<Eigen::Vector3f>{
+      {"Secondary", "Secondary color of grains."}, &secondaryColor});
+  grainGroup.colors.push_back(Configuration::SimpleEntry<Eigen::Vector3f>{
+      {"Tertiary", "Tertiary color of grains."}, &tertiaryColor});
+
   Configuration::ConfigurationGroup textureExtrasGroup;
   textureExtrasGroup.entry = {"Extras", "Extras to add to the texture."};
   textureExtrasGroup.bools.push_back(Configuration::SimpleEntry<bool>{
@@ -195,9 +202,9 @@ void IgneousPipeline::updateTextureGenerator() {
       texGenConfigs.getConfigGroup("Albedo", "Gradient Coloring").getGradientColoring("Gradient");
   coloring->clear();
 
-  (*coloring)[0] = Eigen::Vector3f{1.0, 1.0, 1.0};
-  (*coloring)[100] = Eigen::Vector3f{0.0, 0.0, 0.0};
-  (*coloring)[65] = Eigen::Vector3f(0.4, 0.2, 0.1);  // TODO: User choice
+  (*coloring)[0] = secondaryColor;
+  (*coloring)[100] = tertiaryColor;
+  (*coloring)[65] = baseColor;
 }
 
 void IgneousPipeline::updateTextureAdderVariance() {

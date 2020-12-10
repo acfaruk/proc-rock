@@ -119,6 +119,14 @@ void to_json(nlohmann::json& j, const Configuration::ConfigurationGroup& group) 
     j.update(nlohmann::json{{"float3s", float3sJson}});
   }
 
+  nlohmann::json colorsJson;
+  for (auto& colorEntry : group.colors) {
+    colorsJson.update(nlohmann::json{{colorEntry.entry.name, *colorEntry.data}});
+  }
+  if (group.colors.size() > 0) {
+    j.update(nlohmann::json{{"colors", colorsJson}});
+  }
+
   nlohmann::json boolsJson;
   for (auto& boolEntry : group.bools) {
     boolsJson.update(nlohmann::json{{boolEntry.entry.name, *boolEntry.data}});
@@ -206,6 +214,16 @@ void fillConfigGroupFromJson(const nlohmann::json& j, Configuration::Configurati
       if (val == float3sJson.end()) continue;
 
       *float3Entry.data = val.value().get<Eigen::Vector3f>();
+    }
+  }
+
+  if (j.find("colors") != j.end()) {
+    const nlohmann::json& colorsJson = j.at("colors");
+    for (auto& colorEntry : group.colors) {
+      auto val = colorsJson.find(colorEntry.entry.name);
+      if (val == colorsJson.end()) continue;
+
+      *colorEntry.data = val.value().get<Eigen::Vector3f>();
     }
   }
 

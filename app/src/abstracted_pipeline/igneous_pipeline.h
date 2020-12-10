@@ -38,5 +38,9 @@ class IgneousPipeline : public AbstractedPipeline {
 
   bool textureVariance = true;
   bool textureMoss = false;
+
+  Eigen::Vector3f baseColor = {0.4, 0.2, 0.1};
+  Eigen::Vector3f secondaryColor = {1.0, 1.0, 1.0};
+  Eigen::Vector3f tertiaryColor = {0.0, 0.0, 0.0};
 };
 }  // namespace procrock
