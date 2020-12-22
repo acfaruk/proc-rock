@@ -11,6 +11,9 @@ SedimentaryPipeline::SedimentaryPipeline() {
   group.bools.push_back(Configuration::SimpleEntry<bool>{
       {"Cut Ground", "Should the ground be cut from the rock?"}, &cutGround});
 
+  group.bools.push_back(
+      Configuration::SimpleEntry<bool>{{"Layered", "Approximate layers of sediment."}, &layered});
+
   Configuration::ConfigurationGroup grainGroup;
   grainGroup.entry = {"Grains", "Change settings related to grain sizes and colors."};
 
@@ -43,13 +46,21 @@ void SedimentaryPipeline::setupPipeline() {
   this->modCutGround = mod0.get();
   this->pipeline->addModifier(std::move(mod0));
 
-  auto mod1 = std::make_unique<DecimateModifier>();
-  this->modDecimate = mod1.get();
+  auto mod1 = std::make_unique<SubdivisionModifier>();
+  this->modSubdivision = mod1.get();
   this->pipeline->addModifier(std::move(mod1));
 
-  auto mod2 = std::make_unique<TransformationModifier>();
-  this->modTransform = mod2.get();
+  auto mod2 = std::make_unique<DisplaceAlongNormalsModifier>();
+  this->modDisplaceAlongNormals = mod2.get();
   this->pipeline->addModifier(std::move(mod2));
+
+  auto mod3 = std::make_unique<DecimateModifier>();
+  this->modDecimate = mod3.get();
+  this->pipeline->addModifier(std::move(mod3));
+
+  auto mod4 = std::make_unique<TransformationModifier>();
+  this->modTransform = mod4.get();
+  this->pipeline->addModifier(std::move(mod4));
 
   auto texgen = std::make_unique<NoiseTextureGenerator>();
   this->textureGenerator = texgen.get();
@@ -83,9 +94,53 @@ void SedimentaryPipeline::updatePipeline() {
     modTransform->translation = Eigen::Vector3f(0, 0, 0);
   }
 
+  modSubdivision->setDisabled(!layered);
+
+  updateModifierDisplaceAlongNormals();
+
+  modDecimate->relativeValue = 0.25;
+
   updateTextureGenerator();
   updateTextureAdderVariance();
   updateTextureAdderMoss();
+}
+
+int SedimentaryPipeline::createLayerNoise(NoiseGraph* noise) {
+  auto ridgedMultiNode = std::make_unique<RidgedMultiNoiseNode>();
+  auto ridgetMultiNodePtr = ridgedMultiNode.get();
+  auto ridgetMultiNodeId = noise->addNode(std::move(ridgedMultiNode), false, {0, 700});
+
+  ridgetMultiNodePtr->frequency = 6;
+  ridgetMultiNodePtr->lacunarity = 2.5;
+  ridgetMultiNodePtr->octaveCount = 3;
+
+  auto scalePointNode = std::make_unique<ScalePointNoiseNode>();
+  auto scalePointNodePtr = scalePointNode.get();
+  auto scalePointNodeId = noise->addNode(std::move(scalePointNode), false, {300, 700});
+
+  scalePointNodePtr->xScale = 0.05;
+  scalePointNodePtr->yScale = 1;
+  scalePointNodePtr->zScale = 0.05;
+  noise->addEdge(ridgetMultiNodeId, scalePointNodeId);
+
+  return scalePointNodeId;
+}
+
+void SedimentaryPipeline::updateModifierDisplaceAlongNormals() {
+  modDisplaceAlongNormals->setDisabled(!layered);
+  modDisplaceAlongNormals->factor = 0.15;
+  modDisplaceAlongNormals->selection = 1;  // noise based
+
+  auto modConfigs = modDisplaceAlongNormals->getConfiguration();
+  auto noise = modConfigs.getConfigGroup("Noise", "Noise").getNoiseGraph("Noise Graph");
+  noise->clear();
+
+  int layerNoiseId = createLayerNoise(noise);
+
+  int outputNodeId =
+      noise->addNode(createNoiseNodeFromTypeId(NoiseNodeTypeId_Output), true, {400, 0});
+
+  noise->addEdge(layerNoiseId, outputNodeId);
 }
 
 void SedimentaryPipeline::updateTextureGenerator() {
@@ -97,29 +152,40 @@ void SedimentaryPipeline::updateTextureGenerator() {
 
   auto billowNoiseNode = std::make_unique<BillowNoiseNode>();
   auto billowNoiseNodePtr = billowNoiseNode.get();
-  auto billowNoiseNodeId = noise.addNode(std::move(billowNoiseNode));
+  auto billowNoiseNodeId = noise.addNode(std::move(billowNoiseNode), false);
 
   billowNoiseNodePtr->frequency = 1000;
   billowNoiseNodePtr->lacunarity = 3.5;
   billowNoiseNodePtr->persistence = 0.18;
   billowNoiseNodePtr->octaveCount = 1;
 
-  auto perlinNoiseNode = std::make_unique<PerlinNoiseNode>();
-  auto perlinNoiseNodePtr = perlinNoiseNode.get();
-  auto perlinNoiseNodeId = noise.addNode(std::move(perlinNoiseNode), false, {0, 400});
+  auto voronoiNoiseNode = std::make_unique<VoronoiNoiseNode>();
+  auto voronoiNoiseNodePtr = voronoiNoiseNode.get();
+  auto voronoiNoiseNodeId = noise.addNode(std::move(voronoiNoiseNode), false, {0, 350});
 
-  perlinNoiseNodePtr->frequency = 60;
+  voronoiNoiseNodePtr->frequency = 66;
+  voronoiNoiseNodePtr->displacement = 0.33;
 
-  auto addNoiseNode = std::make_unique<AddNoiseNode>();
-  auto addNoiseNodePtr = addNoiseNode.get();
-  auto addNoiseNodeId = noise.addNode(std::move(addNoiseNode), false, {200, 200});
+  auto addNoiseNode0 = std::make_unique<AddNoiseNode>();
+  auto addNoiseNode0Ptr = addNoiseNode0.get();
+  auto addNoiseNode0Id = noise.addNode(std::move(addNoiseNode0), false, {300, 200});
+
+  auto addNoiseNode1 = std::make_unique<AddNoiseNode>();
+  auto addNoiseNode1Ptr = addNoiseNode1.get();
+  auto addNoiseNode1Id = noise.addNode(std::move(addNoiseNode1), false, {500, 200});
+
+  auto layerNoiseId = createLayerNoise(&noise);
 
   int outputNodeId =
-      noise.addNode(createNoiseNodeFromTypeId(NoiseNodeTypeId_Output), true, {400, 0});
+      noise.addNode(createNoiseNodeFromTypeId(NoiseNodeTypeId_Output), true, {700, 200});
 
-  noise.addEdge(billowNoiseNodeId, addNoiseNodeId);
-  noise.addEdge(perlinNoiseNodeId, addNoiseNodeId, 1);
-  noise.addEdge(addNoiseNodeId, outputNodeId);
+  noise.addEdge(billowNoiseNodeId, addNoiseNode0Id);
+  noise.addEdge(voronoiNoiseNodeId, addNoiseNode0Id, 1);
+  noise.addEdge(addNoiseNode0Id, addNoiseNode1Id);
+  if (layered) {
+    noise.addEdge(layerNoiseId, addNoiseNode1Id, 1);
+  }
+  noise.addEdge(addNoiseNode1Id, outputNodeId);
 
   auto roughnessBias =
       texGenConfigs.getConfigGroup("Roughness", "Greyscale Based Roughness").getInt("Bias");

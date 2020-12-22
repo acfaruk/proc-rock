@@ -16,6 +16,10 @@ class SedimentaryPipeline : public AbstractedPipeline {
   virtual void setupPipeline() override;
   virtual void updatePipeline() override;
 
+  // returns the id of the output node
+  int createLayerNoise(NoiseGraph* noise);
+
+  void updateModifierDisplaceAlongNormals();
   void updateTextureGenerator();
   void updateTextureAdderVariance();
   void updateTextureAdderMoss();
@@ -23,6 +27,8 @@ class SedimentaryPipeline : public AbstractedPipeline {
   SkinSurfaceGenerator* generator;
 
   CutPlaneModifier* modCutGround;
+  SubdivisionModifier* modSubdivision;
+  DisplaceAlongNormalsModifier* modDisplaceAlongNormals;
   DecimateModifier* modDecimate;
   TransformationModifier* modTransform;
 
@@ -34,12 +40,13 @@ class SedimentaryPipeline : public AbstractedPipeline {
   int seed = 0;
   bool cutGround = true;
 
+  bool layered = true;
 
   bool textureVariance = true;
   bool textureMoss = false;
 
-  Eigen::Vector3f baseColor = {0.4, 0.2, 0.1};
-  Eigen::Vector3f secondaryColor = {1.0, 1.0, 1.0};
+  Eigen::Vector3f baseColor = {0.532, 0.355, 0.084};
+  Eigen::Vector3f secondaryColor = {0.681, 0.681, 0.681};
   Eigen::Vector3f tertiaryColor = {0.0, 0.0, 0.0};
 };
 }  // namespace procrock
