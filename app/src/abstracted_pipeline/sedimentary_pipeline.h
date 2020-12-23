@@ -21,6 +21,10 @@ class SedimentaryPipeline : public AbstractedPipeline {
 
   void updateModifierDisplaceAlongNormals();
   void updateTextureGenerator();
+
+  void updateTextureAdderGrainsSecondary();
+  void updateTextureAdderGrainsTertiary();
+  void updateTextureAdderGrainsQuaternary();
   void updateTextureAdderVariance();
   void updateTextureAdderMoss();
 
@@ -33,6 +37,10 @@ class SedimentaryPipeline : public AbstractedPipeline {
   TransformationModifier* modTransform;
 
   NoiseTextureGenerator* textureGenerator;
+
+  NoiseTextureAdder* textureAdderGrainsSecondary;
+  NoiseTextureAdder* textureAdderGrainsTertiary;
+  NoiseTextureAdder* textureAdderGrainsQuaternary;
 
   NoiseTextureAdder* textureAdderVariance;
   NoiseTextureAdder* textureAdderMoss;
@@ -52,5 +60,17 @@ class SedimentaryPipeline : public AbstractedPipeline {
   Eigen::Vector3f baseColor = {0.532, 0.355, 0.084};
   Eigen::Vector3f secondaryColor = {0.681, 0.681, 0.681};
   Eigen::Vector3f tertiaryColor = {0.0, 0.0, 0.0};
+
+  bool useSecondaryGrains = true;
+  Eigen::Vector3f secondaryGrainsColor = {0.5, 0.3, 0.1};
+  float secondaryGrainSize = 0.6;
+
+  bool useTertiaryGrains = false;
+  Eigen::Vector3f tertiaryGrainsColor = {0.6, 0.2, 0.0};
+  float tertiaryGrainSize = 0.9;
+
+  bool useQuaternaryGrains = false;
+  Eigen::Vector3f quaternaryGrainsColor = {0.7, 0.1, 0.3};
+  float quaternaryGrainSize = 0.5;
 };
 }  // namespace procrock

@@ -35,6 +35,24 @@ SedimentaryPipeline::SedimentaryPipeline() {
       {"Secondary", "Secondary color of grains."}, &secondaryColor});
   grainGroup.colors.push_back(Configuration::SimpleEntry<Eigen::Vector3f>{
       {"Tertiary", "Tertiary color of grains."}, &tertiaryColor});
+  grainGroup.bools.push_back(Configuration::SimpleEntry<bool>{
+      {"Secondary Grains", "Use secondary grains."}, &useSecondaryGrains});
+  grainGroup.bools.push_back(Configuration::SimpleEntry<bool>{
+      {"Tertiary Grains", "Use tertiary grains."}, &useTertiaryGrains});
+  grainGroup.bools.push_back(Configuration::SimpleEntry<bool>{
+      {"Quaternary Grains", "Use quaternary grains."}, &useQuaternaryGrains});
+
+  Configuration::ConfigurationGroup secondaryGrainsGroup;
+  auto secondaryGrainsFunc = [&]() { return useSecondaryGrains; };
+  secondaryGrainsGroup.entry = {"Secondary Grains", "Modify Grains", secondaryGrainsFunc};
+
+  Configuration::ConfigurationGroup tertiaryGrainsGroup;
+  auto tertiaryGrainsFunc = [&]() { return useTertiaryGrains; };
+  tertiaryGrainsGroup.entry = {"Tertiary Grains", "Modify Grains", tertiaryGrainsFunc};
+
+  Configuration::ConfigurationGroup quaternaryGrainsGroup;
+  auto quaternaryGrainsFunc = [&]() { return useQuaternaryGrains; };
+  quaternaryGrainsGroup.entry = {"Quaternary Grains", "Modify Grains", quaternaryGrainsFunc};
 
   Configuration::ConfigurationGroup textureExtrasGroup;
   textureExtrasGroup.entry = {"Extras", "Extras to add to the texture."};
@@ -47,6 +65,9 @@ SedimentaryPipeline::SedimentaryPipeline() {
   config.insertToConfigGroups("Form", group);
   config.insertToConfigGroups("Form", layeringGroup);
   config.insertToConfigGroups("Texture", grainGroup);
+  config.insertToConfigGroups("Texture", secondaryGrainsGroup);
+  config.insertToConfigGroups("Texture", tertiaryGrainsGroup);
+  config.insertToConfigGroups("Texture", quaternaryGrainsGroup);
   config.insertToConfigGroups("Texture", textureExtrasGroup);
 }
 
@@ -80,12 +101,24 @@ void SedimentaryPipeline::setupPipeline() {
   this->pipeline->setTextureGenerator(std::move(texgen));
 
   auto texadd0 = std::make_unique<NoiseTextureAdder>();
-  this->textureAdderVariance = texadd0.get();
+  this->textureAdderGrainsSecondary = texadd0.get();
   this->pipeline->addTextureAdder(std::move(texadd0));
 
   auto texadd1 = std::make_unique<NoiseTextureAdder>();
-  this->textureAdderMoss = texadd1.get();
+  this->textureAdderGrainsTertiary = texadd1.get();
   this->pipeline->addTextureAdder(std::move(texadd1));
+
+  auto texadd2 = std::make_unique<NoiseTextureAdder>();
+  this->textureAdderGrainsQuaternary = texadd2.get();
+  this->pipeline->addTextureAdder(std::move(texadd2));
+
+  auto texadd3 = std::make_unique<NoiseTextureAdder>();
+  this->textureAdderVariance = texadd3.get();
+  this->pipeline->addTextureAdder(std::move(texadd3));
+
+  auto texadd4 = std::make_unique<NoiseTextureAdder>();
+  this->textureAdderMoss = texadd4.get();
+  this->pipeline->addTextureAdder(std::move(texadd4));
 }
 
 void SedimentaryPipeline::updatePipeline() {
@@ -223,6 +256,12 @@ void SedimentaryPipeline::updateTextureGenerator() {
   (*coloring)[100] = tertiaryColor;
   (*coloring)[65] = baseColor;
 }  // namespace procrock
+
+void SedimentaryPipeline::updateTextureAdderGrainsSecondary() {}
+
+void SedimentaryPipeline::updateTextureAdderGrainsTertiary() {}
+
+void SedimentaryPipeline::updateTextureAdderGrainsQuaternary() {}
 
 void SedimentaryPipeline::updateTextureAdderVariance() {
   textureAdderVariance->setDisabled(!textureVariance);
