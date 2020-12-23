@@ -2,6 +2,8 @@
 
 #include <math.h>
 
+#include "../math.h"
+
 namespace procrock {
 SedimentaryPipeline::SedimentaryPipeline() {
   Configuration::ConfigurationGroup group;
@@ -14,9 +16,19 @@ SedimentaryPipeline::SedimentaryPipeline() {
   group.bools.push_back(
       Configuration::SimpleEntry<bool>{{"Layered", "Approximate layers of sediment."}, &layered});
 
+  Configuration::ConfigurationGroup layeringGroup;
+  auto layeringFunc = [&]() { return layered; };
+  layeringGroup.entry = {"Layering", "Settings affecting the layered structure.", layeringFunc};
+  layeringGroup.floats.push_back(Configuration::BoundedEntry<float>{
+      {"Frequency", "Layering frequency / density"}, &layerFrequency, 1, 12});
+  layeringGroup.floats.push_back(Configuration::BoundedEntry<float>{
+      {"Strength", "Amount of extrusion/intrusion for the layers."}, &layerStrength, 0.1, 0.4});
+
   Configuration::ConfigurationGroup grainGroup;
   grainGroup.entry = {"Grains", "Change settings related to grain sizes and colors."};
 
+  grainGroup.floats.push_back(Configuration::BoundedEntry<float>{
+      {"Base Size", "Size of the base grains."}, &baseGrainSize, 0, 1});
   grainGroup.colors.push_back(
       Configuration::SimpleEntry<Eigen::Vector3f>{{"Base", "Base color of grains."}, &baseColor});
   grainGroup.colors.push_back(Configuration::SimpleEntry<Eigen::Vector3f>{
@@ -33,6 +45,7 @@ SedimentaryPipeline::SedimentaryPipeline() {
       Configuration::SimpleEntry<bool>{{"Moss", "Add moss to the rock."}, &textureMoss});
 
   config.insertToConfigGroups("Form", group);
+  config.insertToConfigGroups("Form", layeringGroup);
   config.insertToConfigGroups("Texture", grainGroup);
   config.insertToConfigGroups("Texture", textureExtrasGroup);
 }
@@ -88,6 +101,8 @@ void SedimentaryPipeline::updatePipeline() {
 
   modDecimate->relativeValue = 0.3;
 
+  // pipeline->getParameterizer().textureSizeChoice = 3;
+
   if (cutGround) {
     modTransform->translation = Eigen::Vector3f(0, -0.5, 0);
   } else {
@@ -110,7 +125,7 @@ int SedimentaryPipeline::createLayerNoise(NoiseGraph* noise) {
   auto ridgetMultiNodePtr = ridgedMultiNode.get();
   auto ridgetMultiNodeId = noise->addNode(std::move(ridgedMultiNode), false, {0, 700});
 
-  ridgetMultiNodePtr->frequency = 6;
+  ridgetMultiNodePtr->frequency = layerFrequency;
   ridgetMultiNodePtr->lacunarity = 2.5;
   ridgetMultiNodePtr->octaveCount = 3;
 
@@ -128,7 +143,7 @@ int SedimentaryPipeline::createLayerNoise(NoiseGraph* noise) {
 
 void SedimentaryPipeline::updateModifierDisplaceAlongNormals() {
   modDisplaceAlongNormals->setDisabled(!layered);
-  modDisplaceAlongNormals->factor = 0.15;
+  modDisplaceAlongNormals->factor = layerStrength;
   modDisplaceAlongNormals->selection = 1;  // noise based
 
   auto modConfigs = modDisplaceAlongNormals->getConfiguration();
@@ -163,7 +178,7 @@ void SedimentaryPipeline::updateTextureGenerator() {
   auto voronoiNoiseNodePtr = voronoiNoiseNode.get();
   auto voronoiNoiseNodeId = noise.addNode(std::move(voronoiNoiseNode), false, {0, 350});
 
-  voronoiNoiseNodePtr->frequency = 66;
+  voronoiNoiseNodePtr->frequency = math::lerp(1, 100, (1 - baseGrainSize));
   voronoiNoiseNodePtr->displacement = 0.33;
 
   auto addNoiseNode0 = std::make_unique<AddNoiseNode>();

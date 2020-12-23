@@ -40,7 +40,11 @@ class SedimentaryPipeline : public AbstractedPipeline {
   int seed = 0;
   bool cutGround = true;
 
+  float baseGrainSize = 0.33;
+
   bool layered = true;
+  float layerFrequency = 6.0;
+  float layerStrength = 0.15;
 
   bool textureVariance = true;
   bool textureMoss = false;
