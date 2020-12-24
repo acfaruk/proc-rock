@@ -45,14 +45,26 @@ SedimentaryPipeline::SedimentaryPipeline() {
   Configuration::ConfigurationGroup secondaryGrainsGroup;
   auto secondaryGrainsFunc = [&]() { return useSecondaryGrains; };
   secondaryGrainsGroup.entry = {"Secondary Grains", "Modify Grains", secondaryGrainsFunc};
+  secondaryGrainsGroup.floats.push_back(Configuration::BoundedEntry<float>{
+      {"Grain Size", "Set the size of the grains."}, &secondaryGrainSize, 0, 1});
+  secondaryGrainsGroup.colors.push_back(Configuration::SimpleEntry<Eigen::Vector3f>{
+      {"Color", "Color of the grains."}, &secondaryGrainsColor});
 
   Configuration::ConfigurationGroup tertiaryGrainsGroup;
   auto tertiaryGrainsFunc = [&]() { return useTertiaryGrains; };
   tertiaryGrainsGroup.entry = {"Tertiary Grains", "Modify Grains", tertiaryGrainsFunc};
+  tertiaryGrainsGroup.floats.push_back(Configuration::BoundedEntry<float>{
+      {"Grain Size", "Set the size of the grains."}, &tertiaryGrainSize, 0, 1});
+  tertiaryGrainsGroup.colors.push_back(Configuration::SimpleEntry<Eigen::Vector3f>{
+      {"Color", "Color of the grains."}, &tertiaryGrainsColor});
 
   Configuration::ConfigurationGroup quaternaryGrainsGroup;
   auto quaternaryGrainsFunc = [&]() { return useQuaternaryGrains; };
   quaternaryGrainsGroup.entry = {"Quaternary Grains", "Modify Grains", quaternaryGrainsFunc};
+  quaternaryGrainsGroup.floats.push_back(Configuration::BoundedEntry<float>{
+      {"Grain Size", "Set the size of the grains."}, &quaternaryGrainSize, 0, 1});
+  quaternaryGrainsGroup.colors.push_back(Configuration::SimpleEntry<Eigen::Vector3f>{
+      {"Color", "Color of the grains."}, &quaternaryGrainsColor});
 
   Configuration::ConfigurationGroup textureExtrasGroup;
   textureExtrasGroup.entry = {"Extras", "Extras to add to the texture."};
@@ -149,6 +161,9 @@ void SedimentaryPipeline::updatePipeline() {
   modDecimate->relativeValue = 0.25;
 
   updateTextureGenerator();
+  updateTextureAdderGrainsSecondary();
+  updateTextureAdderGrainsTertiary();
+  updateTextureAdderGrainsQuaternary();
   updateTextureAdderVariance();
   updateTextureAdderMoss();
 }
@@ -257,11 +272,92 @@ void SedimentaryPipeline::updateTextureGenerator() {
   (*coloring)[65] = baseColor;
 }  // namespace procrock
 
-void SedimentaryPipeline::updateTextureAdderGrainsSecondary() {}
+void SedimentaryPipeline::updateTextureAdderGrainsSecondary() {
+  textureAdderGrainsSecondary->setDisabled(!useSecondaryGrains);
 
-void SedimentaryPipeline::updateTextureAdderGrainsTertiary() {}
+  auto config = textureAdderGrainsSecondary->getConfiguration();
+  auto& noise = textureAdderGrainsSecondary->noiseGraph;
+  noise.clear();
 
-void SedimentaryPipeline::updateTextureAdderGrainsQuaternary() {}
+  auto voronoiNoiseNode = std::make_unique<VoronoiNoiseNode>();
+  auto voronoiNoiseNodePtr = voronoiNoiseNode.get();
+  auto voronoiNoiseNodeId = noise.addNode(std::move(voronoiNoiseNode));
+
+  voronoiNoiseNodePtr->frequency = math::lerp(1, 100, (1 - secondaryGrainSize));
+  voronoiNoiseNodePtr->seed = 10;
+
+  int outputNoiseNodeId = noise.addNode(std::make_unique<OutputNoiseNode>(), true, {400, 0});
+  noise.addEdge(voronoiNoiseNodeId, outputNoiseNodeId);
+
+  auto coloring = config.getConfigGroup("Albedo", "Gradient Alpha Coloring")
+                      .getGradientAlphaColoring("Gradient");
+  coloring->clear();
+
+  auto col = secondaryGrainsColor;
+  (*coloring)[0] = Eigen::Vector4f{0, 0, 0, 0};
+  (*coloring)[40] = Eigen::Vector4f{col.x(), col.y(), col.z(), 0};
+  (*coloring)[50] = Eigen::Vector4f{col.x(), col.y(), col.z(), 1};
+  (*coloring)[60] = Eigen::Vector4f{col.x(), col.y(), col.z(), 0};
+  (*coloring)[100] = Eigen::Vector4f{0, 0, 0, 0};
+}
+
+void SedimentaryPipeline::updateTextureAdderGrainsTertiary() {
+  textureAdderGrainsTertiary->setDisabled(!useTertiaryGrains);
+
+  auto config = textureAdderGrainsTertiary->getConfiguration();
+  auto& noise = textureAdderGrainsTertiary->noiseGraph;
+  noise.clear();
+
+  auto voronoiNoiseNode = std::make_unique<VoronoiNoiseNode>();
+  auto voronoiNoiseNodePtr = voronoiNoiseNode.get();
+  auto voronoiNoiseNodeId = noise.addNode(std::move(voronoiNoiseNode));
+
+  voronoiNoiseNodePtr->frequency = math::lerp(1, 100, (1 - tertiaryGrainSize));
+  voronoiNoiseNodePtr->seed = 20;
+
+  int outputNoiseNodeId = noise.addNode(std::make_unique<OutputNoiseNode>(), true, {400, 0});
+  noise.addEdge(voronoiNoiseNodeId, outputNoiseNodeId);
+
+  auto coloring = config.getConfigGroup("Albedo", "Gradient Alpha Coloring")
+                      .getGradientAlphaColoring("Gradient");
+  coloring->clear();
+
+  auto col = tertiaryGrainsColor;
+  (*coloring)[0] = Eigen::Vector4f{0, 0, 0, 0};
+  (*coloring)[40] = Eigen::Vector4f{col.x(), col.y(), col.z(), 0};
+  (*coloring)[50] = Eigen::Vector4f{col.x(), col.y(), col.z(), 1};
+  (*coloring)[60] = Eigen::Vector4f{col.x(), col.y(), col.z(), 0};
+  (*coloring)[100] = Eigen::Vector4f{0, 0, 0, 0};
+}
+
+void SedimentaryPipeline::updateTextureAdderGrainsQuaternary() {
+  textureAdderGrainsQuaternary->setDisabled(!useQuaternaryGrains);
+
+  auto config = textureAdderGrainsQuaternary->getConfiguration();
+  auto& noise = textureAdderGrainsQuaternary->noiseGraph;
+  noise.clear();
+
+  auto voronoiNoiseNode = std::make_unique<VoronoiNoiseNode>();
+  auto voronoiNoiseNodePtr = voronoiNoiseNode.get();
+  auto voronoiNoiseNodeId = noise.addNode(std::move(voronoiNoiseNode));
+
+  voronoiNoiseNodePtr->frequency = math::lerp(1, 100, (1 - quaternaryGrainSize));
+  voronoiNoiseNodePtr->seed = 30;
+
+  int outputNoiseNodeId = noise.addNode(std::make_unique<OutputNoiseNode>(), true, {400, 0});
+  noise.addEdge(voronoiNoiseNodeId, outputNoiseNodeId);
+
+  auto coloring = config.getConfigGroup("Albedo", "Gradient Alpha Coloring")
+                      .getGradientAlphaColoring("Gradient");
+  coloring->clear();
+
+  auto col = quaternaryGrainsColor;
+  (*coloring)[0] = Eigen::Vector4f{0, 0, 0, 0};
+  (*coloring)[40] = Eigen::Vector4f{col.x(), col.y(), col.z(), 0};
+  (*coloring)[50] = Eigen::Vector4f{col.x(), col.y(), col.z(), 1};
+  (*coloring)[60] = Eigen::Vector4f{col.x(), col.y(), col.z(), 0};
+  (*coloring)[100] = Eigen::Vector4f{0, 0, 0, 0};
+}
 
 void SedimentaryPipeline::updateTextureAdderVariance() {
   textureAdderVariance->setDisabled(!textureVariance);

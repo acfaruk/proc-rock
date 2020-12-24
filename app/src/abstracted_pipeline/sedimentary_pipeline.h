@@ -66,11 +66,11 @@ class SedimentaryPipeline : public AbstractedPipeline {
   float secondaryGrainSize = 0.6;
 
   bool useTertiaryGrains = false;
-  Eigen::Vector3f tertiaryGrainsColor = {0.6, 0.2, 0.0};
-  float tertiaryGrainSize = 0.9;
+  Eigen::Vector3f tertiaryGrainsColor = {0.8, 0.8, 0.8};
+  float tertiaryGrainSize = 0.5;
 
   bool useQuaternaryGrains = false;
-  Eigen::Vector3f quaternaryGrainsColor = {0.7, 0.1, 0.3};
+  Eigen::Vector3f quaternaryGrainsColor = {0.5, 0.3, 0.1};
   float quaternaryGrainSize = 0.5;
 };
 }  // namespace procrock
