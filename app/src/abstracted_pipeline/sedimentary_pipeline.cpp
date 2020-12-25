@@ -66,21 +66,14 @@ SedimentaryPipeline::SedimentaryPipeline() {
   quaternaryGrainsGroup.colors.push_back(Configuration::SimpleEntry<Eigen::Vector3f>{
       {"Color", "Color of the grains."}, &quaternaryGrainsColor});
 
-  Configuration::ConfigurationGroup textureExtrasGroup;
-  textureExtrasGroup.entry = {"Extras", "Extras to add to the texture."};
-  textureExtrasGroup.bools.push_back(Configuration::SimpleEntry<bool>{
-      {"Variance", "Add some variance to the texture to make it appear more natural."},
-      &textureVariance});
-  textureExtrasGroup.bools.push_back(
-      Configuration::SimpleEntry<bool>{{"Moss", "Add moss to the rock."}, &textureMoss});
-
   config.insertToConfigGroups("Form", group);
   config.insertToConfigGroups("Form", layeringGroup);
   config.insertToConfigGroups("Texture", grainGroup);
   config.insertToConfigGroups("Texture", secondaryGrainsGroup);
   config.insertToConfigGroups("Texture", tertiaryGrainsGroup);
   config.insertToConfigGroups("Texture", quaternaryGrainsGroup);
-  config.insertToConfigGroups("Texture", textureExtrasGroup);
+
+  textureExtrasExtender.addOwnGroups(config, "Texture");
 }
 
 void SedimentaryPipeline::setupPipeline() {
@@ -124,13 +117,7 @@ void SedimentaryPipeline::setupPipeline() {
   this->textureAdderGrainsQuaternary = texadd2.get();
   this->pipeline->addTextureAdder(std::move(texadd2));
 
-  auto texadd3 = std::make_unique<NoiseTextureAdder>();
-  this->textureAdderVariance = texadd3.get();
-  this->pipeline->addTextureAdder(std::move(texadd3));
-
-  auto texadd4 = std::make_unique<NoiseTextureAdder>();
-  this->textureAdderMoss = texadd4.get();
-  this->pipeline->addTextureAdder(std::move(texadd4));
+  textureExtrasExtender.setupPipeline(pipeline);
 }
 
 void SedimentaryPipeline::updatePipeline() {
@@ -164,8 +151,8 @@ void SedimentaryPipeline::updatePipeline() {
   updateTextureAdderGrainsSecondary();
   updateTextureAdderGrainsTertiary();
   updateTextureAdderGrainsQuaternary();
-  updateTextureAdderVariance();
-  updateTextureAdderMoss();
+
+  textureExtrasExtender.updatePipeline(pipeline);
 }
 
 int SedimentaryPipeline::createLayerNoise(NoiseGraph* noise) {
@@ -359,60 +346,4 @@ void SedimentaryPipeline::updateTextureAdderGrainsQuaternary() {
   (*coloring)[100] = Eigen::Vector4f{0, 0, 0, 0};
 }
 
-void SedimentaryPipeline::updateTextureAdderVariance() {
-  textureAdderVariance->setDisabled(!textureVariance);
-
-  auto config = textureAdderVariance->getConfiguration();
-  auto& noise = textureAdderVariance->noiseGraph;
-  noise.clear();
-
-  auto perlinNoiseNode = std::make_unique<PerlinNoiseNode>();
-  auto perlinNoiseNodePtr = perlinNoiseNode.get();
-  auto perlinNoiseNodeId = noise.addNode(std::move(perlinNoiseNode));
-
-  perlinNoiseNodePtr->frequency = 0.7;
-  perlinNoiseNodePtr->lacunarity = 3.5;
-  perlinNoiseNodePtr->persistence = 0.4;
-
-  int outputNoiseNodeId = noise.addNode(std::make_unique<OutputNoiseNode>(), true, {400, 0});
-  noise.addEdge(perlinNoiseNodeId, outputNoiseNodeId);
-
-  auto coloring = config.getConfigGroup("Albedo", "Gradient Alpha Coloring")
-                      .getGradientAlphaColoring("Gradient");
-  coloring->clear();
-
-  (*coloring)[30] = Eigen::Vector4f{0, 0, 0, 0};
-  (*coloring)[70] = Eigen::Vector4f{0, 0, 0, 0.5};
-  (*coloring)[100] = Eigen::Vector4f{0, 0, 0, 0};
-}
-
-void SedimentaryPipeline::updateTextureAdderMoss() {
-  textureAdderMoss->setDisabled(!textureMoss);
-  auto config = textureAdderMoss->getConfiguration();
-  auto& noise = textureAdderMoss->noiseGraph;
-  noise.clear();
-
-  auto perlinNoiseNode = std::make_unique<PerlinNoiseNode>();
-  auto perlinNoiseNodePtr = perlinNoiseNode.get();
-  auto perlinNoiseNodeId = noise.addNode(std::move(perlinNoiseNode));
-
-  perlinNoiseNodePtr->frequency = 6;
-  perlinNoiseNodePtr->lacunarity = 2.5;
-  perlinNoiseNodePtr->persistence = 0.35;
-
-  int outputNoiseNodeId = noise.addNode(std::make_unique<OutputNoiseNode>(), true, {400, 0});
-  noise.addEdge(perlinNoiseNodeId, outputNoiseNodeId);
-
-  auto coloring = config.getConfigGroup("Albedo", "Gradient Alpha Coloring")
-                      .getGradientAlphaColoring("Gradient");
-  coloring->clear();
-
-  (*coloring)[0] = Eigen::Vector4f{0.1, 0.5, 0, 0};
-  (*coloring)[100] = Eigen::Vector4f{0, 0.2, 0, 0.5};
-
-  auto useDirection =
-      config.getConfigGroup("Preferred Normal Direction", "Prefer specific normal directions.")
-          .getBool("Use preferred normal directions.");
-  *useDirection = true;
-}
 }  // namespace procrock
