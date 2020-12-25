@@ -214,8 +214,9 @@ void Pipeline::saveToFile(const std::string filePath) {
 
   finalJson.update({{"modifiers", {}}});
   for (auto& mod : modifiers) {
-    nlohmann::json modJson =
-        nlohmann::json{{"_id", mod->getInfo().id}, {"config", mod->getConfiguration()}};
+    nlohmann::json modJson = nlohmann::json{{"_id", mod->getInfo().id},
+                                            {"disabled", mod->isDisabled()},
+                                            {"config", mod->getConfiguration()}};
     finalJson.at("modifiers").push_back(modJson);
   }
 
@@ -229,8 +230,9 @@ void Pipeline::saveToFile(const std::string filePath) {
 
   finalJson.update({{"textureAdders", {}}});
   for (auto& texAdder : textureAdders) {
-    nlohmann::json texAddJson =
-        nlohmann::json{{"_id", texAdder->getInfo().id}, {"config", texAdder->getConfiguration()}};
+    nlohmann::json texAddJson = nlohmann::json{{"_id", texAdder->getInfo().id},
+                                               {"disabled", texAdder->isDisabled()},
+                                               {"config", texAdder->getConfiguration()}};
     finalJson.at("textureAdders").push_back(texAddJson);
   }
 
@@ -254,8 +256,11 @@ void Pipeline::loadFromFile(const std::string filePath) {
   auto& modsJson = json.at("modifiers");
   for (auto& modJson : modsJson) {
     addModifier(createModifierFromId(modJson.at("_id").get<int>()));
-    fillConfigFromJson(modJson.at("config"),
-                       getModifier(getModifierCount() - 1).getConfiguration());
+    auto& mod = getModifier(getModifierCount() - 1);
+    if (modJson.find("disabled") != modJson.end()) {  // backwards compatible...
+      mod.setDisabled(modJson.at("disabled").get<bool>());
+    }
+    fillConfigFromJson(modJson.at("config"), mod.getConfiguration());
   }
 
   auto& parJson = json.at("parameterizer");
@@ -270,8 +275,11 @@ void Pipeline::loadFromFile(const std::string filePath) {
   auto& texAddsJson = json.at("textureAdders");
   for (auto& texAddJson : texAddsJson) {
     addTextureAdder(createTextureAdderFromId(texAddJson.at("_id").get<int>()));
-    fillConfigFromJson(texAddJson.at("config"),
-                       getTextureAdder(getTextureAdderCount() - 1).getConfiguration());
+    auto& texAdd = getTextureAdder(getTextureAdderCount() - 1);
+    if (texAddJson.find("disabled") != texAddJson.end()) {  // backwards compatible...
+      texAdd.setDisabled(texAddJson.at("disabled").get<bool>());
+    }
+    fillConfigFromJson(texAddJson.at("config"), texAdd.getConfiguration());
   }
 }
 
