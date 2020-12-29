@@ -52,9 +52,6 @@ class SedimentaryPipeline : public AbstractedPipeline {
   float layerFrequency = 6.0;
   float layerStrength = 0.15;
 
-  bool textureVariance = true;
-  bool textureMoss = false;
-
   Eigen::Vector3f baseColor = {0.532, 0.355, 0.084};
   Eigen::Vector3f secondaryColor = {0.681, 0.681, 0.681};
   Eigen::Vector3f tertiaryColor = {0.0, 0.0, 0.0};

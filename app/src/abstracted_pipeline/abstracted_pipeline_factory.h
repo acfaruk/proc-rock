@@ -11,6 +11,8 @@ std::unique_ptr<AbstractedPipeline> inline createAbstractPipelineFromId(unsigned
       return std::make_unique<IgneousPipeline>();
     case AbstractedPipeline_Sedimentary:
       return std::make_unique<SedimentaryPipeline>();
+    case AbstractedPipeline_Metamorphic:
+      return std::make_unique<MetamorphicPipeline>();
     default:
       assert(0 && "make sure all abstract pipeline types are handled!");
   }

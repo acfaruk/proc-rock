@@ -20,7 +20,8 @@ class AbstractedPipeline : public Configurable {
 
 const unsigned int AbstractedPipeline_Igneous = 0;
 const unsigned int AbstractedPipeline_Sedimentary = 1;
+const unsigned int AbstractedPipeline_Metamorphic = 2;
 
-const char* const AbstractedPipeline_Names[] = {"Igneous", "Sedimentary"};
+const char* const AbstractedPipeline_Names[] = {"Igneous", "Sedimentary", "Metamorphic"};
 
 }  // namespace procrock
