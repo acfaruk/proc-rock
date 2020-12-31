@@ -17,7 +17,13 @@ class MetamorphicPipeline : public AbstractedPipeline {
   virtual void setupPipeline() override;
   virtual void updatePipeline() override;
 
+  int createFoliationBaseNoise(NoiseGraph* noise);
+  int createFoliationWaveNoise(NoiseGraph* noise);
+  int createMetamorhpicBaseNoise(NoiseGraph* noise);
+  int createGrainsBaseNoise(NoiseGraph* noise);
+
   void updateTextureGenerator();
+  void setParametersFromPreset();
 
   SkinSurfaceGenerator* generator;
 
@@ -35,12 +41,12 @@ class MetamorphicPipeline : public AbstractedPipeline {
   int seed = 0;
   bool cutGround = true;
 
-  float baseGrainSize = 0.33;
+  float baseGrainSize = 0.2;
 
   // foliation
   struct FoliationSettings {
     float size = 0.5;
-    Eigen::Vector3f direction = {0.0, 1.0, 0.0};
+    Eigen::Vector3f rotation = {0.0, 0.0, 0.0};
     float wavyness = 0.1;
     float scalyness = 0.1;
   } foliation;

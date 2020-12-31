@@ -406,7 +406,7 @@ DisplaceNoiseNode::DisplaceNoiseNode() {
 
 Configuration::ConfigurationGroup DisplaceNoiseNode::getConfig() {
   Configuration::ConfigurationGroup config;
-  config.entry = {"Displace", "Displaces input1 in each dimension by input 2-4"};
+  config.entry = {"Displace", "Displaces input4 in each dimension by input 1-3"};
   return config;
 }
 
