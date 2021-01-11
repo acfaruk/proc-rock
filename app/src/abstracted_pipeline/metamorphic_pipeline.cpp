@@ -50,6 +50,8 @@ MetamorphicPipeline::MetamorphicPipeline() {
   Configuration::ConfigurationGroup foliationGroup;
   foliationGroup.entry = {"Foliation", "Settings regarding foliation."};
 
+  foliationGroup.bools.push_back(Configuration::SimpleEntry<bool>{
+      {"Enabled", "Enable foliation in the texture."}, &foliation.enabled});
   foliationGroup.floats.push_back(Configuration::BoundedEntry<float>{
       {"Size", "Size of the foliation."}, &foliation.size, 0, 1});
   foliationGroup.float3s.push_back(Configuration::BoundedEntry<Eigen::Vector3f>{
@@ -112,8 +114,6 @@ void MetamorphicPipeline::updatePipeline() {
 
   modCutGround->setDisabled(!cutGround);
   modCutGround->rotation = Eigen::Vector3f(0, 0, (6.0 / 4.0) * M_PI);
-
-  pipeline->getParameterizer().textureSizeChoice = 4;
 
   modDecimate->relativeValue = 0.3;
 
@@ -269,7 +269,9 @@ void MetamorphicPipeline::updateTextureGenerator() {
 
   int output = noise.addNode(createNoiseNodeFromTypeId(NoiseNodeTypeId_Output), true, {2250, 0});
 
-  noise.addEdge(metaBaseId, addNoiseNodeId, 0);
+  if (foliation.enabled) {
+    noise.addEdge(metaBaseId, addNoiseNodeId, 0);
+  }
   noise.addEdge(grainsBaseId, addNoiseNodeId, 1);
   noise.addEdge(addNoiseNodeId, output);
 
@@ -299,6 +301,7 @@ void MetamorphicPipeline::setParametersFromPreset() {
   switch (presetChoice) {
     case 0: {  // Slate
       baseGrainSize = 0;
+      foliation.enabled = true;
       foliation.size = 0;
       foliation.wavyness = 0;
       foliation.scalyness = 0;
@@ -310,6 +313,7 @@ void MetamorphicPipeline::setParametersFromPreset() {
     }
     case 1: {  // Phyllite
       baseGrainSize = 0;
+      foliation.enabled = true;
       foliation.size = 0.2;
       foliation.wavyness = 0.3;
       foliation.scalyness = 0;
@@ -321,6 +325,7 @@ void MetamorphicPipeline::setParametersFromPreset() {
     }
     case 2: {  // Schist
       baseGrainSize = 0.2;
+      foliation.enabled = true;
       foliation.size = 0.4;
       foliation.wavyness = 0.05;
       foliation.scalyness = 0.1;
@@ -332,6 +337,7 @@ void MetamorphicPipeline::setParametersFromPreset() {
     }
     case 3: {  // Gneiss
       baseGrainSize = 0.3;
+      foliation.enabled = true;
       foliation.size = 0.95;
       foliation.wavyness = 0.1;
       foliation.scalyness = 0;
@@ -342,10 +348,22 @@ void MetamorphicPipeline::setParametersFromPreset() {
       break;
       break;
     }
-    case 4: {  // Marble (TODO)
+    case 4: {  // Marble
+      baseGrainSize = 0.05;
+      foliation.enabled = false;
+
+      baseColor = Eigen::Vector3f{0.67, 0.67, 0.67};
+      secondaryColor = Eigen::Vector3f{0.96, 0.96, 0.96};
+      tertiaryColor = Eigen::Vector3f{0.77, 0.77, 0.77};
       break;
     }
-    case 5: {  // Hornfels (TODO)
+    case 5: {  // Hornfels
+      baseGrainSize = 0;
+      foliation.enabled = false;
+
+      baseColor = Eigen::Vector3f{0.35, 0.35, 0.35};
+      secondaryColor = Eigen::Vector3f{0.67, 0.67, 0.67};
+      tertiaryColor = Eigen::Vector3f{0.58, 0.58, 0.58};
       break;
     }
   }

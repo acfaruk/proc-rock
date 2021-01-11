@@ -16,12 +16,24 @@ class TextureExtrasExtender : public AbstractedPipelineExtender {
 
  private:
   void updateTextureAdderVariance();
+  void updateTextureAdderVeins();
   void updateTextureAdderMoss();
 
   bool textureVariance = true;
   bool textureMoss = false;
+  bool textureVeins = false;
+
+  struct VeinSettings {
+    bool bigVeins = true;
+    bool smallVeins = true;
+    float size = 1;
+    Eigen::Vector3f color = {0, 0, 0};
+  } veins;
+
+  int textureSizeChoice = 2;
 
   NoiseTextureAdder* textureAdderVariance;
+  NoiseTextureAdder* textureAdderVeins;
   NoiseTextureAdder* textureAdderMoss;
 };
 }  // namespace procrock

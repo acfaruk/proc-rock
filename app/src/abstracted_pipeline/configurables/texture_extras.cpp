@@ -1,17 +1,46 @@
 #include "texture_extras.h"
 
+#include "../../math.h"
+
 namespace procrock {
 void TextureExtrasExtender::addOwnGroups(Configuration& config, std::string newGroupName,
                                          std::function<bool()> activeFunc) {
   Configuration::ConfigurationGroup textureExtrasGroup;
-  textureExtrasGroup.entry = {"Extras", "Extras to add to the texture."};
+  textureExtrasGroup.entry = {"Extras", "Other texture settings and additions."};
+
+  textureExtrasGroup.singleChoices.emplace_back(
+      Configuration::SingleChoiceEntry{{"Size", "Choose the size of the textures for the model."},
+                                       {{"128x128", "Very Low Quality"},
+                                        {"256x256", "Low Quality"},
+                                        {"512x512", "Medium Quality"},
+                                        {"1024x1024", "High Quality"},
+                                        {"2048x2048", "Very High Quality"},
+                                        {"4096x4096", "Extreme Quality"}},
+                                       &textureSizeChoice});
+
   textureExtrasGroup.bools.push_back(Configuration::SimpleEntry<bool>{
       {"Variance", "Add some variance to the texture to make it appear more natural."},
       &textureVariance});
   textureExtrasGroup.bools.push_back(
       Configuration::SimpleEntry<bool>{{"Moss", "Add moss to the rock."}, &textureMoss});
+  textureExtrasGroup.bools.push_back(
+      Configuration::SimpleEntry<bool>{{"Veins", "Add veins to the rock."}, &textureVeins});
+
+  Configuration::ConfigurationGroup veinsExtrasGroup;
+  auto veinsEnabledFunc = [&]() { return textureVeins; };
+  veinsExtrasGroup.entry = {"Veins", "Add veins to the rock texture", veinsEnabledFunc};
+
+  veinsExtrasGroup.bools.push_back(
+      Configuration::SimpleEntry<bool>{{"Big", "Show big veins"}, &veins.bigVeins});
+  veinsExtrasGroup.bools.push_back(
+      Configuration::SimpleEntry<bool>{{"Small", "Show small veins"}, &veins.smallVeins});
+  veinsExtrasGroup.floats.push_back(Configuration::BoundedEntry<float>{
+      {"Size", "Set the size of the veins."}, &veins.size, 0, 1});
+  veinsExtrasGroup.colors.push_back(Configuration::SimpleEntry<Eigen::Vector3f>{
+      {"Color", "Set the color of the veins."}, &veins.color});
 
   config.insertToConfigGroups(newGroupName, textureExtrasGroup);
+  config.insertToConfigGroups(newGroupName, veinsExtrasGroup);
 }
 
 void TextureExtrasExtender::setupPipeline(Pipeline* pipeline) {
@@ -20,11 +49,17 @@ void TextureExtrasExtender::setupPipeline(Pipeline* pipeline) {
   pipeline->addTextureAdder(std::move(texadd0));
 
   auto texadd1 = std::make_unique<NoiseTextureAdder>();
-  this->textureAdderMoss = texadd1.get();
+  this->textureAdderVeins = texadd1.get();
   pipeline->addTextureAdder(std::move(texadd1));
+
+  auto texadd2 = std::make_unique<NoiseTextureAdder>();
+  this->textureAdderMoss = texadd2.get();
+  pipeline->addTextureAdder(std::move(texadd2));
 }
 void TextureExtrasExtender::updatePipeline(Pipeline* pipeline) {
+  pipeline->getParameterizer().textureSizeChoice = textureSizeChoice;
   updateTextureAdderVariance();
+  updateTextureAdderVeins();
   updateTextureAdderMoss();
 }
 
@@ -52,6 +87,63 @@ void TextureExtrasExtender::updateTextureAdderVariance() {
 
   (*coloring)[30] = Eigen::Vector4f{0, 0, 0, 0};
   (*coloring)[70] = Eigen::Vector4f{0, 0, 0, 0.5};
+  (*coloring)[100] = Eigen::Vector4f{0, 0, 0, 0};
+}
+
+void TextureExtrasExtender::updateTextureAdderVeins() {
+  textureAdderVeins->setDisabled(!textureVeins);
+
+  auto config = textureAdderVeins->getConfiguration();
+  auto& noise = textureAdderVeins->noiseGraph;
+  noise.clear();
+
+  auto billowNoiseNodeBig = std::make_unique<BillowNoiseNode>();
+  auto billowNoiseNodeBigPtr = billowNoiseNodeBig.get();
+  auto billowNoiseNodeBigId = noise.addNode(std::move(billowNoiseNodeBig), false, {0, 0});
+
+  billowNoiseNodeBigPtr->frequency = 1.25;
+  billowNoiseNodeBigPtr->lacunarity = 3.5;
+  billowNoiseNodeBigPtr->persistence = 0.58;
+  billowNoiseNodeBigPtr->octaveCount = 7;
+
+  auto billowNoiseNodeSmall = std::make_unique<BillowNoiseNode>();
+  auto billowNoiseNodeSmallPtr = billowNoiseNodeSmall.get();
+  auto billowNoiseNodeSmallId = noise.addNode(std::move(billowNoiseNodeSmall), false, {0, 300});
+
+  billowNoiseNodeSmallPtr->frequency = 6;
+  billowNoiseNodeSmallPtr->lacunarity = 3.5;
+  billowNoiseNodeSmallPtr->persistence = 0.58;
+  billowNoiseNodeSmallPtr->octaveCount = 7;
+  billowNoiseNodeSmallPtr->seed = 10;
+
+  auto minNoiseNodeId = noise.addNode(std::make_unique<MinNoiseNode>(), false, {300, 0});
+
+  auto scalePointNoiseNode = std::make_unique<ScalePointNoiseNode>();
+  auto scalePointNoiseNodePtr = scalePointNoiseNode.get();
+  auto scalePointNoiseNodeId = noise.addNode(std::move(scalePointNoiseNode), false, {500, 0});
+
+  scalePointNoiseNodePtr->xScale = math::lerp(1, 10, 1 - veins.size);
+  scalePointNoiseNodePtr->yScale = math::lerp(1, 10, 1 - veins.size);
+  scalePointNoiseNodePtr->zScale = math::lerp(1, 10, 1 - veins.size);
+
+  int outputNoiseNodeId = noise.addNode(std::make_unique<OutputNoiseNode>(), true, {700, 0});
+  if (veins.bigVeins) {
+    noise.addEdge(billowNoiseNodeBigId, minNoiseNodeId, 0);
+  }
+
+  if (veins.smallVeins) {
+    noise.addEdge(billowNoiseNodeSmallId, minNoiseNodeId, 1);
+  }
+
+  noise.addEdge(minNoiseNodeId, scalePointNoiseNodeId);
+  noise.addEdge(scalePointNoiseNodeId, outputNoiseNodeId);
+
+  auto coloring = config.getConfigGroup("Albedo", "Gradient Alpha Coloring")
+                      .getGradientAlphaColoring("Gradient");
+  coloring->clear();
+
+  (*coloring)[0] = Eigen::Vector4f{veins.color.x(), veins.color.y(), veins.color.z(), 1};
+  (*coloring)[10] = Eigen::Vector4f{0, 0, 0, 0};
   (*coloring)[100] = Eigen::Vector4f{0, 0, 0, 0};
 }
 

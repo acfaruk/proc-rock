@@ -45,6 +45,7 @@ class MetamorphicPipeline : public AbstractedPipeline {
 
   // foliation
   struct FoliationSettings {
+    bool enabled = true;
     float size = 0.5;
     Eigen::Vector3f rotation = {0.0, 0.0, 0.0};
     float wavyness = 0.1;
