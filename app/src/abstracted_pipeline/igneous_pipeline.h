@@ -6,6 +6,7 @@
 #include <procrocklib/texgen/noise_texture_generator.h>
 
 #include "abstracted_pipeline.h"
+#include "configurables/form_generator.h"
 #include "configurables/texture_extras.h"
 
 namespace procrock {
@@ -19,23 +20,12 @@ class IgneousPipeline : public AbstractedPipeline {
 
   void updateTextureGenerator();
 
-  SkinSurfaceGenerator* generator;
-
-  CutPlaneModifier* modCutGround;
-  DecimateModifier* modDecimate;
-  TransformationModifier* modTransform;
-
   NoiseTextureGenerator* textureGenerator;
 
+  FormGeneratorExtender formGeneratorExtender;
   TextureExtrasExtender textureExtrasExtender;
 
-  int seed = 0;
-  bool cutGround = true;
-
   int grainChoice = 0;  // 0 = fine grained, 1 = coarse, 2 = two distinct
-
-  bool textureVariance = true;
-  bool textureMoss = false;
 
   Eigen::Vector3f baseColor = {0.4, 0.2, 0.1};
   Eigen::Vector3f secondaryColor = {1.0, 1.0, 1.0};

@@ -6,23 +6,18 @@
 
 namespace procrock {
 SedimentaryPipeline::SedimentaryPipeline() {
-  Configuration::ConfigurationGroup group;
-  group.entry = {"General", "General Settings to change the form of the rock."};
-  group.ints.push_back(Configuration::BoundedEntry<int>{
-      {"Seed", "Change the form drastically."}, &seed, 0, 1000000});
-  group.bools.push_back(Configuration::SimpleEntry<bool>{
-      {"Cut Ground", "Should the ground be cut from the rock?"}, &cutGround});
-
-  group.bools.push_back(
-      Configuration::SimpleEntry<bool>{{"Layered", "Approximate layers of sediment."}, &layered});
-
   Configuration::ConfigurationGroup layeringGroup;
   auto layeringFunc = [&]() { return layered; };
-  layeringGroup.entry = {"Layering", "Settings affecting the layered structure.", layeringFunc};
+  layeringGroup.entry = {"Layering", "Settings affecting the layered structure."};
+  layeringGroup.bools.push_back(
+      Configuration::SimpleEntry<bool>{{"Layered", "Approximate layers of sediment."}, &layered});
   layeringGroup.floats.push_back(Configuration::BoundedEntry<float>{
-      {"Frequency", "Layering frequency / density"}, &layerFrequency, 1, 12});
+      {"Frequency", "Layering frequency / density", layeringFunc}, &layerFrequency, 1, 12});
   layeringGroup.floats.push_back(Configuration::BoundedEntry<float>{
-      {"Strength", "Amount of extrusion/intrusion for the layers."}, &layerStrength, 0.1, 0.4});
+      {"Strength", "Amount of extrusion/intrusion for the layers.", layeringFunc},
+      &layerStrength,
+      0.1,
+      0.4});
 
   Configuration::ConfigurationGroup grainGroup;
   grainGroup.entry = {"Grains", "Change settings related to grain sizes and colors."};
@@ -66,7 +61,8 @@ SedimentaryPipeline::SedimentaryPipeline() {
   quaternaryGrainsGroup.colors.push_back(Configuration::SimpleEntry<Eigen::Vector3f>{
       {"Color", "Color of the grains."}, &quaternaryGrainsColor});
 
-  config.insertToConfigGroups("Form", group);
+  formGeneratorExtender.addOwnGroups(config, "Form");
+
   config.insertToConfigGroups("Form", layeringGroup);
   config.insertToConfigGroups("Texture", grainGroup);
   config.insertToConfigGroups("Texture", secondaryGrainsGroup);
@@ -77,29 +73,15 @@ SedimentaryPipeline::SedimentaryPipeline() {
 }
 
 void SedimentaryPipeline::setupPipeline() {
-  auto gen = std::make_unique<SkinSurfaceGenerator>();
-  this->generator = gen.get();
-  this->pipeline->setGenerator(std::move(gen));
+  formGeneratorExtender.setupPipeline(pipeline);
 
-  auto mod0 = std::make_unique<CutPlaneModifier>();
-  this->modCutGround = mod0.get();
+  auto mod0 = std::make_unique<SubdivisionModifier>();
+  this->modSubdivision = mod0.get();
   this->pipeline->addModifier(std::move(mod0));
 
-  auto mod1 = std::make_unique<SubdivisionModifier>();
-  this->modSubdivision = mod1.get();
+  auto mod1 = std::make_unique<DisplaceAlongNormalsModifier>();
+  this->modDisplaceAlongNormals = mod1.get();
   this->pipeline->addModifier(std::move(mod1));
-
-  auto mod2 = std::make_unique<DisplaceAlongNormalsModifier>();
-  this->modDisplaceAlongNormals = mod2.get();
-  this->pipeline->addModifier(std::move(mod2));
-
-  auto mod3 = std::make_unique<DecimateModifier>();
-  this->modDecimate = mod3.get();
-  this->pipeline->addModifier(std::move(mod3));
-
-  auto mod4 = std::make_unique<TransformationModifier>();
-  this->modTransform = mod4.get();
-  this->pipeline->addModifier(std::move(mod4));
 
   auto texgen = std::make_unique<NoiseTextureGenerator>();
   this->textureGenerator = texgen.get();
@@ -121,31 +103,12 @@ void SedimentaryPipeline::setupPipeline() {
 }
 
 void SedimentaryPipeline::updatePipeline() {
-  // Form
-  generator->seed = this->seed + 10;
-  generator->pointAmount = 100;
-  generator->pointSize = 0.08;
-  generator->shrinkFactor = 0.4;
-  generator->setChanged(true);
-
-  modCutGround->setDisabled(!cutGround);
-  modCutGround->rotation = Eigen::Vector3f(0, 0, (6.0 / 4.0) * M_PI);
-
-  modDecimate->relativeValue = 0.3;
-
-  // pipeline->getParameterizer().textureSizeChoice = 3;
-
-  if (cutGround) {
-    modTransform->translation = Eigen::Vector3f(0, -0.5, 0);
-  } else {
-    modTransform->translation = Eigen::Vector3f(0, 0, 0);
-  }
+  formGeneratorExtender.updatePipeline(pipeline);
 
   modSubdivision->setDisabled(!layered);
+  modSubdivision->subdivisions = 2;
 
   updateModifierDisplaceAlongNormals();
-
-  modDecimate->relativeValue = 0.25;
 
   updateTextureGenerator();
   updateTextureAdderGrainsSecondary();

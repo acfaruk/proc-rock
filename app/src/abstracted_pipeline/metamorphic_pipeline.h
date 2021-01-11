@@ -6,6 +6,7 @@
 #include <procrocklib/texgen/noise_texture_generator.h>
 
 #include "abstracted_pipeline.h"
+#include "configurables/form_generator.h"
 #include "configurables/texture_extras.h"
 
 namespace procrock {
@@ -25,21 +26,13 @@ class MetamorphicPipeline : public AbstractedPipeline {
   void updateTextureGenerator();
   void setParametersFromPreset();
 
-  SkinSurfaceGenerator* generator;
-
-  CutPlaneModifier* modCutGround;
-  DecimateModifier* modDecimate;
-  TransformationModifier* modTransform;
-
   NoiseTextureGenerator* textureGenerator;
 
+  FormGeneratorExtender formGeneratorExtender;
   TextureExtrasExtender textureExtrasExtender;
 
   bool usePreset = true;
   int presetChoice = 3;  // gneiss
-
-  int seed = 0;
-  bool cutGround = true;
 
   float baseGrainSize = 0.2;
 

@@ -19,6 +19,8 @@ class DisplaceAlongNormalsModifier : public Modifier {
   float preferStrength = 1.0f;
   Eigen::Vector3f preferredDirection{0, -1, 0};
 
+  NoiseGraph noiseGraph;
+
   virtual std::shared_ptr<Mesh> modify(Mesh& mesh) override;
   virtual PipelineStageInfo& getInfo() override;
 
@@ -28,8 +30,6 @@ class DisplaceAlongNormalsModifier : public Modifier {
                          PipelineStageType::Modifier, PipelineStage_Mod_DisplaceAlongNormals};
 
   std::mt19937 rng;
-  NoiseGraph noiseGraph;
-
   int vertexCount = 0;
 
   std::set<int> pickSet(int N, int k);

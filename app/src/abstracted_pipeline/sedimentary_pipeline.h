@@ -6,6 +6,7 @@
 #include <procrocklib/texgen/noise_texture_generator.h>
 
 #include "abstracted_pipeline.h"
+#include "configurables/form_generator.h"
 #include "configurables/texture_extras.h"
 
 namespace procrock {
@@ -29,11 +30,8 @@ class SedimentaryPipeline : public AbstractedPipeline {
 
   SkinSurfaceGenerator* generator;
 
-  CutPlaneModifier* modCutGround;
   SubdivisionModifier* modSubdivision;
   DisplaceAlongNormalsModifier* modDisplaceAlongNormals;
-  DecimateModifier* modDecimate;
-  TransformationModifier* modTransform;
 
   NoiseTextureGenerator* textureGenerator;
 
@@ -41,10 +39,8 @@ class SedimentaryPipeline : public AbstractedPipeline {
   NoiseTextureAdder* textureAdderGrainsTertiary;
   NoiseTextureAdder* textureAdderGrainsQuaternary;
 
+  FormGeneratorExtender formGeneratorExtender;
   TextureExtrasExtender textureExtrasExtender;
-
-  int seed = 0;
-  bool cutGround = true;
 
   float baseGrainSize = 0.33;
 

@@ -28,13 +28,6 @@ MetamorphicPipeline::MetamorphicPipeline() {
        {"Hornfels", "Nonfoliated metamorhic rock, resulting often from shale."}},
       &presetChoice});
 
-  Configuration::ConfigurationGroup group;
-  group.entry = {"General", "General Settings to change the form of the rock."};
-  group.ints.push_back(Configuration::BoundedEntry<int>{
-      {"Seed", "Change the form drastically."}, &seed, 0, 1000000});
-  group.bools.push_back(Configuration::SimpleEntry<bool>{
-      {"Cut Ground", "Should the ground be cut from the rock?"}, &cutGround});
-
   Configuration::ConfigurationGroup grainGroup;
   grainGroup.entry = {"Grains", "Change settings related to grain sizes and colors."};
 
@@ -68,30 +61,15 @@ MetamorphicPipeline::MetamorphicPipeline() {
   foliationGroup.floats.push_back(Configuration::BoundedEntry<float>{
       {"Scalyness", "Gives the foliation a \"scaly\" look."}, &foliation.scalyness, 0, 1});
 
+  formGeneratorExtender.addOwnGroups(config, "Form");
   config.insertToConfigGroups("Preset", presetGroup);
-  config.insertToConfigGroups("Form", group);
   config.insertToConfigGroups("Texture", grainGroup);
   config.insertToConfigGroups("Texture", foliationGroup);
-
   textureExtrasExtender.addOwnGroups(config, "Texture");
 }
 
 void MetamorphicPipeline::setupPipeline() {
-  auto gen = std::make_unique<SkinSurfaceGenerator>();
-  this->generator = gen.get();
-  this->pipeline->setGenerator(std::move(gen));
-
-  auto mod0 = std::make_unique<CutPlaneModifier>();
-  this->modCutGround = mod0.get();
-  this->pipeline->addModifier(std::move(mod0));
-
-  auto mod1 = std::make_unique<DecimateModifier>();
-  this->modDecimate = mod1.get();
-  this->pipeline->addModifier(std::move(mod1));
-
-  auto mod2 = std::make_unique<TransformationModifier>();
-  this->modTransform = mod2.get();
-  this->pipeline->addModifier(std::move(mod2));
+  formGeneratorExtender.setupPipeline(pipeline);
 
   auto texgen = std::make_unique<NoiseTextureGenerator>();
   this->textureGenerator = texgen.get();
@@ -105,24 +83,7 @@ void MetamorphicPipeline::updatePipeline() {
     setParametersFromPreset();
   }
 
-  // Form
-  generator->seed = this->seed + 10;
-  generator->pointAmount = 100;
-  generator->pointSize = 0.08;
-  generator->shrinkFactor = 0.4;
-  generator->setChanged(true);
-
-  modCutGround->setDisabled(!cutGround);
-  modCutGround->rotation = Eigen::Vector3f(0, 0, (6.0 / 4.0) * M_PI);
-
-  modDecimate->relativeValue = 0.3;
-
-  if (cutGround) {
-    modTransform->translation = Eigen::Vector3f(0, -0.5, 0);
-  } else {
-    modTransform->translation = Eigen::Vector3f(0, 0, 0);
-  }
-
+  formGeneratorExtender.updatePipeline(pipeline);
   updateTextureGenerator();
   textureExtrasExtender.updatePipeline(pipeline);
 }

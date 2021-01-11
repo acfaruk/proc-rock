@@ -4,13 +4,6 @@
 
 namespace procrock {
 IgneousPipeline::IgneousPipeline() {
-  Configuration::ConfigurationGroup group;
-  group.entry = {"General", "General Settings to change the form of the rock."};
-  group.ints.push_back(Configuration::BoundedEntry<int>{
-      {"Seed", "Change the form drastically."}, &seed, 0, 1000000});
-  group.bools.push_back(Configuration::SimpleEntry<bool>{
-      {"Cut Ground", "Should the ground be cut from the rock?"}, &cutGround});
-
   Configuration::ConfigurationGroup grainGroup;
   grainGroup.entry = {"Grains", "Change settings related to grain sizes and colors."};
   grainGroup.singleChoices.push_back(Configuration::SingleChoiceEntry{
@@ -27,27 +20,13 @@ IgneousPipeline::IgneousPipeline() {
   grainGroup.colors.push_back(Configuration::SimpleEntry<Eigen::Vector3f>{
       {"Tertiary", "Tertiary color of grains."}, &tertiaryColor});
 
-  config.insertToConfigGroups("Form", group);
+  formGeneratorExtender.addOwnGroups(config, "Form");
   config.insertToConfigGroups("Texture", grainGroup);
   textureExtrasExtender.addOwnGroups(config, "Texture");
 }
 
 void IgneousPipeline::setupPipeline() {
-  auto gen = std::make_unique<SkinSurfaceGenerator>();
-  this->generator = gen.get();
-  this->pipeline->setGenerator(std::move(gen));
-
-  auto mod0 = std::make_unique<CutPlaneModifier>();
-  this->modCutGround = mod0.get();
-  this->pipeline->addModifier(std::move(mod0));
-
-  auto mod1 = std::make_unique<DecimateModifier>();
-  this->modDecimate = mod1.get();
-  this->pipeline->addModifier(std::move(mod1));
-
-  auto mod2 = std::make_unique<TransformationModifier>();
-  this->modTransform = mod2.get();
-  this->pipeline->addModifier(std::move(mod2));
+  formGeneratorExtender.setupPipeline(pipeline);
 
   auto texgen = std::make_unique<NoiseTextureGenerator>();
   this->textureGenerator = texgen.get();
@@ -57,24 +36,7 @@ void IgneousPipeline::setupPipeline() {
 }
 
 void IgneousPipeline::updatePipeline() {
-  // Form
-  generator->seed = this->seed + 10;
-  generator->pointAmount = 100;
-  generator->pointSize = 0.08;
-  generator->shrinkFactor = 0.4;
-  generator->setChanged(true);
-
-  modCutGround->setDisabled(!cutGround);
-  modCutGround->rotation = Eigen::Vector3f(0, 0, (6.0 / 4.0) * M_PI);
-
-  modDecimate->relativeValue = 0.3;
-
-  if (cutGround) {
-    modTransform->translation = Eigen::Vector3f(0, -0.5, 0);
-  } else {
-    modTransform->translation = Eigen::Vector3f(0, 0, 0);
-  }
-
+  formGeneratorExtender.updatePipeline(pipeline);
   updateTextureGenerator();
   textureExtrasExtender.updatePipeline(pipeline);
 }
