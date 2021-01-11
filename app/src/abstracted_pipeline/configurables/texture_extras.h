@@ -16,12 +16,14 @@ class TextureExtrasExtender : public AbstractedPipelineExtender {
 
  private:
   void updateTextureAdderVariance();
+  void updateTextureAdderSpots();
   void updateTextureAdderVeins();
   void updateTextureAdderMoss();
 
   bool textureVariance = true;
   bool textureMoss = false;
   bool textureVeins = false;
+  bool textureSpots = false;
 
   struct VeinSettings {
     bool bigVeins = true;
@@ -30,9 +32,16 @@ class TextureExtrasExtender : public AbstractedPipelineExtender {
     Eigen::Vector3f color = {0, 0, 0};
   } veins;
 
+  struct SpotSettings {
+    float size = 1;
+    float strength = 0.3;
+    Eigen::Vector3f color = {0.35, 0.35, 0};
+  } spots;
+
   int textureSizeChoice = 2;
 
   NoiseTextureAdder* textureAdderVariance;
+  NoiseTextureAdder* textureAdderSpots;
   NoiseTextureAdder* textureAdderVeins;
   NoiseTextureAdder* textureAdderMoss;
 };

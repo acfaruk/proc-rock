@@ -25,6 +25,8 @@ void TextureExtrasExtender::addOwnGroups(Configuration& config, std::string newG
       Configuration::SimpleEntry<bool>{{"Moss", "Add moss to the rock."}, &textureMoss});
   textureExtrasGroup.bools.push_back(
       Configuration::SimpleEntry<bool>{{"Veins", "Add veins to the rock."}, &textureVeins});
+  textureExtrasGroup.bools.push_back(
+      Configuration::SimpleEntry<bool>{{"Spots", "Add veins to the rock."}, &textureSpots});
 
   Configuration::ConfigurationGroup veinsExtrasGroup;
   auto veinsEnabledFunc = [&]() { return textureVeins; };
@@ -39,7 +41,19 @@ void TextureExtrasExtender::addOwnGroups(Configuration& config, std::string newG
   veinsExtrasGroup.colors.push_back(Configuration::SimpleEntry<Eigen::Vector3f>{
       {"Color", "Set the color of the veins."}, &veins.color});
 
+  Configuration::ConfigurationGroup spotsExtraGroup;
+  auto spotsEnabledFunc = [&]() { return textureSpots; };
+  spotsExtraGroup.entry = {"Spots", "Add spots of different color.", spotsEnabledFunc};
+
+  spotsExtraGroup.floats.push_back(Configuration::BoundedEntry<float>{
+      {"Size", "Set the size and frequency of the spots"}, &spots.size, 0, 1});
+  spotsExtraGroup.floats.push_back(Configuration::BoundedEntry<float>{
+      {"Strength", "Set the strength of the spots"}, &spots.strength, 0, 1});
+  spotsExtraGroup.colors.push_back(Configuration::SimpleEntry<Eigen::Vector3f>{
+      {"Color", "Set the color of the spots"}, &spots.color});
+
   config.insertToConfigGroups(newGroupName, textureExtrasGroup);
+  config.insertToConfigGroups(newGroupName, spotsExtraGroup);
   config.insertToConfigGroups(newGroupName, veinsExtrasGroup);
 }
 
@@ -49,16 +63,21 @@ void TextureExtrasExtender::setupPipeline(Pipeline* pipeline) {
   pipeline->addTextureAdder(std::move(texadd0));
 
   auto texadd1 = std::make_unique<NoiseTextureAdder>();
-  this->textureAdderVeins = texadd1.get();
+  this->textureAdderSpots = texadd1.get();
   pipeline->addTextureAdder(std::move(texadd1));
 
   auto texadd2 = std::make_unique<NoiseTextureAdder>();
-  this->textureAdderMoss = texadd2.get();
+  this->textureAdderVeins = texadd2.get();
   pipeline->addTextureAdder(std::move(texadd2));
+
+  auto texadd3 = std::make_unique<NoiseTextureAdder>();
+  this->textureAdderMoss = texadd3.get();
+  pipeline->addTextureAdder(std::move(texadd3));
 }
 void TextureExtrasExtender::updatePipeline(Pipeline* pipeline) {
   pipeline->getParameterizer().textureSizeChoice = textureSizeChoice;
   updateTextureAdderVariance();
+  updateTextureAdderSpots();
   updateTextureAdderVeins();
   updateTextureAdderMoss();
 }
@@ -87,6 +106,32 @@ void TextureExtrasExtender::updateTextureAdderVariance() {
 
   (*coloring)[30] = Eigen::Vector4f{0, 0, 0, 0};
   (*coloring)[70] = Eigen::Vector4f{0, 0, 0, 0.5};
+  (*coloring)[100] = Eigen::Vector4f{0, 0, 0, 0};
+}
+
+void TextureExtrasExtender::updateTextureAdderSpots() {
+  textureAdderSpots->setDisabled(!textureSpots);
+
+  auto config = textureAdderSpots->getConfiguration();
+  auto& noise = textureAdderSpots->noiseGraph;
+  noise.clear();
+
+  auto ridgedMultiNoiseNode = std::make_unique<RidgedMultiNoiseNode>();
+  auto ridgedMultiNoiseNodePtr = ridgedMultiNoiseNode.get();
+  auto ridgedMultiNoiseNodeId = noise.addNode(std::move(ridgedMultiNoiseNode), false, {0, 0});
+
+  ridgedMultiNoiseNodePtr->frequency = math::lerp(1, 20, 1 - spots.size);
+
+  int outputNoiseNodeId = noise.addNode(std::make_unique<OutputNoiseNode>(), true, {400, 0});
+  noise.addEdge(ridgedMultiNoiseNodeId, outputNoiseNodeId);
+
+  auto coloring = config.getConfigGroup("Albedo", "Gradient Alpha Coloring")
+                      .getGradientAlphaColoring("Gradient");
+  coloring->clear();
+
+  (*coloring)[0] =
+      Eigen::Vector4f{spots.color.x(), spots.color.y(), spots.color.z(), spots.strength};
+  (*coloring)[30] = Eigen::Vector4f{0, 0, 0, 0};
   (*coloring)[100] = Eigen::Vector4f{0, 0, 0, 0};
 }
 
