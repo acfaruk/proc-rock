@@ -65,7 +65,7 @@ void FormGeneratorExtender::updatePipeline(Pipeline* pipeline) {
       auto gen = std::make_unique<IcosahedronGenerator>();
       genPebble = gen.get();
       pipeline->setGenerator(std::move(gen));
-      modSubdiv->subdivisions = 2;
+      modSubdiv->subdivisions = 3;
       modSubdiv->mode = 0;
     } break;
     case 1: {
@@ -105,15 +105,15 @@ void FormGeneratorExtender::updatePipeline(Pipeline* pipeline) {
   std::mt19937 rng;
   rng.seed(seed + 10);
 
-  float rotX = rng() / (float)rng.max();
-  float rotY = rng() / (float)rng.max();
+  float rotY = (rng() / (float)rng.max()) * (M_PI / 2);
+  float rotZ = (rng() / (float)rng.max()) * (M_PI / 2);
 
-  modPyramidCut->rotation.x() = rotX;
   modPyramidCut->rotation.y() = rotY;
+  modPyramidCut->rotation.z() = rotZ;
 
   // Skin Decimate
   modSkinDecimate->setDisabled(formChoice != 1);
-  modSkinDecimate->relativeValue = 0.1;
+  modSkinDecimate->relativeValue = 0.3;
 
   // Cut Ground
   modGroundCut->rotation = Eigen::Vector3f(0, 0, (6.0 / 4.0) * M_PI);
