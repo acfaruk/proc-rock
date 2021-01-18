@@ -106,7 +106,7 @@ void SedimentaryPipeline::updatePipeline() {
   formGeneratorExtender.updatePipeline(pipeline);
 
   modSubdivision->setDisabled(!layered);
-  modSubdivision->subdivisions = 2;
+  modSubdivision->subdivisions = 1;
 
   updateModifierDisplaceAlongNormals();
 
