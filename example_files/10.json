@@ -1,0 +1,868 @@
+{
+ "generator": {
+  "_id": 1,
+  "config": {
+   "General": [
+    {
+     "floats": {
+      "Edge length": 1.0
+     }
+    }
+   ]
+  }
+ },
+ "modifiers": [
+  {
+   "_id": 1,
+   "config": {
+    "General": [
+     {
+      "ints": {
+       "Subdivs": 2
+      },
+      "singleChoices": {
+       "Type": 0
+      }
+     }
+    ]
+   },
+   "disabled": false
+  },
+  {
+   "_id": 3,
+   "config": {
+    "General": [
+     {
+      "bools": {
+       "Prefer Direction": false
+      },
+      "floats": {
+       "Factor": 0.23899999260902405
+      },
+      "ints": {
+       "Ignored Verts": 0,
+       "Seed": 0
+      },
+      "singleChoices": {
+       "Type": 1
+      }
+     }
+    ],
+    "Noise": [
+     {
+      "noiseGraphs": {
+       "Noise Graph": {
+        "edges": [
+         {
+          "from": 2,
+          "to": 0
+         }
+        ],
+        "nodes": [
+         {
+          "_id": 401,
+          "config": {
+           "floats": {
+            "Frequency": 11.715999603271484,
+            "Lacunarity": 2.5,
+            "Persistence": 0.6000000238418579
+           },
+           "ints": {
+            "Octaves": 3,
+            "Seed": 0
+           },
+           "singleChoices": {
+            "Quality": 2
+           }
+          },
+          "general": {
+           "internal_id": 0,
+           "position": {
+            "x": 11.0,
+            "y": 20.0
+           }
+          }
+         },
+         {
+          "_id": 0,
+          "config": null,
+          "general": {
+           "internal_id": 1,
+           "position": {
+            "x": 587.0,
+            "y": 44.0
+           }
+          }
+         }
+        ]
+       }
+      }
+     }
+    ],
+    "Prefer Direction": [
+     {
+      "float3s": {
+       "Direction": {
+        "x": 0.0,
+        "y": -1.0,
+        "z": 0.0
+       }
+      },
+      "floats": {
+       "Strength": 1.0
+      }
+     }
+    ]
+   },
+   "disabled": false
+  },
+  {
+   "_id": 1,
+   "config": {
+    "General": [
+     {
+      "ints": {
+       "Subdivs": 1
+      },
+      "singleChoices": {
+       "Type": 0
+      }
+     }
+    ]
+   },
+   "disabled": false
+  },
+  {
+   "_id": 3,
+   "config": {
+    "General": [
+     {
+      "bools": {
+       "Prefer Direction": false
+      },
+      "floats": {
+       "Factor": 0.44600000977516174
+      },
+      "ints": {
+       "Ignored Verts": 0,
+       "Seed": 0
+      },
+      "singleChoices": {
+       "Type": 1
+      }
+     }
+    ],
+    "Noise": [
+     {
+      "noiseGraphs": {
+       "Noise Graph": {
+        "edges": [
+         {
+          "from": 6,
+          "to": 0
+         },
+         {
+          "from": 2,
+          "to": 5
+         }
+        ],
+        "nodes": [
+         {
+          "_id": 401,
+          "config": {
+           "floats": {
+            "Frequency": 0.30000001192092896,
+            "Lacunarity": 2.5,
+            "Persistence": 0.6000000238418579
+           },
+           "ints": {
+            "Octaves": 3,
+            "Seed": 0
+           },
+           "singleChoices": {
+            "Quality": 2
+           }
+          },
+          "general": {
+           "internal_id": 0,
+           "position": {
+            "x": 25.0,
+            "y": 25.0
+           }
+          }
+         },
+         {
+          "_id": 0,
+          "config": null,
+          "general": {
+           "internal_id": 1,
+           "position": {
+            "x": 706.0,
+            "y": 37.0
+           }
+          }
+         },
+         {
+          "_id": 302,
+          "config": {
+           "floats": {
+            "x Scale": 1.0,
+            "y Scale": 10.0,
+            "z Scale": 1.0
+           }
+          },
+          "general": {
+           "internal_id": 5,
+           "position": {
+            "x": 395.0,
+            "y": 64.0
+           }
+          }
+         }
+        ]
+       }
+      }
+     }
+    ],
+    "Prefer Direction": [
+     {
+      "float3s": {
+       "Direction": {
+        "x": 0.0,
+        "y": -1.0,
+        "z": 0.0
+       }
+      },
+      "floats": {
+       "Strength": 1.0
+      }
+     }
+    ]
+   },
+   "disabled": false
+  },
+  {
+   "_id": 1,
+   "config": {
+    "General": [
+     {
+      "ints": {
+       "Subdivs": 1
+      },
+      "singleChoices": {
+       "Type": 0
+      }
+     }
+    ]
+   },
+   "disabled": false
+  },
+  {
+   "_id": 4,
+   "config": {
+    "General": [
+     {
+      "bools": {
+       "Noisy Surface": true
+      },
+      "float3s": {
+       "Rotation": {
+        "x": 1.1710000038146973,
+        "y": 0.8519999980926514,
+        "z": 3.1410000324249268
+       },
+       "Translation": {
+        "x": 0.0,
+        "y": -0.03400000184774399,
+        "z": 0.0
+       }
+      }
+     }
+    ],
+    "Noise": [
+     {
+      "floats": {
+       "Scale": 0.15000000596046448
+      },
+      "ints": {
+       "Resolution": 7
+      },
+      "noiseGraphs": {
+       "Noise Graph": {
+        "edges": [
+         {
+          "from": 2,
+          "to": 0
+         }
+        ],
+        "nodes": [
+         {
+          "_id": 401,
+          "config": {
+           "floats": {
+            "Frequency": 18.68600082397461,
+            "Lacunarity": 2.5,
+            "Persistence": 0.6000000238418579
+           },
+           "ints": {
+            "Octaves": 3,
+            "Seed": 0
+           },
+           "singleChoices": {
+            "Quality": 2
+           }
+          },
+          "general": {
+           "internal_id": 0,
+           "position": {
+            "x": 25.0,
+            "y": 25.0
+           }
+          }
+         },
+         {
+          "_id": 0,
+          "config": null,
+          "general": {
+           "internal_id": 1,
+           "position": {
+            "x": 400.0,
+            "y": 25.0
+           }
+          }
+         }
+        ]
+       }
+      }
+     }
+    ]
+   },
+   "disabled": false
+  },
+  {
+   "_id": 1,
+   "config": {
+    "General": [
+     {
+      "ints": {
+       "Subdivs": 1
+      },
+      "singleChoices": {
+       "Type": 0
+      }
+     }
+    ]
+   },
+   "disabled": false
+  },
+  {
+   "_id": 2,
+   "config": {
+    "General": [
+     {
+      "floats": {
+       "Rel. Value": 0.19900000095367432
+      },
+      "ints": {
+       "Abs. Value": 1000
+      },
+      "singleChoices": {
+       "Type": 0
+      }
+     }
+    ]
+   },
+   "disabled": false
+  },
+  {
+   "_id": 0,
+   "config": {
+    "General": [
+     {
+      "float3s": {
+       "Rotate": {
+        "x": 5.644000053405762,
+        "y": 2.0230000019073486,
+        "z": 1.3839999437332153
+       },
+       "Scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+       },
+       "Translation": {
+        "x": 0.0,
+        "y": -0.4410000145435333,
+        "z": 0.0
+       }
+      }
+     }
+    ]
+   },
+   "disabled": false
+  }
+ ],
+ "parameterizer": {
+  "_id": 1,
+  "config": {
+   "Chart Options": [
+    {
+     "floats": {
+      "Max. Cost": 2.0,
+      "Normal Deviation Weight": 2.0,
+      "Normal Seam Weight": 4.0,
+      "Roundness Weight": 0.009999999776482582,
+      "Straighness Weight": 6.0,
+      "Texture Seam Weight": 0.5
+     },
+     "ints": {
+      "Max. Iters": 1
+     }
+    }
+   ],
+   "Pack Options": [
+    {
+     "bools": {
+      "Bilinear": true,
+      "Block Align": true,
+      "Brute Force": false
+     },
+     "ints": {
+      "Padding": 10
+     }
+    }
+   ],
+   "Texture": [
+    {
+     "singleChoices": {
+      "Size": 4
+     }
+    }
+   ]
+  }
+ },
+ "textureAdders": null,
+ "textureGenerator": {
+  "_id": 0,
+  "config": {
+   "Albedo": [
+    {
+     "singleChoices": {
+      "Method": 0
+     }
+    },
+    {
+     "noiseGraphs": {
+      "Noise Graph": {
+       "edges": [
+        {
+         "from": 9,
+         "to": 7
+        },
+        {
+         "from": 33,
+         "to": 5
+        },
+        {
+         "from": 35,
+         "to": 8
+        },
+        {
+         "from": 37,
+         "to": 23
+        },
+        {
+         "from": 50,
+         "to": 32
+        },
+        {
+         "from": 59,
+         "to": 49
+        },
+        {
+         "from": 2,
+         "to": 58
+        }
+       ],
+       "nodes": [
+        {
+         "_id": 0,
+         "config": null,
+         "general": {
+          "internal_id": 1,
+          "position": {
+           "x": 1365.0,
+           "y": 118.0
+          }
+         }
+        },
+        {
+         "_id": 402,
+         "config": {
+          "floats": {
+           "Frequency": 3.5850000381469727,
+           "Lacunarity": 3.0810000896453857,
+           "Persistence": 0.6510000228881836
+          },
+          "ints": {
+           "Octaves": 5,
+           "Seed": 13954
+          },
+          "singleChoices": {
+           "Quality": 2
+          }
+         },
+         "general": {
+          "internal_id": 5,
+          "position": {
+           "x": 93.0,
+           "y": 5.0
+          }
+         }
+        },
+        {
+         "_id": 401,
+         "config": {
+          "floats": {
+           "Frequency": 3.5850000381469727,
+           "Lacunarity": 2.5,
+           "Persistence": 0.6000000238418579
+          },
+          "ints": {
+           "Octaves": 3,
+           "Seed": 12792
+          },
+          "singleChoices": {
+           "Quality": 2
+          }
+         },
+         "general": {
+          "internal_id": 7,
+          "position": {
+           "x": 161.0,
+           "y": 317.0
+          }
+         }
+        },
+        {
+         "_id": 304,
+         "config": {
+          "floats": {
+           "Frequency": 0.5,
+           "Power": 0.5
+          },
+          "ints": {
+           "Roughness": 5,
+           "Seed": 0
+          }
+         },
+         "general": {
+          "internal_id": 8,
+          "position": {
+           "x": 489.0,
+           "y": 367.0
+          }
+         }
+        },
+        {
+         "_id": 403,
+         "config": {
+          "floats": {
+           "Frequency": 4.747000217437744,
+           "Lacunarity": 2.5
+          },
+          "ints": {
+           "Octaves": 3,
+           "Seed": 0
+          },
+          "singleChoices": {
+           "Quality": 2
+          }
+         },
+         "general": {
+          "internal_id": 23,
+          "position": {
+           "x": 397.0,
+           "y": 151.0
+          }
+         }
+        },
+        {
+         "_id": 100,
+         "config": null,
+         "general": {
+          "internal_id": 32,
+          "position": {
+           "x": 702.0,
+           "y": 73.0
+          }
+         }
+        },
+        {
+         "_id": 302,
+         "config": {
+          "floats": {
+           "x Scale": 0.20000000298023224,
+           "y Scale": 0.9300000071525574,
+           "z Scale": 0.20000000298023224
+          }
+         },
+         "general": {
+          "internal_id": 49,
+          "position": {
+           "x": 828.0,
+           "y": 194.0
+          }
+         }
+        },
+        {
+         "_id": 301,
+         "config": {
+          "floats": {
+           "x Angle": 66.97699737548828,
+           "y Angle": 1.2999999523162842,
+           "z Angle": 83.72100067138672
+          }
+         },
+         "general": {
+          "internal_id": 58,
+          "position": {
+           "x": 1131.0,
+           "y": 162.0
+          }
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "gradientColorings": {
+      "Gradient": [
+       [
+        0,
+        {
+         "x": 0.3548387289047241,
+         "y": 0.35483518242836,
+         "z": 0.35483518242836
+        }
+       ],
+       [
+        22,
+        {
+         "x": 0.08636011183261871,
+         "y": 0.125,
+         "z": 0.07610887289047241
+        }
+       ],
+       [
+        40,
+        {
+         "x": 0.15252666175365448,
+         "y": 0.1842004954814911,
+         "z": 0.23790323734283447
+        }
+       ],
+       [
+        59,
+        {
+         "x": 0.5322580337524414,
+         "y": 0.4980223476886749,
+         "z": 0.4335327446460724
+        }
+       ],
+       [
+        73,
+        {
+         "x": 0.05893927440047264,
+         "y": 0.10080647468566895,
+         "z": 0.09888596087694168
+        }
+       ],
+       [
+        100,
+        {
+         "x": 0.14516127109527588,
+         "y": 0.10828562825918198,
+         "z": 0.10828562825918198
+        }
+       ]
+      ]
+     }
+    },
+    {
+     "gradientColorings": {
+      "Gradient": [
+       [
+        0,
+        {
+         "x": 0.8270000219345093,
+         "y": 0.7839999794960022,
+         "z": 0.5170000195503235
+        }
+       ],
+       [
+        30,
+        {
+         "x": 0.28600001335144043,
+         "y": 0.22499999403953552,
+         "z": 0.22499999403953552
+        }
+       ],
+       [
+        45,
+        {
+         "x": 0.4269999861717224,
+         "y": 0.39500001072883606,
+         "z": 0.39500001072883606
+        }
+       ],
+       [
+        65,
+        {
+         "x": 0.5690000057220459,
+         "y": 0.5529999732971191,
+         "z": 0.3779999911785126
+        }
+       ],
+       [
+        100,
+        {
+         "x": 0.9399999976158142,
+         "y": 0.9359999895095825,
+         "z": 0.9210000038146973
+        }
+       ]
+      ]
+     }
+    }
+   ],
+   "Ambient Occlusion": [
+    {
+     "singleChoices": {
+      "Method": 0
+     }
+    },
+    {
+     "floats": {
+      "Scaling": 0.5
+     },
+     "ints": {
+      "Bias": 0
+     },
+     "singleChoices": {
+      "Source Channel": 0
+     }
+    }
+   ],
+   "Displacement / Height": [
+    {
+     "noiseGraphs": {
+      "Noise Graph": {
+       "edges": [
+        {
+         "from": 2,
+         "to": 0
+        }
+       ],
+       "nodes": [
+        {
+         "_id": 401,
+         "config": {
+          "floats": {
+           "Frequency": 9.392999649047852,
+           "Lacunarity": 2.5,
+           "Persistence": 0.6000000238418579
+          },
+          "ints": {
+           "Octaves": 3,
+           "Seed": 0
+          },
+          "singleChoices": {
+           "Quality": 2
+          }
+         },
+         "general": {
+          "internal_id": 0,
+          "position": {
+           "x": 25.0,
+           "y": 25.0
+          }
+         }
+        },
+        {
+         "_id": 0,
+         "config": null,
+         "general": {
+          "internal_id": 1,
+          "position": {
+           "x": 636.0,
+           "y": 40.0
+          }
+         }
+        }
+       ]
+      }
+     }
+    }
+   ],
+   "Metalness": [
+    {
+     "singleChoices": {
+      "Method": 0
+     }
+    },
+    {
+     "bools": {
+      "True Metal": false,
+      "Use Cutoff": false
+     },
+     "floats": {
+      "Scaling": 0.20000000298023224
+     },
+     "ints": {
+      "Bias": 0,
+      "Cutoff": 10
+     },
+     "singleChoices": {
+      "Source Channel": 0
+     }
+    }
+   ],
+   "Normals": [
+    {
+     "singleChoices": {
+      "Method": 0
+     }
+    },
+    {
+     "floats": {
+      "Normal Strength": 1.0
+     },
+     "singleChoices": {
+      "Mode": 3,
+      "Source Channel": 0
+     }
+    }
+   ],
+   "Roughness": [
+    {
+     "singleChoices": {
+      "Method": 0
+     }
+    },
+    {
+     "floats": {
+      "Scaling": 2.9110000133514404
+     },
+     "ints": {
+      "Bias": 0
+     },
+     "singleChoices": {
+      "Source Channel": 0
+     }
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,2448 @@
+{
+ "generator": {
+  "_id": 3,
+  "config": {
+   "General": [
+    {
+     "floats": {
+      "Point Size": 0.07999999821186066,
+      "Shrink Factor": 0.4000000059604645
+     },
+     "singleChoices": {
+      "Distribution Method": 0
+     }
+    },
+    {
+     "ints": {
+      "Points": 100,
+      "Seed": 666677
+     }
+    },
+    {
+     "floats": {
+      "Noise Range": 0.05000000074505806
+     },
+     "ints": {
+      "Resolution": 10
+     },
+     "noiseGraphs": {
+      "Noise": {
+       "edges": [
+        {
+         "from": 2,
+         "to": 0
+        }
+       ],
+       "nodes": [
+        {
+         "_id": 401,
+         "config": {
+          "floats": {
+           "Frequency": 31.0,
+           "Lacunarity": 2.5,
+           "Persistence": 0.6000000238418579
+          },
+          "ints": {
+           "Octaves": 3,
+           "Seed": 0
+          },
+          "singleChoices": {
+           "Quality": 2
+          }
+         },
+         "general": {
+          "internal_id": 0,
+          "position": {
+           "x": 25.0,
+           "y": 25.0
+          }
+         }
+        },
+        {
+         "_id": 0,
+         "config": null,
+         "general": {
+          "internal_id": 1,
+          "position": {
+           "x": 400.0,
+           "y": 25.0
+          }
+         }
+        }
+       ]
+      }
+     }
+    }
+   ]
+  }
+ },
+ "modifiers": [
+  {
+   "_id": 2,
+   "config": {
+    "General": [
+     {
+      "floats": {
+       "Rel. Value": 0.30000001192092896
+      },
+      "ints": {
+       "Abs. Value": 1000
+      },
+      "singleChoices": {
+       "Type": 0
+      }
+     }
+    ]
+   },
+   "disabled": false
+  },
+  {
+   "_id": 4,
+   "config": {
+    "General": [
+     {
+      "bools": {
+       "Noisy Surface": false
+      },
+      "float3s": {
+       "Rotation": {
+        "x": 0.30000001192092896,
+        "y": 0.16912691295146942,
+        "z": 0.07238180190324783
+       },
+       "Translation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+       }
+      }
+     }
+    ],
+    "Noise": [
+     {
+      "floats": {
+       "Scale": 0.15000000596046448
+      },
+      "ints": {
+       "Resolution": 7
+      },
+      "noiseGraphs": {
+       "Noise Graph": {
+        "edges": [
+         {
+          "from": 2,
+          "to": 0
+         }
+        ],
+        "nodes": [
+         {
+          "_id": 401,
+          "config": {
+           "floats": {
+            "Frequency": 31.0,
+            "Lacunarity": 2.5,
+            "Persistence": 0.6000000238418579
+           },
+           "ints": {
+            "Octaves": 3,
+            "Seed": 0
+           },
+           "singleChoices": {
+            "Quality": 2
+           }
+          },
+          "general": {
+           "internal_id": 0,
+           "position": {
+            "x": 25.0,
+            "y": 25.0
+           }
+          }
+         },
+         {
+          "_id": 0,
+          "config": null,
+          "general": {
+           "internal_id": 1,
+           "position": {
+            "x": 400.0,
+            "y": 25.0
+           }
+          }
+         }
+        ]
+       }
+      }
+     }
+    ]
+   },
+   "disabled": true
+  },
+  {
+   "_id": 1,
+   "config": {
+    "General": [
+     {
+      "ints": {
+       "Subdivs": 0
+      },
+      "singleChoices": {
+       "Type": 0
+      }
+     }
+    ]
+   },
+   "disabled": false
+  },
+  {
+   "_id": 4,
+   "config": {
+    "General": [
+     {
+      "bools": {
+       "Noisy Surface": false
+      },
+      "float3s": {
+       "Rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 4.71238899230957
+       },
+       "Translation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+       }
+      }
+     }
+    ],
+    "Noise": [
+     {
+      "floats": {
+       "Scale": 0.15000000596046448
+      },
+      "ints": {
+       "Resolution": 7
+      },
+      "noiseGraphs": {
+       "Noise Graph": {
+        "edges": [
+         {
+          "from": 2,
+          "to": 0
+         }
+        ],
+        "nodes": [
+         {
+          "_id": 401,
+          "config": {
+           "floats": {
+            "Frequency": 31.0,
+            "Lacunarity": 2.5,
+            "Persistence": 0.6000000238418579
+           },
+           "ints": {
+            "Octaves": 3,
+            "Seed": 0
+           },
+           "singleChoices": {
+            "Quality": 2
+           }
+          },
+          "general": {
+           "internal_id": 0,
+           "position": {
+            "x": 25.0,
+            "y": 25.0
+           }
+          }
+         },
+         {
+          "_id": 0,
+          "config": null,
+          "general": {
+           "internal_id": 1,
+           "position": {
+            "x": 400.0,
+            "y": 25.0
+           }
+          }
+         }
+        ]
+       }
+      }
+     }
+    ]
+   },
+   "disabled": false
+  },
+  {
+   "_id": 3,
+   "config": {
+    "General": [
+     {
+      "bools": {
+       "Prefer Direction": false
+      },
+      "floats": {
+       "Factor": 0.07500000298023224
+      },
+      "ints": {
+       "Ignored Verts": 0,
+       "Seed": 0
+      },
+      "singleChoices": {
+       "Type": 1
+      }
+     }
+    ],
+    "Noise": [
+     {
+      "noiseGraphs": {
+       "Noise Graph": {
+        "edges": [
+         {
+          "from": 2,
+          "to": 0
+         }
+        ],
+        "nodes": [
+         {
+          "_id": 402,
+          "config": {
+           "floats": {
+            "Frequency": 2.240000009536743,
+            "Lacunarity": 2.5,
+            "Persistence": 0.6000000238418579
+           },
+           "ints": {
+            "Octaves": 3,
+            "Seed": 666677
+           },
+           "singleChoices": {
+            "Quality": 2
+           }
+          },
+          "general": {
+           "internal_id": 0,
+           "position": {
+            "x": 0.0,
+            "y": 0.0
+           }
+          }
+         },
+         {
+          "_id": 0,
+          "config": null,
+          "general": {
+           "internal_id": 1,
+           "position": {
+            "x": 400.0,
+            "y": 0.0
+           }
+          }
+         }
+        ]
+       }
+      }
+     }
+    ],
+    "Prefer Direction": [
+     {
+      "float3s": {
+       "Direction": {
+        "x": 0.0,
+        "y": -1.0,
+        "z": 0.0
+       }
+      },
+      "floats": {
+       "Strength": 1.0
+      }
+     }
+    ]
+   },
+   "disabled": false
+  },
+  {
+   "_id": 0,
+   "config": {
+    "General": [
+     {
+      "float3s": {
+       "Rotate": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+       },
+       "Scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+       },
+       "Translation": {
+        "x": 0.0,
+        "y": -0.5,
+        "z": 0.0
+       }
+      }
+     }
+    ]
+   },
+   "disabled": false
+  },
+  {
+   "_id": 2,
+   "config": {
+    "General": [
+     {
+      "floats": {
+       "Rel. Value": 1.0
+      },
+      "ints": {
+       "Abs. Value": 1000
+      },
+      "singleChoices": {
+       "Type": 0
+      }
+     }
+    ]
+   },
+   "disabled": false
+  },
+  {
+   "_id": 1,
+   "config": {
+    "General": [
+     {
+      "ints": {
+       "Subdivs": 1
+      },
+      "singleChoices": {
+       "Type": 0
+      }
+     }
+    ]
+   },
+   "disabled": false
+  },
+  {
+   "_id": 3,
+   "config": {
+    "General": [
+     {
+      "bools": {
+       "Prefer Direction": false
+      },
+      "floats": {
+       "Factor": 0.15000000596046448
+      },
+      "ints": {
+       "Ignored Verts": 0,
+       "Seed": 0
+      },
+      "singleChoices": {
+       "Type": 1
+      }
+     }
+    ],
+    "Noise": [
+     {
+      "noiseGraphs": {
+       "Noise Graph": {
+        "edges": [
+         {
+          "from": 2,
+          "to": 0
+         },
+         {
+          "from": 6,
+          "to": 1
+         }
+        ],
+        "nodes": [
+         {
+          "_id": 403,
+          "config": {
+           "floats": {
+            "Frequency": 6.0,
+            "Lacunarity": 2.5
+           },
+           "ints": {
+            "Octaves": 3,
+            "Seed": 0
+           },
+           "singleChoices": {
+            "Quality": 2
+           }
+          },
+          "general": {
+           "internal_id": 0,
+           "position": {
+            "x": 0.0,
+            "y": 700.0
+           }
+          }
+         },
+         {
+          "_id": 302,
+          "config": {
+           "floats": {
+            "x Scale": 0.05000000074505806,
+            "y Scale": 1.0,
+            "z Scale": 0.05000000074505806
+           }
+          },
+          "general": {
+           "internal_id": 1,
+           "position": {
+            "x": 300.0,
+            "y": 700.0
+           }
+          }
+         },
+         {
+          "_id": 0,
+          "config": null,
+          "general": {
+           "internal_id": 5,
+           "position": {
+            "x": 400.0,
+            "y": 0.0
+           }
+          }
+         }
+        ]
+       }
+      }
+     }
+    ],
+    "Prefer Direction": [
+     {
+      "float3s": {
+       "Direction": {
+        "x": 0.0,
+        "y": -1.0,
+        "z": 0.0
+       }
+      },
+      "floats": {
+       "Strength": 1.0
+      }
+     }
+    ]
+   },
+   "disabled": false
+  }
+ ],
+ "parameterizer": {
+  "_id": 1,
+  "config": {
+   "Chart Options": [
+    {
+     "floats": {
+      "Max. Cost": 2.0,
+      "Normal Deviation Weight": 2.0,
+      "Normal Seam Weight": 4.0,
+      "Roundness Weight": 0.009999999776482582,
+      "Straighness Weight": 6.0,
+      "Texture Seam Weight": 0.5
+     },
+     "ints": {
+      "Max. Iters": 1
+     }
+    }
+   ],
+   "Pack Options": [
+    {
+     "bools": {
+      "Bilinear": true,
+      "Block Align": true,
+      "Brute Force": false
+     },
+     "ints": {
+      "Padding": 10
+     }
+    }
+   ],
+   "Texture": [
+    {
+     "singleChoices": {
+      "Size": 4
+     }
+    }
+   ]
+  }
+ },
+ "textureAdders": [
+  {
+   "_id": 0,
+   "config": {
+    "Albedo": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "gradientAlphaColorings": {
+       "Gradient": [
+        [
+         0,
+         {
+          "w": 0.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+         }
+        ],
+        [
+         40,
+         {
+          "w": 0.0,
+          "x": 0.5,
+          "y": 0.30000001192092896,
+          "z": 0.10000000149011612
+         }
+        ],
+        [
+         50,
+         {
+          "w": 1.0,
+          "x": 0.5,
+          "y": 0.30000001192092896,
+          "z": 0.10000000149011612
+         }
+        ],
+        [
+         60,
+         {
+          "w": 0.0,
+          "x": 0.5,
+          "y": 0.30000001192092896,
+          "z": 0.10000000149011612
+         }
+        ],
+        [
+         100,
+         {
+          "w": 0.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+         }
+        ]
+       ]
+      }
+     }
+    ],
+    "Ambient Occlusion": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "floats": {
+       "Scaling": 0.5
+      },
+      "ints": {
+       "Bias": 0
+      },
+      "singleChoices": {
+       "Source Channel": 0
+      }
+     }
+    ],
+    "Displacement / Height": [
+     {
+      "noiseGraphs": {
+       "Noise Graph": {
+        "edges": [
+         {
+          "from": 2,
+          "to": 0
+         }
+        ],
+        "nodes": [
+         {
+          "_id": 404,
+          "config": {
+           "bools": {
+            "Distance": false
+           },
+           "floats": {
+            "Displacement": 1.0,
+            "Frequency": 40.59999465942383
+           },
+           "ints": {
+            "Seed": 10
+           }
+          },
+          "general": {
+           "internal_id": 0,
+           "position": {
+            "x": 0.0,
+            "y": 0.0
+           }
+          }
+         },
+         {
+          "_id": 0,
+          "config": null,
+          "general": {
+           "internal_id": 1,
+           "position": {
+            "x": 400.0,
+            "y": 0.0
+           }
+          }
+         }
+        ]
+       }
+      }
+     }
+    ],
+    "Metalness": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "bools": {
+       "True Metal": false,
+       "Use Cutoff": false
+      },
+      "floats": {
+       "Scaling": 0.20000000298023224
+      },
+      "ints": {
+       "Bias": 0,
+       "Cutoff": 10
+      },
+      "singleChoices": {
+       "Source Channel": 0
+      }
+     }
+    ],
+    "Normals": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "floats": {
+       "Normal Strength": 1.399999976158142
+      },
+      "singleChoices": {
+       "Mode": 3,
+       "Source Channel": 0
+      }
+     }
+    ],
+    "Preferred Normal Direction": [
+     {
+      "bools": {
+       "Use preferred normal directions.": false
+      },
+      "float3s": {
+       "Preferred Normal Direction": {
+        "x": 0.0,
+        "y": 1.0,
+        "z": 0.0
+       }
+      },
+      "floats": {
+       "Strength": 1.0
+      }
+     }
+    ],
+    "Proportions": [
+     {
+      "floats": {
+       "Ambient Occ.": 0.5,
+       "Displacement": 0.5,
+       "Metal": 1.0,
+       "Normals": 0.009999999776482582,
+       "Roughness": 0.10000000149011612
+      }
+     }
+    ],
+    "Roughness": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "floats": {
+       "Scaling": 2.0
+      },
+      "ints": {
+       "Bias": 0
+      },
+      "singleChoices": {
+       "Source Channel": 0
+      }
+     }
+    ]
+   },
+   "disabled": false
+  },
+  {
+   "_id": 0,
+   "config": {
+    "Albedo": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "gradientAlphaColorings": {
+       "Gradient": [
+        [
+         0,
+         {
+          "w": 0.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+         }
+        ],
+        [
+         40,
+         {
+          "w": 0.0,
+          "x": 0.800000011920929,
+          "y": 0.800000011920929,
+          "z": 0.800000011920929
+         }
+        ],
+        [
+         50,
+         {
+          "w": 1.0,
+          "x": 0.800000011920929,
+          "y": 0.800000011920929,
+          "z": 0.800000011920929
+         }
+        ],
+        [
+         60,
+         {
+          "w": 0.0,
+          "x": 0.800000011920929,
+          "y": 0.800000011920929,
+          "z": 0.800000011920929
+         }
+        ],
+        [
+         100,
+         {
+          "w": 0.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+         }
+        ]
+       ]
+      }
+     }
+    ],
+    "Ambient Occlusion": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "floats": {
+       "Scaling": 0.5
+      },
+      "ints": {
+       "Bias": 0
+      },
+      "singleChoices": {
+       "Source Channel": 0
+      }
+     }
+    ],
+    "Displacement / Height": [
+     {
+      "noiseGraphs": {
+       "Noise Graph": {
+        "edges": [
+         {
+          "from": 2,
+          "to": 0
+         }
+        ],
+        "nodes": [
+         {
+          "_id": 404,
+          "config": {
+           "bools": {
+            "Distance": false
+           },
+           "floats": {
+            "Displacement": 1.0,
+            "Frequency": 50.5
+           },
+           "ints": {
+            "Seed": 20
+           }
+          },
+          "general": {
+           "internal_id": 0,
+           "position": {
+            "x": 0.0,
+            "y": 0.0
+           }
+          }
+         },
+         {
+          "_id": 0,
+          "config": null,
+          "general": {
+           "internal_id": 1,
+           "position": {
+            "x": 400.0,
+            "y": 0.0
+           }
+          }
+         }
+        ]
+       }
+      }
+     }
+    ],
+    "Metalness": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "bools": {
+       "True Metal": false,
+       "Use Cutoff": false
+      },
+      "floats": {
+       "Scaling": 0.20000000298023224
+      },
+      "ints": {
+       "Bias": 0,
+       "Cutoff": 10
+      },
+      "singleChoices": {
+       "Source Channel": 0
+      }
+     }
+    ],
+    "Normals": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "floats": {
+       "Normal Strength": 1.399999976158142
+      },
+      "singleChoices": {
+       "Mode": 3,
+       "Source Channel": 0
+      }
+     }
+    ],
+    "Preferred Normal Direction": [
+     {
+      "bools": {
+       "Use preferred normal directions.": false
+      },
+      "float3s": {
+       "Preferred Normal Direction": {
+        "x": 0.0,
+        "y": 1.0,
+        "z": 0.0
+       }
+      },
+      "floats": {
+       "Strength": 1.0
+      }
+     }
+    ],
+    "Proportions": [
+     {
+      "floats": {
+       "Ambient Occ.": 0.5,
+       "Displacement": 0.5,
+       "Metal": 1.0,
+       "Normals": 0.009999999776482582,
+       "Roughness": 0.10000000149011612
+      }
+     }
+    ],
+    "Roughness": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "floats": {
+       "Scaling": 2.0
+      },
+      "ints": {
+       "Bias": 0
+      },
+      "singleChoices": {
+       "Source Channel": 0
+      }
+     }
+    ]
+   },
+   "disabled": true
+  },
+  {
+   "_id": 0,
+   "config": {
+    "Albedo": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "gradientAlphaColorings": {
+       "Gradient": [
+        [
+         0,
+         {
+          "w": 0.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+         }
+        ],
+        [
+         40,
+         {
+          "w": 0.0,
+          "x": 0.5,
+          "y": 0.30000001192092896,
+          "z": 0.10000000149011612
+         }
+        ],
+        [
+         50,
+         {
+          "w": 1.0,
+          "x": 0.5,
+          "y": 0.30000001192092896,
+          "z": 0.10000000149011612
+         }
+        ],
+        [
+         60,
+         {
+          "w": 0.0,
+          "x": 0.5,
+          "y": 0.30000001192092896,
+          "z": 0.10000000149011612
+         }
+        ],
+        [
+         100,
+         {
+          "w": 0.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+         }
+        ]
+       ]
+      }
+     }
+    ],
+    "Ambient Occlusion": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "floats": {
+       "Scaling": 0.5
+      },
+      "ints": {
+       "Bias": 0
+      },
+      "singleChoices": {
+       "Source Channel": 0
+      }
+     }
+    ],
+    "Displacement / Height": [
+     {
+      "noiseGraphs": {
+       "Noise Graph": {
+        "edges": [
+         {
+          "from": 2,
+          "to": 0
+         }
+        ],
+        "nodes": [
+         {
+          "_id": 404,
+          "config": {
+           "bools": {
+            "Distance": false
+           },
+           "floats": {
+            "Displacement": 1.0,
+            "Frequency": 50.5
+           },
+           "ints": {
+            "Seed": 30
+           }
+          },
+          "general": {
+           "internal_id": 0,
+           "position": {
+            "x": 0.0,
+            "y": 0.0
+           }
+          }
+         },
+         {
+          "_id": 0,
+          "config": null,
+          "general": {
+           "internal_id": 1,
+           "position": {
+            "x": 400.0,
+            "y": 0.0
+           }
+          }
+         }
+        ]
+       }
+      }
+     }
+    ],
+    "Metalness": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "bools": {
+       "True Metal": false,
+       "Use Cutoff": false
+      },
+      "floats": {
+       "Scaling": 0.20000000298023224
+      },
+      "ints": {
+       "Bias": 0,
+       "Cutoff": 10
+      },
+      "singleChoices": {
+       "Source Channel": 0
+      }
+     }
+    ],
+    "Normals": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "floats": {
+       "Normal Strength": 1.399999976158142
+      },
+      "singleChoices": {
+       "Mode": 3,
+       "Source Channel": 0
+      }
+     }
+    ],
+    "Preferred Normal Direction": [
+     {
+      "bools": {
+       "Use preferred normal directions.": false
+      },
+      "float3s": {
+       "Preferred Normal Direction": {
+        "x": 0.0,
+        "y": 1.0,
+        "z": 0.0
+       }
+      },
+      "floats": {
+       "Strength": 1.0
+      }
+     }
+    ],
+    "Proportions": [
+     {
+      "floats": {
+       "Ambient Occ.": 0.5,
+       "Displacement": 0.5,
+       "Metal": 1.0,
+       "Normals": 0.009999999776482582,
+       "Roughness": 0.10000000149011612
+      }
+     }
+    ],
+    "Roughness": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "floats": {
+       "Scaling": 2.0
+      },
+      "ints": {
+       "Bias": 0
+      },
+      "singleChoices": {
+       "Source Channel": 0
+      }
+     }
+    ]
+   },
+   "disabled": true
+  },
+  {
+   "_id": 0,
+   "config": {
+    "Albedo": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "gradientAlphaColorings": {
+       "Gradient": [
+        [
+         30,
+         {
+          "w": 0.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+         }
+        ],
+        [
+         70,
+         {
+          "w": 0.5,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+         }
+        ],
+        [
+         100,
+         {
+          "w": 0.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+         }
+        ]
+       ]
+      }
+     }
+    ],
+    "Ambient Occlusion": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "floats": {
+       "Scaling": 0.5
+      },
+      "ints": {
+       "Bias": 0
+      },
+      "singleChoices": {
+       "Source Channel": 0
+      }
+     }
+    ],
+    "Displacement / Height": [
+     {
+      "noiseGraphs": {
+       "Noise Graph": {
+        "edges": [
+         {
+          "from": 2,
+          "to": 0
+         }
+        ],
+        "nodes": [
+         {
+          "_id": 401,
+          "config": {
+           "floats": {
+            "Frequency": 0.699999988079071,
+            "Lacunarity": 3.5,
+            "Persistence": 0.4000000059604645
+           },
+           "ints": {
+            "Octaves": 3,
+            "Seed": 0
+           },
+           "singleChoices": {
+            "Quality": 2
+           }
+          },
+          "general": {
+           "internal_id": 0,
+           "position": {
+            "x": 0.0,
+            "y": 0.0
+           }
+          }
+         },
+         {
+          "_id": 0,
+          "config": null,
+          "general": {
+           "internal_id": 1,
+           "position": {
+            "x": 400.0,
+            "y": 0.0
+           }
+          }
+         }
+        ]
+       }
+      }
+     }
+    ],
+    "Metalness": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "bools": {
+       "True Metal": false,
+       "Use Cutoff": false
+      },
+      "floats": {
+       "Scaling": 0.20000000298023224
+      },
+      "ints": {
+       "Bias": 0,
+       "Cutoff": 10
+      },
+      "singleChoices": {
+       "Source Channel": 0
+      }
+     }
+    ],
+    "Normals": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "floats": {
+       "Normal Strength": 1.399999976158142
+      },
+      "singleChoices": {
+       "Mode": 3,
+       "Source Channel": 0
+      }
+     }
+    ],
+    "Preferred Normal Direction": [
+     {
+      "bools": {
+       "Use preferred normal directions.": false
+      },
+      "float3s": {
+       "Preferred Normal Direction": {
+        "x": 0.0,
+        "y": 1.0,
+        "z": 0.0
+       }
+      },
+      "floats": {
+       "Strength": 1.0
+      }
+     }
+    ],
+    "Proportions": [
+     {
+      "floats": {
+       "Ambient Occ.": 0.5,
+       "Displacement": 0.5,
+       "Metal": 1.0,
+       "Normals": 0.009999999776482582,
+       "Roughness": 0.10000000149011612
+      }
+     }
+    ],
+    "Roughness": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "floats": {
+       "Scaling": 2.0
+      },
+      "ints": {
+       "Bias": 0
+      },
+      "singleChoices": {
+       "Source Channel": 0
+      }
+     }
+    ]
+   },
+   "disabled": false
+  },
+  {
+   "_id": 0,
+   "config": {
+    "Albedo": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "gradientAlphaColorings": {
+       "Gradient": [
+        [
+         0,
+         {
+          "w": 0.30000001192092896,
+          "x": 0.3499999940395355,
+          "y": 0.3499999940395355,
+          "z": 0.0
+         }
+        ],
+        [
+         30,
+         {
+          "w": 0.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+         }
+        ],
+        [
+         100,
+         {
+          "w": 0.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+         }
+        ]
+       ]
+      }
+     }
+    ],
+    "Ambient Occlusion": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "floats": {
+       "Scaling": 0.5
+      },
+      "ints": {
+       "Bias": 0
+      },
+      "singleChoices": {
+       "Source Channel": 0
+      }
+     }
+    ],
+    "Displacement / Height": [
+     {
+      "noiseGraphs": {
+       "Noise Graph": {
+        "edges": [
+         {
+          "from": 2,
+          "to": 0
+         }
+        ],
+        "nodes": [
+         {
+          "_id": 403,
+          "config": {
+           "floats": {
+            "Frequency": 1.0,
+            "Lacunarity": 2.5
+           },
+           "ints": {
+            "Octaves": 3,
+            "Seed": 0
+           },
+           "singleChoices": {
+            "Quality": 2
+           }
+          },
+          "general": {
+           "internal_id": 0,
+           "position": {
+            "x": 0.0,
+            "y": 0.0
+           }
+          }
+         },
+         {
+          "_id": 0,
+          "config": null,
+          "general": {
+           "internal_id": 1,
+           "position": {
+            "x": 400.0,
+            "y": 0.0
+           }
+          }
+         }
+        ]
+       }
+      }
+     }
+    ],
+    "Metalness": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "bools": {
+       "True Metal": false,
+       "Use Cutoff": false
+      },
+      "floats": {
+       "Scaling": 0.20000000298023224
+      },
+      "ints": {
+       "Bias": 0,
+       "Cutoff": 10
+      },
+      "singleChoices": {
+       "Source Channel": 0
+      }
+     }
+    ],
+    "Normals": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "floats": {
+       "Normal Strength": 1.399999976158142
+      },
+      "singleChoices": {
+       "Mode": 3,
+       "Source Channel": 0
+      }
+     }
+    ],
+    "Preferred Normal Direction": [
+     {
+      "bools": {
+       "Use preferred normal directions.": false
+      },
+      "float3s": {
+       "Preferred Normal Direction": {
+        "x": 0.0,
+        "y": 1.0,
+        "z": 0.0
+       }
+      },
+      "floats": {
+       "Strength": 1.0
+      }
+     }
+    ],
+    "Proportions": [
+     {
+      "floats": {
+       "Ambient Occ.": 0.5,
+       "Displacement": 0.5,
+       "Metal": 1.0,
+       "Normals": 0.009999999776482582,
+       "Roughness": 0.10000000149011612
+      }
+     }
+    ],
+    "Roughness": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "floats": {
+       "Scaling": 2.0
+      },
+      "ints": {
+       "Bias": 0
+      },
+      "singleChoices": {
+       "Source Channel": 0
+      }
+     }
+    ]
+   },
+   "disabled": true
+  },
+  {
+   "_id": 0,
+   "config": {
+    "Albedo": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "gradientAlphaColorings": {
+       "Gradient": [
+        [
+         0,
+         {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+         }
+        ],
+        [
+         10,
+         {
+          "w": 0.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+         }
+        ],
+        [
+         100,
+         {
+          "w": 0.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+         }
+        ]
+       ]
+      }
+     }
+    ],
+    "Ambient Occlusion": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "floats": {
+       "Scaling": 0.5
+      },
+      "ints": {
+       "Bias": 0
+      },
+      "singleChoices": {
+       "Source Channel": 0
+      }
+     }
+    ],
+    "Displacement / Height": [
+     {
+      "noiseGraphs": {
+       "Noise Graph": {
+        "edges": [
+         {
+          "from": 3,
+          "to": 0
+         },
+         {
+          "from": 5,
+          "to": 1
+         },
+         {
+          "from": 8,
+          "to": 2
+         },
+         {
+          "from": 11,
+          "to": 7
+         }
+        ],
+        "nodes": [
+         {
+          "_id": 402,
+          "config": {
+           "floats": {
+            "Frequency": 1.25,
+            "Lacunarity": 3.5,
+            "Persistence": 0.5799999833106995
+           },
+           "ints": {
+            "Octaves": 7,
+            "Seed": 0
+           },
+           "singleChoices": {
+            "Quality": 2
+           }
+          },
+          "general": {
+           "internal_id": 0,
+           "position": {
+            "x": 0.0,
+            "y": 0.0
+           }
+          }
+         },
+         {
+          "_id": 402,
+          "config": {
+           "floats": {
+            "Frequency": 6.0,
+            "Lacunarity": 3.5,
+            "Persistence": 0.5799999833106995
+           },
+           "ints": {
+            "Octaves": 7,
+            "Seed": 10
+           },
+           "singleChoices": {
+            "Quality": 2
+           }
+          },
+          "general": {
+           "internal_id": 1,
+           "position": {
+            "x": 0.0,
+            "y": 300.0
+           }
+          }
+         },
+         {
+          "_id": 3,
+          "config": null,
+          "general": {
+           "internal_id": 2,
+           "position": {
+            "x": 300.0,
+            "y": 0.0
+           }
+          }
+         },
+         {
+          "_id": 302,
+          "config": {
+           "floats": {
+            "x Scale": 1.0,
+            "y Scale": 1.0,
+            "z Scale": 1.0
+           }
+          },
+          "general": {
+           "internal_id": 7,
+           "position": {
+            "x": 500.0,
+            "y": 0.0
+           }
+          }
+         },
+         {
+          "_id": 0,
+          "config": null,
+          "general": {
+           "internal_id": 10,
+           "position": {
+            "x": 700.0,
+            "y": 0.0
+           }
+          }
+         }
+        ]
+       }
+      }
+     }
+    ],
+    "Metalness": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "bools": {
+       "True Metal": false,
+       "Use Cutoff": false
+      },
+      "floats": {
+       "Scaling": 0.20000000298023224
+      },
+      "ints": {
+       "Bias": 0,
+       "Cutoff": 10
+      },
+      "singleChoices": {
+       "Source Channel": 0
+      }
+     }
+    ],
+    "Normals": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "floats": {
+       "Normal Strength": 1.399999976158142
+      },
+      "singleChoices": {
+       "Mode": 3,
+       "Source Channel": 0
+      }
+     }
+    ],
+    "Preferred Normal Direction": [
+     {
+      "bools": {
+       "Use preferred normal directions.": false
+      },
+      "float3s": {
+       "Preferred Normal Direction": {
+        "x": 0.0,
+        "y": 1.0,
+        "z": 0.0
+       }
+      },
+      "floats": {
+       "Strength": 1.0
+      }
+     }
+    ],
+    "Proportions": [
+     {
+      "floats": {
+       "Ambient Occ.": 0.5,
+       "Displacement": 0.5,
+       "Metal": 1.0,
+       "Normals": 0.009999999776482582,
+       "Roughness": 0.10000000149011612
+      }
+     }
+    ],
+    "Roughness": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "floats": {
+       "Scaling": 2.0
+      },
+      "ints": {
+       "Bias": 0
+      },
+      "singleChoices": {
+       "Source Channel": 0
+      }
+     }
+    ]
+   },
+   "disabled": true
+  },
+  {
+   "_id": 0,
+   "config": {
+    "Albedo": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "gradientAlphaColorings": {
+       "Gradient": [
+        [
+         0,
+         {
+          "w": 0.0,
+          "x": 0.10000000149011612,
+          "y": 0.5,
+          "z": 0.0
+         }
+        ],
+        [
+         100,
+         {
+          "w": 0.5,
+          "x": 0.0,
+          "y": 0.20000000298023224,
+          "z": 0.0
+         }
+        ]
+       ]
+      }
+     }
+    ],
+    "Ambient Occlusion": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "floats": {
+       "Scaling": 0.5
+      },
+      "ints": {
+       "Bias": 0
+      },
+      "singleChoices": {
+       "Source Channel": 0
+      }
+     }
+    ],
+    "Displacement / Height": [
+     {
+      "noiseGraphs": {
+       "Noise Graph": {
+        "edges": [
+         {
+          "from": 2,
+          "to": 0
+         }
+        ],
+        "nodes": [
+         {
+          "_id": 401,
+          "config": {
+           "floats": {
+            "Frequency": 6.0,
+            "Lacunarity": 2.5,
+            "Persistence": 0.3499999940395355
+           },
+           "ints": {
+            "Octaves": 3,
+            "Seed": 0
+           },
+           "singleChoices": {
+            "Quality": 2
+           }
+          },
+          "general": {
+           "internal_id": 0,
+           "position": {
+            "x": 0.0,
+            "y": 0.0
+           }
+          }
+         },
+         {
+          "_id": 0,
+          "config": null,
+          "general": {
+           "internal_id": 1,
+           "position": {
+            "x": 400.0,
+            "y": 0.0
+           }
+          }
+         }
+        ]
+       }
+      }
+     }
+    ],
+    "Metalness": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "bools": {
+       "True Metal": false,
+       "Use Cutoff": false
+      },
+      "floats": {
+       "Scaling": 0.20000000298023224
+      },
+      "ints": {
+       "Bias": 0,
+       "Cutoff": 10
+      },
+      "singleChoices": {
+       "Source Channel": 0
+      }
+     }
+    ],
+    "Normals": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "floats": {
+       "Normal Strength": 1.399999976158142
+      },
+      "singleChoices": {
+       "Mode": 3,
+       "Source Channel": 0
+      }
+     }
+    ],
+    "Preferred Normal Direction": [
+     {
+      "bools": {
+       "Use preferred normal directions.": true
+      },
+      "float3s": {
+       "Preferred Normal Direction": {
+        "x": 0.0,
+        "y": 1.0,
+        "z": 0.0
+       }
+      },
+      "floats": {
+       "Strength": 1.0
+      }
+     }
+    ],
+    "Proportions": [
+     {
+      "floats": {
+       "Ambient Occ.": 0.5,
+       "Displacement": 0.5,
+       "Metal": 1.0,
+       "Normals": 0.009999999776482582,
+       "Roughness": 0.10000000149011612
+      }
+     }
+    ],
+    "Roughness": [
+     {
+      "singleChoices": {
+       "Method": 0
+      }
+     },
+     {
+      "floats": {
+       "Scaling": 2.0
+      },
+      "ints": {
+       "Bias": 0
+      },
+      "singleChoices": {
+       "Source Channel": 0
+      }
+     }
+    ]
+   },
+   "disabled": true
+  }
+ ],
+ "textureGenerator": {
+  "_id": 0,
+  "config": {
+   "Albedo": [
+    {
+     "singleChoices": {
+      "Method": 1
+     }
+    },
+    {
+     "noiseGraphs": {
+      "Noise Graph": {
+       "edges": [
+        {
+         "from": 2,
+         "to": 0
+        }
+       ],
+       "nodes": [
+        {
+         "_id": 401,
+         "config": {
+          "floats": {
+           "Frequency": 31.0,
+           "Lacunarity": 2.5,
+           "Persistence": 0.6000000238418579
+          },
+          "ints": {
+           "Octaves": 3,
+           "Seed": 0
+          },
+          "singleChoices": {
+           "Quality": 2
+          }
+         },
+         "general": {
+          "internal_id": 0,
+          "position": {
+           "x": 25.0,
+           "y": 25.0
+          }
+         }
+        },
+        {
+         "_id": 0,
+         "config": null,
+         "general": {
+          "internal_id": 1,
+          "position": {
+           "x": 400.0,
+           "y": 25.0
+          }
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "gradientColorings": {
+      "Gradient": [
+       [
+        0,
+        {
+         "x": 0.8270000219345093,
+         "y": 0.7839999794960022,
+         "z": 0.5170000195503235
+        }
+       ],
+       [
+        30,
+        {
+         "x": 0.28600001335144043,
+         "y": 0.22499999403953552,
+         "z": 0.22499999403953552
+        }
+       ],
+       [
+        45,
+        {
+         "x": 0.4269999861717224,
+         "y": 0.39500001072883606,
+         "z": 0.39500001072883606
+        }
+       ],
+       [
+        65,
+        {
+         "x": 0.5690000057220459,
+         "y": 0.5529999732971191,
+         "z": 0.3779999911785126
+        }
+       ],
+       [
+        100,
+        {
+         "x": 0.9399999976158142,
+         "y": 0.9359999895095825,
+         "z": 0.9210000038146973
+        }
+       ]
+      ]
+     }
+    },
+    {
+     "gradientColorings": {
+      "Gradient": [
+       [
+        0,
+        {
+         "x": 0.6809999942779541,
+         "y": 0.6809999942779541,
+         "z": 0.6809999942779541
+        }
+       ],
+       [
+        65,
+        {
+         "x": 0.5320000052452087,
+         "y": 0.35499998927116394,
+         "z": 0.08399999886751175
+        }
+       ],
+       [
+        100,
+        {
+         "x": 0.0,
+         "y": 0.0,
+         "z": 0.0
+        }
+       ]
+      ]
+     }
+    }
+   ],
+   "Ambient Occlusion": [
+    {
+     "singleChoices": {
+      "Method": 0
+     }
+    },
+    {
+     "floats": {
+      "Scaling": 0.5
+     },
+     "ints": {
+      "Bias": 0
+     },
+     "singleChoices": {
+      "Source Channel": 0
+     }
+    }
+   ],
+   "Displacement / Height": [
+    {
+     "noiseGraphs": {
+      "Noise Graph": {
+       "edges": [
+        {
+         "from": 14,
+         "to": 12
+        },
+        {
+         "from": 3,
+         "to": 0
+        },
+        {
+         "from": 5,
+         "to": 1
+        },
+        {
+         "from": 8,
+         "to": 2
+        },
+        {
+         "from": 10,
+         "to": 13
+        },
+        {
+         "from": 18,
+         "to": 7
+        }
+       ],
+       "nodes": [
+        {
+         "_id": 402,
+         "config": {
+          "floats": {
+           "Frequency": 1000.0,
+           "Lacunarity": 3.5,
+           "Persistence": 0.18000000715255737
+          },
+          "ints": {
+           "Octaves": 1,
+           "Seed": 0
+          },
+          "singleChoices": {
+           "Quality": 2
+          }
+         },
+         "general": {
+          "internal_id": 0,
+          "position": {
+           "x": 0.0,
+           "y": 0.0
+          }
+         }
+        },
+        {
+         "_id": 404,
+         "config": {
+          "bools": {
+           "Distance": false
+          },
+          "floats": {
+           "Displacement": 0.33000001311302185,
+           "Frequency": 67.32999420166016
+          },
+          "ints": {
+           "Seed": 0
+          }
+         },
+         "general": {
+          "internal_id": 1,
+          "position": {
+           "x": 0.0,
+           "y": 350.0
+          }
+         }
+        },
+        {
+         "_id": 1,
+         "config": null,
+         "general": {
+          "internal_id": 2,
+          "position": {
+           "x": 300.0,
+           "y": 200.0
+          }
+         }
+        },
+        {
+         "_id": 1,
+         "config": null,
+         "general": {
+          "internal_id": 7,
+          "position": {
+           "x": 500.0,
+           "y": 200.0
+          }
+         }
+        },
+        {
+         "_id": 403,
+         "config": {
+          "floats": {
+           "Frequency": 6.0,
+           "Lacunarity": 2.5
+          },
+          "ints": {
+           "Octaves": 3,
+           "Seed": 0
+          },
+          "singleChoices": {
+           "Quality": 2
+          }
+         },
+         "general": {
+          "internal_id": 12,
+          "position": {
+           "x": 0.0,
+           "y": 700.0
+          }
+         }
+        },
+        {
+         "_id": 302,
+         "config": {
+          "floats": {
+           "x Scale": 0.05000000074505806,
+           "y Scale": 1.0,
+           "z Scale": 0.05000000074505806
+          }
+         },
+         "general": {
+          "internal_id": 13,
+          "position": {
+           "x": 300.0,
+           "y": 700.0
+          }
+         }
+        },
+        {
+         "_id": 0,
+         "config": null,
+         "general": {
+          "internal_id": 17,
+          "position": {
+           "x": 700.0,
+           "y": 200.0
+          }
+         }
+        }
+       ]
+      }
+     }
+    }
+   ],
+   "Metalness": [
+    {
+     "singleChoices": {
+      "Method": 0
+     }
+    },
+    {
+     "bools": {
+      "True Metal": true,
+      "Use Cutoff": false
+     },
+     "floats": {
+      "Scaling": 0.20000000298023224
+     },
+     "ints": {
+      "Bias": -255,
+      "Cutoff": 10
+     },
+     "singleChoices": {
+      "Source Channel": 0
+     }
+    }
+   ],
+   "Normals": [
+    {
+     "singleChoices": {
+      "Method": 0
+     }
+    },
+    {
+     "floats": {
+      "Normal Strength": 1.399999976158142
+     },
+     "singleChoices": {
+      "Mode": 3,
+      "Source Channel": 0
+     }
+    }
+   ],
+   "Roughness": [
+    {
+     "singleChoices": {
+      "Method": 0
+     }
+    },
+    {
+     "floats": {
+      "Scaling": 2.0
+     },
+     "ints": {
+      "Bias": 255
+     },
+     "singleChoices": {
+      "Source Channel": 0
+     }
+    }
+   ]
+  }
+ }
+}
