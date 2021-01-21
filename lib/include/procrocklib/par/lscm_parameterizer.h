@@ -7,6 +7,7 @@ namespace procrock {
 class LSCM_Parameterizer : public Parameterizer {
  public:
   LSCM_Parameterizer();
+  virtual ~LSCM_Parameterizer() = default;
 
   float scaling = 1;
 

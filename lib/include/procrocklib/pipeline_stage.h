@@ -24,6 +24,8 @@ struct PipelineStageInfo {
 
 class PipelineStage : public Configurable {
  public:
+  virtual ~PipelineStage() = default;
+
   virtual std::shared_ptr<Mesh> run(Mesh* before = nullptr) = 0;
   virtual PipelineStageInfo& getInfo() = 0;
 

@@ -6,6 +6,7 @@ namespace procrock {
 class DecimateModifier : public Modifier {
  public:
   DecimateModifier();
+  virtual ~DecimateModifier() = default;
 
   int mode = 0;  // 0 = relative value, 1 = absolute value
 

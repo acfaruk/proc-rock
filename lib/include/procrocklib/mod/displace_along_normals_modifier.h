@@ -9,6 +9,7 @@ namespace procrock {
 class DisplaceAlongNormalsModifier : public Modifier {
  public:
   DisplaceAlongNormalsModifier();
+  virtual ~DisplaceAlongNormalsModifier() = default;
 
   int selection = 0;  // 0 = rng, 1 = noise graph
   int seed = 0;

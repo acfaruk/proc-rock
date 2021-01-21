@@ -7,6 +7,7 @@ namespace procrock {
 class SkinSurfaceGenerator : public Generator {
  public:
   SkinSurfaceGenerator();
+  virtual ~SkinSurfaceGenerator() = default;
 
   int distributionMethod = 0;
 

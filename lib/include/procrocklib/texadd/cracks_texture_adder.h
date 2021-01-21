@@ -9,6 +9,7 @@ namespace procrock {
 class CracksTextureAdder : public TextureAdder {
  public:
   CracksTextureAdder();
+  virtual ~CracksTextureAdder() = default;
 
   virtual PipelineStageInfo& getInfo() override;
 

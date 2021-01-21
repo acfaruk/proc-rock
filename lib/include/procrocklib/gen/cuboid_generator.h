@@ -5,6 +5,7 @@ namespace procrock {
 class CuboidGenerator : public Generator {
  public:
   CuboidGenerator();
+  virtual ~CuboidGenerator() = default;
 
   float length = 1.0f;
   float height = 0.5f;

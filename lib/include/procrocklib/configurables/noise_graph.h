@@ -44,6 +44,8 @@ const int NoiseNodeTypeId_Cylinders = 406;
 
 class NoiseNode : public GroupConfigurable {
  public:
+  virtual ~NoiseNode() = default;
+
   int id = -1;
   bool placeholder = false;
   Eigen::Vector2f position{0, 0};
@@ -61,6 +63,7 @@ std::unique_ptr<NoiseNode> createNoiseNodeFromTypeId(int noiseNodeTypeId);
 
 struct NoiseGraph : public ConfigurableExtender {
   NoiseGraph(bool empty = false);
+  virtual ~NoiseGraph() = default;
 
   Graph<NoiseNode*> graph;
   std::vector<std::unique_ptr<NoiseNode>> nodes;
@@ -82,6 +85,7 @@ noise::module::Module* evaluateGraph(const NoiseGraph& noiseGraph);
 class OutputNoiseNode : public NoiseNode {
  public:
   OutputNoiseNode();
+  virtual ~OutputNoiseNode() = default;
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
@@ -93,6 +97,7 @@ class OutputNoiseNode : public NoiseNode {
 class AddNoiseNode : public NoiseNode {
  public:
   AddNoiseNode();
+  virtual ~AddNoiseNode() = default;
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
@@ -103,6 +108,7 @@ class AddNoiseNode : public NoiseNode {
 class MaxNoiseNode : public NoiseNode {
  public:
   MaxNoiseNode();
+  virtual ~MaxNoiseNode() = default;
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
@@ -113,6 +119,7 @@ class MaxNoiseNode : public NoiseNode {
 class MinNoiseNode : public NoiseNode {
  public:
   MinNoiseNode();
+  virtual ~MinNoiseNode() = default;
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
@@ -123,6 +130,7 @@ class MinNoiseNode : public NoiseNode {
 class MultiplyNoiseNode : public NoiseNode {
  public:
   MultiplyNoiseNode();
+  virtual ~MultiplyNoiseNode() = default;
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
@@ -133,6 +141,7 @@ class MultiplyNoiseNode : public NoiseNode {
 class PowerNoiseNode : public NoiseNode {
  public:
   PowerNoiseNode();
+  virtual ~PowerNoiseNode() = default;
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
@@ -144,6 +153,7 @@ class PowerNoiseNode : public NoiseNode {
 class BlendNoiseNode : public NoiseNode {
  public:
   BlendNoiseNode();
+  virtual ~BlendNoiseNode() = default;
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
@@ -154,6 +164,7 @@ class BlendNoiseNode : public NoiseNode {
 class SelectNoiseNode : public NoiseNode {
  public:
   SelectNoiseNode();
+  virtual ~SelectNoiseNode() = default;
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
@@ -169,6 +180,7 @@ class SelectNoiseNode : public NoiseNode {
 class AbsNoiseNode : public NoiseNode {
  public:
   AbsNoiseNode();
+  virtual ~AbsNoiseNode() = default;
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
@@ -179,6 +191,7 @@ class AbsNoiseNode : public NoiseNode {
 class ClampNoiseNode : public NoiseNode {
  public:
   ClampNoiseNode();
+  virtual ~ClampNoiseNode() = default;
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
@@ -192,6 +205,7 @@ class ClampNoiseNode : public NoiseNode {
 class ExponentNoiseNode : public NoiseNode {
  public:
   ExponentNoiseNode();
+  virtual ~ExponentNoiseNode() = default;
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
@@ -204,6 +218,7 @@ class ExponentNoiseNode : public NoiseNode {
 class InvertNoiseNode : public NoiseNode {
  public:
   InvertNoiseNode();
+  virtual ~InvertNoiseNode() = default;
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
@@ -214,6 +229,7 @@ class InvertNoiseNode : public NoiseNode {
 class ScaleBiasNoiseNode : public NoiseNode {
  public:
   ScaleBiasNoiseNode();
+  virtual ~ScaleBiasNoiseNode() = default;
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
@@ -227,6 +243,7 @@ class ScaleBiasNoiseNode : public NoiseNode {
 class TerraceNoiseNode : public NoiseNode {
  public:
   TerraceNoiseNode();
+  virtual ~TerraceNoiseNode() = default;
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
@@ -240,6 +257,7 @@ class TerraceNoiseNode : public NoiseNode {
 class CurveNoiseNode : public NoiseNode {
  public:
   CurveNoiseNode();
+  virtual ~CurveNoiseNode() = default;
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
@@ -253,6 +271,7 @@ class CurveNoiseNode : public NoiseNode {
 class DisplaceNoiseNode : public NoiseNode {
  public:
   DisplaceNoiseNode();
+  virtual ~DisplaceNoiseNode() = default;
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
@@ -263,6 +282,7 @@ class DisplaceNoiseNode : public NoiseNode {
 class RotatePointNoiseNode : public NoiseNode {
  public:
   RotatePointNoiseNode();
+  virtual ~RotatePointNoiseNode() = default;
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
@@ -275,6 +295,7 @@ class RotatePointNoiseNode : public NoiseNode {
 class ScalePointNoiseNode : public NoiseNode {
  public:
   ScalePointNoiseNode();
+  virtual ~ScalePointNoiseNode() = default;
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
@@ -287,6 +308,7 @@ class ScalePointNoiseNode : public NoiseNode {
 class TranslatePointNoiseNode : public NoiseNode {
  public:
   TranslatePointNoiseNode();
+  virtual ~TranslatePointNoiseNode() = default;
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
@@ -299,6 +321,7 @@ class TranslatePointNoiseNode : public NoiseNode {
 class TurbulenceNoiseNode : public NoiseNode {
  public:
   TurbulenceNoiseNode();
+  virtual ~TurbulenceNoiseNode() = default;
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
@@ -313,6 +336,7 @@ class TurbulenceNoiseNode : public NoiseNode {
 class ConstNoiseNode : public NoiseNode {
  public:
   ConstNoiseNode();
+  virtual ~ConstNoiseNode() = default;
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
@@ -325,6 +349,7 @@ class ConstNoiseNode : public NoiseNode {
 class PerlinNoiseNode : public NoiseNode {
  public:
   PerlinNoiseNode();
+  virtual ~PerlinNoiseNode() = default;
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
@@ -342,6 +367,7 @@ class PerlinNoiseNode : public NoiseNode {
 class BillowNoiseNode : public NoiseNode {
  public:
   BillowNoiseNode();
+  virtual ~BillowNoiseNode() = default;
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
@@ -359,6 +385,7 @@ class BillowNoiseNode : public NoiseNode {
 class RidgedMultiNoiseNode : public NoiseNode {
  public:
   RidgedMultiNoiseNode();
+  virtual ~RidgedMultiNoiseNode() = default;
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
@@ -375,6 +402,7 @@ class RidgedMultiNoiseNode : public NoiseNode {
 class VoronoiNoiseNode : public NoiseNode {
  public:
   VoronoiNoiseNode();
+  virtual ~VoronoiNoiseNode() = default;
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
@@ -390,6 +418,7 @@ class VoronoiNoiseNode : public NoiseNode {
 class SpheresNoiseNode : public NoiseNode {
  public:
   SpheresNoiseNode();
+  virtual ~SpheresNoiseNode() = default;
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 
@@ -402,6 +431,7 @@ class SpheresNoiseNode : public NoiseNode {
 class CylindersNoiseNode : public NoiseNode {
  public:
   CylindersNoiseNode();
+  virtual ~CylindersNoiseNode() = default;
   virtual Configuration::ConfigurationGroup getConfig() override;
   virtual noise::module::Module* const getModule() override;
 

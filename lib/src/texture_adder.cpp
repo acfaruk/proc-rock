@@ -3,7 +3,7 @@
 #include <CImg.h>
 #include <igl/barycentric_coordinates.h>
 
-#include <Eigen/LU>
+#include <Eigen/Eigen>
 #include <thread>
 
 #include "utils/vector.h"

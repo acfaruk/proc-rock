@@ -7,6 +7,7 @@ namespace procrock {
 class PyramidGenerator : public Generator {
  public:
   PyramidGenerator();
+  virtual ~PyramidGenerator() = default;
 
   float height = 2;
   float tipX = 0;

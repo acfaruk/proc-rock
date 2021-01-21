@@ -9,6 +9,8 @@ namespace procrock {
 
 class Generator : public PipelineStage {
  public:
+  virtual ~Generator() = default;
+  
   std::shared_ptr<Mesh> run(Mesh* before = nullptr) override;
 
   virtual bool isMoveable() const override;

@@ -5,6 +5,7 @@ namespace procrock {
 class SubdivisionModifier : public Modifier {
  public:
   SubdivisionModifier();
+  virtual ~SubdivisionModifier() = default;
 
   int subdivisions = 1;
   int mode = 0;

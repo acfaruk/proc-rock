@@ -6,6 +6,7 @@ namespace procrock {
 class TransformationModifier : public Modifier {
  public:
   TransformationModifier();
+  virtual ~TransformationModifier() = default;
 
   Eigen::Vector3f translation{0, 0, 0};
   Eigen::Vector3f scale{1, 1, 1};
