@@ -54,6 +54,7 @@ class GradientAlbedoGenerator : public TextureGroupModifier {
 };
 
 class NoiseGradientAlbedoGenerator : public TextureGroupModifier {
+ public:
   virtual ~NoiseGradientAlbedoGenerator() = default;
   virtual void addOwnGroups(
       Configuration& config, std::string newGroupName,
