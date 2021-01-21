@@ -63,8 +63,6 @@ bool TextureAdder::isMoveable() const { return true; }
 bool TextureAdder::isRemovable() const { return true; }
 
 TextureGroup TextureAdder::createAddTexture(Mesh& mesh, TextureFunction texFunction) {
-  int index = 0;
-
   const auto& texGroup = mesh.textures;
 
   TextureGroup addGroup;

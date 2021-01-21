@@ -7,7 +7,7 @@ namespace procrock {
 class PointLight {
  public:
   PointLight(glm::vec3 position, float intensity, glm::vec3 color = glm::vec3(1, 1, 1))
-      : initialPosition(position), intensity(intensity), position(position), color(color){};
+      : initialPosition(position), position(position), color(color), intensity(intensity){};
 
   glm::vec3 position;
   glm::vec3 color;

@@ -9,6 +9,7 @@ namespace procrock {
 
 class TextureGroupModifier : public ConfigurableExtender {
  public:
+  virtual ~TextureGroupModifier() = default;
   virtual void addOwnGroups(
       Configuration& config, std::string newGroupName,
       std::function<bool()> activeFunc = []() { return true; }) = 0;
@@ -18,6 +19,7 @@ class TextureGroupModifier : public ConfigurableExtender {
 // Albedo
 class GradientAlphaAlbedoGenerator : public TextureGroupModifier {
  public:
+  virtual ~GradientAlphaAlbedoGenerator() = default;
   virtual void addOwnGroups(
       Configuration& config, std::string newGroupName,
       std::function<bool()> activeFunc = []() { return true; }) override;
@@ -29,6 +31,7 @@ class GradientAlphaAlbedoGenerator : public TextureGroupModifier {
 class AlbedoAlphaGenerator : public TextureGroupModifier {
  public:
   AlbedoAlphaGenerator();
+  virtual ~AlbedoAlphaGenerator() = default;
   virtual void addOwnGroups(
       Configuration& config, std::string newGroupName,
       std::function<bool()> activeFunc = []() { return true; }) override;
@@ -41,6 +44,7 @@ class AlbedoAlphaGenerator : public TextureGroupModifier {
 
 class GradientAlbedoGenerator : public TextureGroupModifier {
  public:
+  virtual ~GradientAlbedoGenerator() = default;
   virtual void addOwnGroups(
       Configuration& config, std::string newGroupName,
       std::function<bool()> activeFunc = []() { return true; }) override;
@@ -50,6 +54,7 @@ class GradientAlbedoGenerator : public TextureGroupModifier {
 };
 
 class NoiseGradientAlbedoGenerator : public TextureGroupModifier {
+  virtual ~NoiseGradientAlbedoGenerator() = default;
   virtual void addOwnGroups(
       Configuration& config, std::string newGroupName,
       std::function<bool()> activeFunc = []() { return true; }) override;
@@ -62,6 +67,7 @@ class NoiseGradientAlbedoGenerator : public TextureGroupModifier {
 class AlbedoGenerator : public TextureGroupModifier {
  public:
   AlbedoGenerator();
+  virtual ~AlbedoGenerator() = default;
   virtual void addOwnGroups(
       Configuration& config, std::string newGroupName,
       std::function<bool()> activeFunc = []() { return true; }) override;
@@ -75,6 +81,7 @@ class AlbedoGenerator : public TextureGroupModifier {
 // Normals
 class GradientNormalsGenerator : public TextureGroupModifier {
  public:
+  virtual ~GradientNormalsGenerator() = default;
   virtual void addOwnGroups(
       Configuration& config, std::string newGroupName,
       std::function<bool()> activeFunc = []() { return true; }) override;
@@ -91,6 +98,7 @@ class GradientNormalsGenerator : public TextureGroupModifier {
 class NormalsGenerator : public TextureGroupModifier {
  public:
   NormalsGenerator();
+  virtual ~NormalsGenerator() = default;
   virtual void addOwnGroups(
       Configuration& config, std::string newGroupName,
       std::function<bool()> activeFunc = []() { return true; }) override;
@@ -104,6 +112,7 @@ class NormalsGenerator : public TextureGroupModifier {
 // Roughness
 class GreyscaleRoughnessGenerator : public TextureGroupModifier {
  public:
+  virtual ~GreyscaleRoughnessGenerator() = default;
   virtual void addOwnGroups(
       Configuration& config, std::string newGroupName,
       std::function<bool()> activeFunc = []() { return true; }) override;
@@ -118,6 +127,7 @@ class GreyscaleRoughnessGenerator : public TextureGroupModifier {
 class RoughnessGenerator : public TextureGroupModifier {
  public:
   RoughnessGenerator();
+  virtual ~RoughnessGenerator() = default;
   virtual void addOwnGroups(
       Configuration& config, std::string newGroupName,
       std::function<bool()> activeFunc = []() { return true; }) override;
@@ -131,6 +141,7 @@ class RoughnessGenerator : public TextureGroupModifier {
 // Metallness
 class GreyscaleMetalnessGenerator : public TextureGroupModifier {
  public:
+  virtual ~GreyscaleMetalnessGenerator() = default;
   virtual void addOwnGroups(
       Configuration& config, std::string newGroupName,
       std::function<bool()> activeFunc = []() { return true; }) override;
@@ -149,6 +160,7 @@ class GreyscaleMetalnessGenerator : public TextureGroupModifier {
 class MetalnessGenerator : public TextureGroupModifier {
  public:
   MetalnessGenerator();
+  virtual ~MetalnessGenerator() = default;
   virtual void addOwnGroups(
       Configuration& config, std::string newGroupName,
       std::function<bool()> activeFunc = []() { return true; }) override;
@@ -162,6 +174,7 @@ class MetalnessGenerator : public TextureGroupModifier {
 // Ambient Occ
 class GreyscaleAmbientOcclusionGenerator : public TextureGroupModifier {
  public:
+  virtual ~GreyscaleAmbientOcclusionGenerator() = default;
   virtual void addOwnGroups(
       Configuration& config, std::string newGroupName,
       std::function<bool()> activeFunc = []() { return true; }) override;
@@ -176,6 +189,7 @@ class GreyscaleAmbientOcclusionGenerator : public TextureGroupModifier {
 class AmbientOcclusionGenerator : public TextureGroupModifier {
  public:
   AmbientOcclusionGenerator();
+  virtual ~AmbientOcclusionGenerator() = default;
   virtual void addOwnGroups(
       Configuration& config, std::string newGroupName,
       std::function<bool()> activeFunc = []() { return true; }) override;

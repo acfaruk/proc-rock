@@ -16,5 +16,7 @@ std::unique_ptr<AbstractedPipeline> inline createAbstractPipelineFromId(unsigned
     default:
       assert(0 && "make sure all abstract pipeline types are handled!");
   }
+
+  return std::make_unique<IgneousPipeline>();
 }
 }  // namespace procrock

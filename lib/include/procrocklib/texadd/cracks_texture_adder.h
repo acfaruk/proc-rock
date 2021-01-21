@@ -24,7 +24,5 @@ class CracksTextureAdder : public TextureAdder {
   PipelineStageInfo info{PipelineStageNames_TexAdd[PipelineStage_TexAdd_Cracks],
                          "Adds Cracks to the texture.", PipelineStageType::TextureAdder,
                          PipelineStage_TexAdd_Cracks};
-
-  NoiseGraph noiseGraph;
 };
 }  // namespace procrock

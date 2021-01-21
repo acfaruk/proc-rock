@@ -13,6 +13,7 @@ namespace procrock {
 class SedimentaryPipeline : public AbstractedPipeline {
  public:
   SedimentaryPipeline();
+  virtual ~SedimentaryPipeline() = default;
 
  private:
   virtual void setupPipeline() override;

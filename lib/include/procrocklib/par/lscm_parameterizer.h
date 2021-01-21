@@ -17,7 +17,6 @@ class LSCM_Parameterizer : public Parameterizer {
   virtual std::shared_ptr<Mesh> parameterize(Mesh* mesh) override;
 
  private:
-  int indexMax = 0;
   PipelineStageInfo info{PipelineStageNames_Par[PipelineStage_Par_LSCM],
                          "Least Squares Conformal Maps", PipelineStageType::Parameterizer,
                          PipelineStage_Par_LSCM};

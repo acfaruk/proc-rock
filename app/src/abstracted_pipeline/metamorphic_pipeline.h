@@ -13,6 +13,7 @@ namespace procrock {
 class MetamorphicPipeline : public AbstractedPipeline {
  public:
   MetamorphicPipeline();
+  virtual ~MetamorphicPipeline() = default;
 
  private:
   virtual void setupPipeline() override;
