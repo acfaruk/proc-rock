@@ -83,7 +83,13 @@ void updateMainMenu(Pipeline& pipeline) {
       }
       if (ImGui::MenuItem("Load Pipeline")) {
         const char* patterns[] = {"*.json"};
+        // Patterns do not seem to work on newer osx versions with this library
+#if __APPLE__
+        const char* file = tinyfd_openFileDialog("Load a Pipeline", "", 0, NULL, NULL, 0);
+#else
         const char* file = tinyfd_openFileDialog("Load a Pipeline", "", 1, patterns, NULL, 0);
+#endif
+
         if (file != NULL) {
           pipeline.loadFromFile(file);
           currentStageEditor.current = nullptr;

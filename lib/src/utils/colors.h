@@ -28,7 +28,9 @@ Eigen::Vector3i inline computeColorGradient(std::map<int, Eigen::Vector3f>& grad
   int secondValue = upper->first;
   Eigen::Vector3f secondColor = upper->second;
 
-  upper--;
+  if (upper != gradient.begin()) {
+    upper--;
+  }
 
   int firstValue = upper->first;
   Eigen::Vector3f firstColor = upper->second;
