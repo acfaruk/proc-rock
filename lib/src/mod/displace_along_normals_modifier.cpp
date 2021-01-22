@@ -56,7 +56,7 @@ std::shared_ptr<Mesh> DisplaceAlongNormalsModifier::modify(Mesh& mesh) {
   rng.seed(seed);
   auto module = evaluateGraph(noiseGraph);
 
-  //auto verticesToModify = pickSet(vertexCount, vertexCount - ignoredVerticesCount);
+  // auto verticesToModify = pickSet(vertexCount, vertexCount - ignoredVerticesCount);
 
   for (int v = 0; v < vertexCount; v++) {
     auto pos = mesh.vertices.row(v);

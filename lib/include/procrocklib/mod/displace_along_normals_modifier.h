@@ -13,7 +13,7 @@ class DisplaceAlongNormalsModifier : public Modifier {
 
   int selection = 0;  // 0 = rng, 1 = noise graph
   int seed = 0;
-  //int ignoredVerticesCount = 0;
+  // int ignoredVerticesCount = 0;
   float factor = 0.001;
 
   bool preferDirection = false;

@@ -108,7 +108,7 @@ void TextureAdder::addTextures(Mesh& mesh, TextureGroup& addGroup) {
     if (preferred.enabled) {
       auto& pixel = mesh.textures.worldMap[i];
 
-      if (pixel.face == -1) continue; //skip pixels on non faces..
+      if (pixel.face == -1) continue;  // skip pixels on non faces..
 
       Eigen::Vector3i textureNormalSample = {texGroup.normalData[(3 * i)],
                                              texGroup.normalData[(3 * i) + 1],
