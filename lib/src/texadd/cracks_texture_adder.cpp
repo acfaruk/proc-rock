@@ -23,7 +23,6 @@ std::shared_ptr<Mesh> CracksTextureAdder::generate(Mesh* before) {
   using namespace cimg_library;
 
   auto result = std::make_shared<Mesh>(*before);
-  auto noiseModule = evaluateGraph(noiseGraph);
 
   noise::module::Voronoi voronoi;
   voronoi.SetFrequency(frequency);

@@ -6,6 +6,7 @@ namespace procrock {
 class IcosahedronGenerator : public Generator {
  public:
   IcosahedronGenerator();
+  virtual ~IcosahedronGenerator() = default;
 
   float edgeLength = 1;
 

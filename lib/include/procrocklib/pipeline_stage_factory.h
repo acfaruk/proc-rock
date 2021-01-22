@@ -22,6 +22,8 @@ std::unique_ptr<Generator> inline createGeneratorFromId(unsigned int id) {
     default:
       assert(0 && "make sure all stages are handled!");
   }
+
+  return std::make_unique<CuboidGenerator>();
 }
 
 std::unique_ptr<Modifier> inline createModifierFromId(unsigned int id) {
@@ -39,6 +41,8 @@ std::unique_ptr<Modifier> inline createModifierFromId(unsigned int id) {
     default:
       assert(0 && "make sure all stages are handled!");
   }
+
+  return std::make_unique<TransformationModifier>();
 }
 
 std::unique_ptr<Parameterizer> inline createParameterizerFromId(unsigned int id) {
@@ -50,6 +54,8 @@ std::unique_ptr<Parameterizer> inline createParameterizerFromId(unsigned int id)
     default:
       assert(0 && "make sure all stages are handled!");
   }
+
+  return std::make_unique<LSCM_Parameterizer>();
 }
 
 std::unique_ptr<TextureGenerator> inline createTextureGeneratorFromId(unsigned int id) {
@@ -59,6 +65,8 @@ std::unique_ptr<TextureGenerator> inline createTextureGeneratorFromId(unsigned i
     default:
       assert(0 && "make sure all stages are handled!");
   }
+
+  return std::make_unique<NoiseTextureGenerator>();
 }
 
 std::unique_ptr<TextureAdder> inline createTextureAdderFromId(unsigned int id) {
@@ -70,5 +78,7 @@ std::unique_ptr<TextureAdder> inline createTextureAdderFromId(unsigned int id) {
     default:
       assert(0 && "make sure all stages are handled!");
   }
+
+  return std::make_unique<NoiseTextureAdder>();
 }
 }  // namespace procrock

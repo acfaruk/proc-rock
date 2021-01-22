@@ -11,6 +11,7 @@ namespace procrock {
 class TextureGenerator : public PipelineStage {
  public:
   TextureGenerator();
+  virtual ~TextureGenerator() = default;
 
   std::shared_ptr<Mesh> run(Mesh* before = nullptr) override;
 

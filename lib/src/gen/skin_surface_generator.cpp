@@ -57,7 +57,6 @@ std::shared_ptr<Mesh> SkinSurfaceGenerator::generate() {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
   typedef CGAL::Skin_surface_traits_3<K> Traits;
   typedef CGAL::Skin_surface_3<Traits> Skin_surface_3;
-  typedef Skin_surface_3::FT FT;
   typedef Skin_surface_3::Bare_point Bare_point;
   typedef Skin_surface_3::Weighted_point Weighted_point;
   typedef CGAL::Polyhedron_3<K, CGAL::Skin_surface_polyhedral_items_3<Skin_surface_3>> Polyhedron;
@@ -103,7 +102,6 @@ std::shared_ptr<Mesh> SkinSurfaceGenerator::generate() {
   CGAL::make_skin_surface_mesh_3(p, points.begin(), points.end(), shrinkFactor);
 
   typedef Polyhedron::Vertex_const_iterator VCI;
-  typedef Polyhedron::Facet_const_iterator FCI;
   typedef Polyhedron::Halfedge_around_facet_const_circulator HFCC;
   typedef CGAL::Inverse_index<VCI> Index;
   Index index(p.vertices_begin(), p.vertices_end());

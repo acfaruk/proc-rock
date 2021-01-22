@@ -212,7 +212,7 @@ void Pipeline::saveToFile(const std::string filePath) {
       nlohmann::json{{"_id", generator->getInfo().id}, {"config", generator->getConfiguration()}};
   finalJson.update({{"generator", genJson}});
 
-  finalJson.update({{"modifiers", {}}});
+  finalJson.update({{"modifiers", nlohmann::json::array()}});
   for (auto& mod : modifiers) {
     nlohmann::json modJson = nlohmann::json{{"_id", mod->getInfo().id},
                                             {"disabled", mod->isDisabled()},
@@ -228,7 +228,7 @@ void Pipeline::saveToFile(const std::string filePath) {
                                              {"config", textureGenerator->getConfiguration()}};
   finalJson.update({{"textureGenerator", texGenJson}});
 
-  finalJson.update({{"textureAdders", {}}});
+  finalJson.update({{"textureAdders", nlohmann::json::array()}});
   for (auto& texAdder : textureAdders) {
     nlohmann::json texAddJson = nlohmann::json{{"_id", texAdder->getInfo().id},
                                                {"disabled", texAdder->isDisabled()},
@@ -245,42 +245,46 @@ void Pipeline::saveToFile(const std::string filePath) {
 void Pipeline::loadFromFile(const std::string filePath) {
   std::ifstream file;
   file.open(filePath);
-  auto json = nlohmann::json::parse(file);
+  try {
+    auto json = nlohmann::json::parse(file);
+
+    auto& genJson = json.at("generator");
+    setGenerator(createGeneratorFromId(genJson.at("_id").get<int>()));
+    fillConfigFromJson(genJson.at("config"), generator->getConfiguration());
+
+    modifiers.clear();
+    auto& modsJson = json.at("modifiers");
+    for (auto& modJson : modsJson) {
+      addModifier(createModifierFromId(modJson.at("_id").get<int>()));
+      auto& mod = getModifier(getModifierCount() - 1);
+      if (modJson.find("disabled") != modJson.end()) {  // backwards compatible...
+        mod.setDisabled(modJson.at("disabled").get<bool>());
+      }
+      fillConfigFromJson(modJson.at("config"), mod.getConfiguration());
+    }
+
+    auto& parJson = json.at("parameterizer");
+    setParameterizer(createParameterizerFromId(parJson.at("_id").get<int>()));
+    fillConfigFromJson(parJson.at("config"), getParameterizer().getConfiguration());
+
+    auto& texGenJson = json.at("textureGenerator");
+    setTextureGenerator(createTextureGeneratorFromId(texGenJson.at("_id").get<int>()));
+    fillConfigFromJson(texGenJson.at("config"), getTextureGenerator().getConfiguration());
+
+    textureAdders.clear();
+    auto& texAddsJson = json.at("textureAdders");
+    for (auto& texAddJson : texAddsJson) {
+      addTextureAdder(createTextureAdderFromId(texAddJson.at("_id").get<int>()));
+      auto& texAdd = getTextureAdder(getTextureAdderCount() - 1);
+      if (texAddJson.find("disabled") != texAddJson.end()) {  // backwards compatible...
+        texAdd.setDisabled(texAddJson.at("disabled").get<bool>());
+      }
+      fillConfigFromJson(texAddJson.at("config"), texAdd.getConfiguration());
+    }
+  } catch (const std::exception& e) {
+    if (outputEnabled) *outputStream << "Error reading file. Try another file." << std::endl;
+  }
   file.close();
-
-  auto& genJson = json.at("generator");
-  setGenerator(createGeneratorFromId(genJson.at("_id").get<int>()));
-  fillConfigFromJson(genJson.at("config"), generator->getConfiguration());
-
-  modifiers.clear();
-  auto& modsJson = json.at("modifiers");
-  for (auto& modJson : modsJson) {
-    addModifier(createModifierFromId(modJson.at("_id").get<int>()));
-    auto& mod = getModifier(getModifierCount() - 1);
-    if (modJson.find("disabled") != modJson.end()) {  // backwards compatible...
-      mod.setDisabled(modJson.at("disabled").get<bool>());
-    }
-    fillConfigFromJson(modJson.at("config"), mod.getConfiguration());
-  }
-
-  auto& parJson = json.at("parameterizer");
-  setParameterizer(createParameterizerFromId(parJson.at("_id").get<int>()));
-  fillConfigFromJson(parJson.at("config"), getParameterizer().getConfiguration());
-
-  auto& texGenJson = json.at("textureGenerator");
-  setTextureGenerator(createTextureGeneratorFromId(texGenJson.at("_id").get<int>()));
-  fillConfigFromJson(texGenJson.at("config"), getTextureGenerator().getConfiguration());
-
-  textureAdders.clear();
-  auto& texAddsJson = json.at("textureAdders");
-  for (auto& texAddJson : texAddsJson) {
-    addTextureAdder(createTextureAdderFromId(texAddJson.at("_id").get<int>()));
-    auto& texAdd = getTextureAdder(getTextureAdderCount() - 1);
-    if (texAddJson.find("disabled") != texAddJson.end()) {  // backwards compatible...
-      texAdd.setDisabled(texAddJson.at("disabled").get<bool>());
-    }
-    fillConfigFromJson(texAddJson.at("config"), texAdd.getConfiguration());
-  }
 }
 
 void Pipeline::exportCurrent(const std::string filePath, ExportSettings settings) {

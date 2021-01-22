@@ -7,6 +7,7 @@ namespace procrock {
 class CutPlaneModifier : public Modifier {
  public:
   CutPlaneModifier();
+  virtual ~CutPlaneModifier() = default;
 
   Eigen::Vector3f translation{0, 0, 0};
   Eigen::Vector3f rotation{0.3, 0, 1.7};

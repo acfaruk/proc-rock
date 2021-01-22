@@ -14,7 +14,7 @@ struct NoiseGraph;
 template <typename T>
 struct ConfigurationList {
   ConfigurationList(std::set<T> initial = {}, int min = 0, int max = 100)
-      : list(initial), minEntries(min), maxEntries(max){};
+      : minEntries(min), maxEntries(max), list(initial){};
 
   int minEntries;
   int maxEntries;

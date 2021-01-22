@@ -3,7 +3,7 @@
 #include <CImg.h>
 #include <igl/barycentric_coordinates.h>
 
-#include <Eigen/LU>
+#include <Eigen/Eigen>
 #include <thread>
 
 #include "utils/vector.h"
@@ -63,8 +63,6 @@ bool TextureAdder::isMoveable() const { return true; }
 bool TextureAdder::isRemovable() const { return true; }
 
 TextureGroup TextureAdder::createAddTexture(Mesh& mesh, TextureFunction texFunction) {
-  int index = 0;
-
   const auto& texGroup = mesh.textures;
 
   TextureGroup addGroup;
@@ -109,6 +107,8 @@ void TextureAdder::addTextures(Mesh& mesh, TextureGroup& addGroup) {
   for (int i = 0; i < addTexture.size() / 4; i++) {
     if (preferred.enabled) {
       auto& pixel = mesh.textures.worldMap[i];
+
+      if (pixel.face == -1) continue; //skip pixels on non faces..
 
       Eigen::Vector3i textureNormalSample = {texGroup.normalData[(3 * i)],
                                              texGroup.normalData[(3 * i) + 1],

@@ -6,6 +6,8 @@
 namespace procrock {
 class AbstractedPipeline : public Configurable {
  public:
+  virtual ~AbstractedPipeline() = default;
+
   void connect(Pipeline* pipeline);
   void disconnect();
 

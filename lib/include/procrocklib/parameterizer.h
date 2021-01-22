@@ -8,6 +8,7 @@ namespace procrock {
 class Parameterizer : public PipelineStage {
  public:
   Parameterizer();
+  virtual ~Parameterizer() = default;
 
   int textureSizeChoice = 2;
 

@@ -6,6 +6,7 @@
 namespace procrock {
 class Modifier : public PipelineStage, public Disablable {
  public:
+  virtual ~Modifier() = default;
   std::shared_ptr<Mesh> run(Mesh* before = nullptr) override;
 
   virtual bool isMoveable() const override;

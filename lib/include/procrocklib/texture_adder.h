@@ -11,6 +11,7 @@ namespace procrock {
 class TextureAdder : public PipelineStage, public Disablable {
  public:
   TextureAdder(bool hideConfigurables = false);
+  virtual ~TextureAdder() = default;
 
   std::shared_ptr<Mesh> run(Mesh* before = nullptr) override;
 

@@ -9,6 +9,7 @@ namespace procrock {
 class NoiseTextureAdder : public TextureAdder {
  public:
   NoiseTextureAdder();
+  virtual ~NoiseTextureAdder() = default;
 
   virtual PipelineStageInfo& getInfo() override;
   NoiseGraph noiseGraph;

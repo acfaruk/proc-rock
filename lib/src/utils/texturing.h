@@ -28,7 +28,6 @@ inline void fillPart(std::vector<float>& data, int startIndex, int endIndex,
 
 inline void fillFloatTexture(TextureGroup& texGroup, FloatTextureFunction texFunction,
                              std::vector<float>& dataToFill) {
-  int index = 0;
   dataToFill.resize(texGroup.width * texGroup.height);
   std::fill(dataToFill.begin(), dataToFill.end(), 0);
 

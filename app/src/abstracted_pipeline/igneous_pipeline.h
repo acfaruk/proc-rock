@@ -13,6 +13,7 @@ namespace procrock {
 class IgneousPipeline : public AbstractedPipeline {
  public:
   IgneousPipeline();
+  virtual ~IgneousPipeline() = default;
 
  private:
   virtual void setupPipeline() override;

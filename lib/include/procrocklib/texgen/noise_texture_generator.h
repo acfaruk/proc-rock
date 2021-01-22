@@ -9,6 +9,7 @@ namespace procrock {
 class NoiseTextureGenerator : public TextureGenerator {
  public:
   NoiseTextureGenerator();
+  virtual ~NoiseTextureGenerator() = default;
 
   virtual PipelineStageInfo& getInfo() override;
   NoiseGraph noiseGraph;

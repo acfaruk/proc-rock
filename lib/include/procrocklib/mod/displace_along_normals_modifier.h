@@ -9,10 +9,11 @@ namespace procrock {
 class DisplaceAlongNormalsModifier : public Modifier {
  public:
   DisplaceAlongNormalsModifier();
+  virtual ~DisplaceAlongNormalsModifier() = default;
 
   int selection = 0;  // 0 = rng, 1 = noise graph
   int seed = 0;
-  int ignoredVerticesCount = 0;
+  //int ignoredVerticesCount = 0;
   float factor = 0.001;
 
   bool preferDirection = false;
@@ -31,7 +32,5 @@ class DisplaceAlongNormalsModifier : public Modifier {
 
   std::mt19937 rng;
   int vertexCount = 0;
-
-  std::set<int> pickSet(int N, int k);
 };
 }  // namespace procrock

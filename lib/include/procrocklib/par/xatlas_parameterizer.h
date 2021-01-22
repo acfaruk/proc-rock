@@ -5,6 +5,7 @@ namespace procrock {
 class XAtlasParameterizer : public Parameterizer {
  public:
   XAtlasParameterizer();
+  virtual ~XAtlasParameterizer() = default;
 
   struct ChartOptions {
     float normalDeviationWeight = 2.0f;

@@ -27,11 +27,11 @@ DisplaceAlongNormalsModifier::DisplaceAlongNormalsModifier() {
   group.ints.emplace_back(Configuration::BoundedEntry<int>{
       {"Seed", "Seed for the rng", [&]() { return selection == 0; }}, &seed, 0, 100000});
 
-  group.ints.emplace_back(Configuration::BoundedEntry<int>{
+  /*group.ints.emplace_back(Configuration::BoundedEntry<int>{
       {"Ignored Verts", "How many vertices should NOT be modified?"},
       &ignoredVerticesCount,
       0,
-      100000});
+      100000});*/
   config.insertToConfigGroups("General", group);
 
   std::function<bool()> preferDirectionActive = [&]() { return preferDirection; };
@@ -56,9 +56,9 @@ std::shared_ptr<Mesh> DisplaceAlongNormalsModifier::modify(Mesh& mesh) {
   rng.seed(seed);
   auto module = evaluateGraph(noiseGraph);
 
-  auto verticesToModify = pickSet(vertexCount, vertexCount - ignoredVerticesCount);
+  //auto verticesToModify = pickSet(vertexCount, vertexCount - ignoredVerticesCount);
 
-  for (int v : verticesToModify) {
+  for (int v = 0; v < vertexCount; v++) {
     auto pos = mesh.vertices.row(v);
     float amount = 0;
     switch (selection) {
@@ -96,15 +96,4 @@ std::shared_ptr<Mesh> DisplaceAlongNormalsModifier::modify(Mesh& mesh) {
   return result;
 }
 PipelineStageInfo& DisplaceAlongNormalsModifier::getInfo() { return info; }
-
-std::set<int> DisplaceAlongNormalsModifier::pickSet(int N, int k) {
-  std::set<int> elems;
-  for (int r = N - k; r < N; ++r) {
-    int v = std::uniform_int_distribution<>(0, r)(rng);
-    if (!elems.insert(v).second) {
-      elems.insert(r);
-    }
-  }
-  return elems;
-}
 }  // namespace procrock
