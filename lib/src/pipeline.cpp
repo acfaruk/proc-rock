@@ -212,7 +212,7 @@ void Pipeline::saveToFile(const std::string filePath) {
       nlohmann::json{{"_id", generator->getInfo().id}, {"config", generator->getConfiguration()}};
   finalJson.update({{"generator", genJson}});
 
-  finalJson.update({{"modifiers", {}}});
+  finalJson.update({{"modifiers", nlohmann::json::array()}});
   for (auto& mod : modifiers) {
     nlohmann::json modJson = nlohmann::json{{"_id", mod->getInfo().id},
                                             {"disabled", mod->isDisabled()},
@@ -228,7 +228,7 @@ void Pipeline::saveToFile(const std::string filePath) {
                                              {"config", textureGenerator->getConfiguration()}};
   finalJson.update({{"textureGenerator", texGenJson}});
 
-  finalJson.update({{"textureAdders", {}}});
+  finalJson.update({{"textureAdders", nlohmann::json::array()}});
   for (auto& texAdder : textureAdders) {
     nlohmann::json texAddJson = nlohmann::json{{"_id", texAdder->getInfo().id},
                                                {"disabled", texAdder->isDisabled()},
