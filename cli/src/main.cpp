@@ -1,8 +1,8 @@
 #include <procrocklib/pipeline.h>
+#include <tinydir.h>
 
 #include <algorithm>
 #include <chrono>
-#include <filesystem>
 #include <iostream>
 
 char* getCmdOption(char** begin, char** end, const std::string& option) {
@@ -37,21 +37,31 @@ int main(int argc, char* argv[]) {
     procrock::Pipeline pipeline;
     pipeline.enableOutput(false);
 
-    for (const auto& entry : std::filesystem::directory_iterator(benchmarkFolder)) {
-      std::string parameterFile = entry.path().generic_string();
+    tinydir_dir directory;
+    tinydir_open(&directory, benchmarkFolder);
+    while (directory.has_next) {
+      tinydir_file file;
+      tinydir_readfile(&directory, &file);
 
-      std::cout << "Benchmarking file: " << parameterFile << std::endl;
+      if (file.is_dir) {
+        tinydir_next(&directory);
+        continue;
+      }
+
+      std::string parameterFile = file.path;
+
+      std::cout << "Benchmarking file: " << file.path << std::endl;
 
       pipeline.loadFromFile(parameterFile);
 
       // iterate through texture sizes
-      std::array<long long, 5> currentTimes;
       for (int i = 0; i < 5; i++) {
         pipeline.getParameterizer().textureSizeChoice = i;
 
+        // run each texture size and pipeline 3 times
         long long durationSum = 0;
         for (int j = 0; j < 3; j++) {
-          pipeline.getGenerator().setChanged(true);
+          pipeline.getGenerator().setChanged(true);  // make sure full pipeline runs
           auto start = std::chrono::high_resolution_clock::now();
           pipeline.getCurrentMesh();
           auto end = std::chrono::high_resolution_clock::now();
@@ -66,7 +76,10 @@ int main(int argc, char* argv[]) {
         std::cout << std::endl;
       }
       std::cout << std::endl;
+      tinydir_next(&directory);
     }
+
+    tinydir_close(&directory);
   }
 
   return 0;
