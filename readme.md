@@ -31,6 +31,8 @@ Install these via your preferred package manager on your system.
 The windows setup script does not have any dependencies.
 
 After running the setup script, it should be easily buildable with a simple cmake call.
+To run the application, you need to feed it the `app` folder directory as argument. 
+It uses this folder to find the shaders and textures used.
 
 ## License
 Proc-Rock is licensed under the GPL-3.0
