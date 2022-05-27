@@ -9,7 +9,7 @@
 Proc-Rock is a program specialising in creating realistic-looking rocks by trying to map visual and geological features to procedural techniques. Based on the geological categorisation of rocks, having three default mappings gives the user the option to create various realistic-looking rocks without needing expertise in procedural techniques or even technical art. These mappings were made possible due to a highly customisable pipeline approach, node-based noise function graphs, boolean mesh geometry, and skin surfaces. Proc-Rock also creates reproducible results between operating systems and computers via simple text files, which store the parameters used for the creation.
 
 ## Features
-- Simple and Advanced modi to create rocks
+- Simple and Advanced modes to create rocks
 - Creates high resolution PBR materials
 - Exports as .obj files with .png textures
 - Can create very simple LOD's of the exported rocks
@@ -35,4 +35,5 @@ To run the application, you need to feed it the `app` folder directory as argume
 It uses this folder to find the shaders and textures used.
 
 ## License
-Proc-Rock is licensed under the GPL-3.0
+Proc-Rock is licensed under the GPL-3.0.
+Any rocks you create and export are yours to keep.
